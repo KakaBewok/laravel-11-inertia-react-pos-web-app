@@ -4,8 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PaymentMethod extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'bank_name',
+        'bank_logo',
+        'qris_image',
+        'status'
+    ];
+
+    public function orders(): HasMany
+    {
+        return $this->HasMany(Order::class);
+    }
 }
