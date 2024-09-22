@@ -33,8 +33,8 @@ class RolePermissionSeeder extends Seeder
         }
 
         // create roles
-        $adminRole = Role::create(['name' => 'admin']);
-        $superAdminRole = Role::create(['name' => 'super_admin']);
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $superAdminRole = Role::firstOrCreate(['name' => 'super_admin']);
 
         // give permission to roles
         $adminRole->syncPermissions('manage orders');
