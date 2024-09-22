@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,8 @@ class PhotoFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'photo' => $this->faker->imageUrl,
+            'product_id' => Product::factory(),
         ];
     }
 }

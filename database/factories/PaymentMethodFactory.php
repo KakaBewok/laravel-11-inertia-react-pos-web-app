@@ -17,7 +17,11 @@ class PaymentMethodFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->words(2, true),
+            'bank_name' => $this->faker->company,
+            'bank_logo' => $this->faker->imageUrl,
+            'qris_image' => $this->faker->imageUrl,
+            'status' => $this->faker->randomElement(['active', 'non-active'])
         ];
     }
 }
