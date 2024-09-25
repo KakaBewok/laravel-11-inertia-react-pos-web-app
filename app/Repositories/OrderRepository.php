@@ -1,29 +1,29 @@
 <?php
 
-use App\Models\Category;
+use App\Models\Order;
 use CrudRepository;
 use Illuminate\Support\Collection;
 
-class CategoryRepository implements CrudRepository
+class OrderRepository implements CrudRepository
 {
     public function find(int $id)
     {
-        return Category::find($id);
+        return Order::find($id);
     }
 
     public function all(): Collection
     {
-        return Category::all();
+        return Order::all();
     }
 
     public function store(array $data)
     {
-        return Category::create($data);
+        return Order::create($data);
     }
 
     public function update(int $id, array $data)
     {
-        $oldData = Category::find($id);
+        $oldData = Order::find($id);
         if ($oldData) {
             $oldData->update($data);
             return $oldData;
@@ -33,7 +33,7 @@ class CategoryRepository implements CrudRepository
 
     public function delete(int $id)
     {
-        $data = Category::find($id);
+        $data = Order::find($id);
         if ($data) {
             return $data->delete();
         }

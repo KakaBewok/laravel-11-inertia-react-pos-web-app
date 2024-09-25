@@ -1,29 +1,29 @@
 <?php
 
-use App\Models\Category;
+use App\Models\PaymentMethod;
 use CrudRepository;
 use Illuminate\Support\Collection;
 
-class CategoryRepository implements CrudRepository
+class PaymentMethodRepository implements CrudRepository
 {
     public function find(int $id)
     {
-        return Category::find($id);
+        return PaymentMethod::find($id);
     }
 
     public function all(): Collection
     {
-        return Category::all();
+        return PaymentMethod::all();
     }
 
     public function store(array $data)
     {
-        return Category::create($data);
+        return PaymentMethod::create($data);
     }
 
     public function update(int $id, array $data)
     {
-        $oldData = Category::find($id);
+        $oldData = PaymentMethod::find($id);
         if ($oldData) {
             $oldData->update($data);
             return $oldData;
@@ -33,7 +33,7 @@ class CategoryRepository implements CrudRepository
 
     public function delete(int $id)
     {
-        $data = Category::find($id);
+        $data = PaymentMethod::find($id);
         if ($data) {
             return $data->delete();
         }

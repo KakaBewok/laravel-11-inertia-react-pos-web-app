@@ -1,29 +1,29 @@
 <?php
 
-use App\Models\Category;
+use App\Models\Photo;
 use CrudRepository;
 use Illuminate\Support\Collection;
 
-class CategoryRepository implements CrudRepository
+class PhotoRepository implements CrudRepository
 {
     public function find(int $id)
     {
-        return Category::find($id);
+        return Photo::find($id);
     }
 
     public function all(): Collection
     {
-        return Category::all();
+        return Photo::all();
     }
 
     public function store(array $data)
     {
-        return Category::create($data);
+        return Photo::create($data);
     }
 
     public function update(int $id, array $data)
     {
-        $oldData = Category::find($id);
+        $oldData = Photo::find($id);
         if ($oldData) {
             $oldData->update($data);
             return $oldData;
@@ -33,7 +33,7 @@ class CategoryRepository implements CrudRepository
 
     public function delete(int $id)
     {
-        $data = Category::find($id);
+        $data = Photo::find($id);
         if ($data) {
             return $data->delete();
         }

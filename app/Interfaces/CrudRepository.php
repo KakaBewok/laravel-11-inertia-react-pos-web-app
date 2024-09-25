@@ -5,6 +5,11 @@ use Illuminate\Support\Collection;
 interface CrudRepository
 {
     /**
+     * Find a specified resource.
+     */
+    public function find(int $id);
+
+    /**
      * Display a listing of the resource.
      */
     public function all(): Collection;
