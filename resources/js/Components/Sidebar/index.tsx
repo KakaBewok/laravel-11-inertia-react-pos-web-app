@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-// import { NavLink, useLocation } from 'react-router-dom';
 import SidebarLinkGroup from "./SidebarLinkGroup";
 import { Link, usePage } from "@inertiajs/react";
 import Logo from "../../../../public/images/logo/logo.svg";
-import NavLink from "@/Components/NavLink";
+import NavLink from "@/Components/Sidebar/NavLink";
 
 interface SidebarProps {
     sidebarOpen: boolean;
@@ -11,9 +10,6 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
-    // const location = useLocation();
-    // const { pathname } = location;
-
     const { url } = usePage();
 
     const trigger = useRef<any>(null);
@@ -113,21 +109,18 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             {/* <!-- Menu Item Dashboard --> */}
                             <SidebarLinkGroup
                                 activeCondition={
-                                    url === "/" || url.includes("dashboard")
+                                    url === "/dashboard" ||
+                                    url.includes("dashboard")
                                 }
                             >
                                 {(handleClick, open) => {
                                     return (
                                         <React.Fragment>
-                                            <Link
-                                                href="#"
-                                                className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-slate-300 duration-300 ease-in-out hover:bg-slate-800 dark:hover:bg-slate-800 ${
-                                                    (url === "/" ||
-                                                        url.includes(
-                                                            "dashboard"
-                                                        )) &&
-                                                    "bg-slate-800"
-                                                }`}
+                                            <NavLink
+                                                href={route("dashboard")}
+                                                active={route().current(
+                                                    "dashboard"
+                                                )}
                                                 onClick={(e) => {
                                                     e.preventDefault();
                                                     sidebarExpanded
@@ -180,25 +173,38 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                                         fill=""
                                                     />
                                                 </svg>
-                                            </Link>
+                                            </NavLink>
                                             {/* <!-- Dropdown Menu Start --> */}
                                             <div
                                                 className={`translate transform overflow-hidden ${
                                                     !open && "hidden"
                                                 }`}
                                             >
-                                                <ul className="flex flex-col gap-3 mt-4 mb-5 pl-7">
+                                                <ul className="mt-4 mb-5 pl-7">
                                                     <li>
-                                                        <Link
-                                                            href="/"
-                                                            className={`group relative flex items-center gap-3 rounded-md px-4 font-medium text-slate-300 duration-300 ease-in-out hover:text-white ${
-                                                                url === "/"
-                                                                    ? "!text-white"
-                                                                    : ""
-                                                            }`}
+                                                        <NavLink
+                                                            href={route(
+                                                                "admin.statistic"
+                                                            )}
+                                                            active={route().current(
+                                                                "admin.statistic"
+                                                            )}
                                                         >
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                className="fill-current"
+                                                                width="18"
+                                                                height="18"
+                                                                viewBox="0 0 21 27"
+                                                                fill="none"
+                                                            >
+                                                                <path
+                                                                    fill="#F8F8FE"
+                                                                    d="M5,12a1,1,0,0,0-1,1v8a1,1,0,0,0,2,0V13A1,1,0,0,0,5,12ZM10,2A1,1,0,0,0,9,3V21a1,1,0,0,0,2,0V3A1,1,0,0,0,10,2ZM20,16a1,1,0,0,0-1,1v4a1,1,0,0,0,2,0V17A1,1,0,0,0,20,16ZM15,8a1,1,0,0,0-1,1V21a1,1,0,0,0,2,0V9A1,1,0,0,0,15,8Z"
+                                                                ></path>
+                                                            </svg>
                                                             Statistics
-                                                        </Link>
+                                                        </NavLink>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -211,30 +217,165 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
                             {/* <!-- Menu Item Category --> */}
                             <li>
-                                <Link
-                                    href="/calendar"
-                                    className={`group relative flex items-center gap-3 rounded-sm py-2 px-4 font-medium text-slate-300 duration-300 ease-in-out hover:bg-slate-800 dark:bg-slate-800 ${
-                                        url.includes("calendar") &&
-                                        "bg-slate-800 dark:bg-slate-800"
-                                    }`}
+                                <NavLink
+                                    href={route("admin.category.index")}
+                                    active={route().current(
+                                        "admin.category.index"
+                                    )}
                                 >
                                     <svg
-                                        className="fill-current"
+                                        className="-mt-1 fill-current"
                                         width="18"
                                         height="18"
-                                        viewBox="0 0 18 18"
+                                        viewBox="0 0 22 22"
                                         fill="none"
                                         xmlns="http://www.w3.org/2000/svg"
+                                        id="list-ul"
                                     >
                                         <path
-                                            d="M15.7499 2.9812H14.2874V2.36245C14.2874 2.02495 14.0062 1.71558 13.6405 1.71558C13.2749 1.71558 12.9937 1.99683 12.9937 2.36245V2.9812H4.97803V2.36245C4.97803 2.02495 4.69678 1.71558 4.33115 1.71558C3.96553 1.71558 3.68428 1.99683 3.68428 2.36245V2.9812H2.2499C1.29365 2.9812 0.478027 3.7687 0.478027 4.75308V14.5406C0.478027 15.4968 1.26553 16.3125 2.2499 16.3125H15.7499C16.7062 16.3125 17.5218 15.525 17.5218 14.5406V4.72495C17.5218 3.7687 16.7062 2.9812 15.7499 2.9812ZM1.77178 8.21245H4.1624V10.9968H1.77178V8.21245ZM5.42803 8.21245H8.38115V10.9968H5.42803V8.21245ZM8.38115 12.2625V15.0187H5.42803V12.2625H8.38115ZM9.64678 12.2625H12.5999V15.0187H9.64678V12.2625ZM9.64678 10.9968V8.21245H12.5999V10.9968H9.64678ZM13.8374 8.21245H16.228V10.9968H13.8374V8.21245ZM2.2499 4.24683H3.7124V4.83745C3.7124 5.17495 3.99365 5.48433 4.35928 5.48433C4.7249 5.48433 5.00615 5.20308 5.00615 4.83745V4.24683H13.0499V4.83745C13.0499 5.17495 13.3312 5.48433 13.6968 5.48433C14.0624 5.48433 14.3437 5.20308 14.3437 4.83745V4.24683H15.7499C16.0312 4.24683 16.2562 4.47183 16.2562 4.75308V6.94683H1.77178V4.75308C1.77178 4.47183 1.96865 4.24683 2.2499 4.24683ZM1.77178 14.5125V12.2343H4.1624V14.9906H2.2499C1.96865 15.0187 1.77178 14.7937 1.77178 14.5125ZM15.7499 15.0187H13.8374V12.2625H16.228V14.5406C16.2562 14.7937 16.0312 15.0187 15.7499 15.0187Z"
-                                            fill=""
-                                        />
+                                            fill="#FAFAFF"
+                                            d="M3.71,16.29a1,1,0,0,0-.33-.21,1,1,0,0,0-.76,0,1,1,0,0,0-.33.21,1,1,0,0,0-.21.33,1,1,0,0,0,.21,1.09,1.15,1.15,0,0,0,.33.21.94.94,0,0,0,.76,0,1.15,1.15,0,0,0,.33-.21,1,1,0,0,0,.21-1.09A1,1,0,0,0,3.71,16.29ZM7,8H21a1,1,0,0,0,0-2H7A1,1,0,0,0,7,8ZM3.71,11.29a1,1,0,0,0-1.09-.21,1.15,1.15,0,0,0-.33.21,1,1,0,0,0-.21.33.94.94,0,0,0,0,.76,1.15,1.15,0,0,0,.21.33,1.15,1.15,0,0,0,.33.21.94.94,0,0,0,.76,0,1.15,1.15,0,0,0,.33-.21,1.15,1.15,0,0,0,.21-.33.94.94,0,0,0,0-.76A1,1,0,0,0,3.71,11.29ZM21,11H7a1,1,0,0,0,0,2H21a1,1,0,0,0,0-2ZM3.71,6.29a1,1,0,0,0-.33-.21,1,1,0,0,0-1.09.21,1.15,1.15,0,0,0-.21.33.94.94,0,0,0,0,.76,1.15,1.15,0,0,0,.21.33,1.15,1.15,0,0,0,.33.21,1,1,0,0,0,1.09-.21,1.15,1.15,0,0,0,.21-.33.94.94,0,0,0,0-.76A1.15,1.15,0,0,0,3.71,6.29ZM21,16H7a1,1,0,0,0,0,2H21a1,1,0,0,0,0-2Z"
+                                        ></path>
                                     </svg>
-                                    Calendar
-                                </Link>
+                                    Category
+                                </NavLink>
                             </li>
                             {/* <!-- Menu Item Category --> */}
+
+                            {/* <!-- Menu Item Product --> */}
+                            <li>
+                                <NavLink
+                                    href={route("admin.product.index")}
+                                    active={route().current(
+                                        "admin.product.index"
+                                    )}
+                                >
+                                    <svg
+                                        className="-mt-1 fill-current"
+                                        width="19"
+                                        height="19"
+                                        viewBox="0 0 22 22"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        id="box"
+                                    >
+                                        <path
+                                            fill="#FAFAFF"
+                                            d="M20.49,7.52a.19.19,0,0,1,0-.08.17.17,0,0,1,0-.07l0-.09-.06-.15,0,0h0l0,0,0,0a.48.48,0,0,0-.09-.11l-.09-.08h0l-.05,0,0,0L16.26,4.45h0l-3.72-2.3A.85.85,0,0,0,12.25,2h-.08a.82.82,0,0,0-.27,0h-.1a1.13,1.13,0,0,0-.33.13L4,6.78l-.09.07-.09.08L3.72,7l-.05.06,0,0-.06.15,0,.09v.06a.69.69,0,0,0,0,.2v8.73a1,1,0,0,0,.47.85l7.5,4.64h0l0,0,.15.06.08,0a.86.86,0,0,0,.52,0l.08,0,.15-.06,0,0h0L20,17.21a1,1,0,0,0,.47-.85V7.63S20.49,7.56,20.49,7.52ZM12,4.17l1.78,1.1L8.19,8.73,6.4,7.63Zm-1,15L5.5,15.81V9.42l5.5,3.4Zm1-8.11L10.09,9.91l5.59-3.47L17.6,7.63Zm6.5,4.72L13,19.2V12.82l5.5-3.4Z"
+                                        ></path>
+                                    </svg>
+                                    Product
+                                </NavLink>
+                            </li>
+                            {/* <!-- Menu Item Product --> */}
+
+                            {/* <!-- Menu Item Photo --> */}
+                            <li>
+                                <NavLink
+                                    href={route("admin.photo.index")}
+                                    active={route().current(
+                                        "admin.photo.index"
+                                    )}
+                                >
+                                    <svg
+                                        className="-mt-1 fill-current"
+                                        width="17"
+                                        height="17"
+                                        viewBox="0 0 22 22"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        id="image-v"
+                                    >
+                                        <path
+                                            fill="#F5F5FC"
+                                            d="M19,2H5A3,3,0,0,0,2,5V19a3,3,0,0,0,3,3H19a2.81,2.81,0,0,0,.49-.05l.3-.07.07,0h0l.05,0,.37-.14.13-.07c.1-.06.21-.11.31-.18a3.79,3.79,0,0,0,.38-.32l.07-.09a2.69,2.69,0,0,0,.27-.32l.09-.13a2.31,2.31,0,0,0,.18-.35,1,1,0,0,0,.07-.15c.05-.12.08-.25.12-.38l0-.15A2.6,2.6,0,0,0,22,19V5A3,3,0,0,0,19,2ZM5,20a1,1,0,0,1-1-1V14.69l3.29-3.3h0a1,1,0,0,1,1.42,0L17.31,20Zm15-1a1,1,0,0,1-.07.36,1,1,0,0,1-.08.14.94.94,0,0,1-.09.12l-5.35-5.35.88-.88a1,1,0,0,1,1.42,0h0L20,16.69Zm0-5.14L18.12,12a3.08,3.08,0,0,0-4.24,0l-.88.88L10.12,10a3.08,3.08,0,0,0-4.24,0L4,11.86V5A1,1,0,0,1,5,4H19a1,1,0,0,1,1,1Z"
+                                        ></path>
+                                    </svg>
+                                    Photo
+                                </NavLink>
+                            </li>
+                            {/* <!-- Menu Item Photo --> */}
+
+                            {/* <!-- Menu Item Payment Method --> */}
+                            <li>
+                                <NavLink
+                                    href={route("admin.payment_method.index")}
+                                    active={route().current(
+                                        "admin.payment_method.index"
+                                    )}
+                                >
+                                    <svg
+                                        className="-mt-1 fill-current"
+                                        width="19"
+                                        height="19"
+                                        viewBox="0 0 22 22"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        id="credit-card"
+                                    >
+                                        <path
+                                            fill="#FCFCFE"
+                                            d="M7,15h3a1,1,0,0,0,0-2H7a1,1,0,0,0,0,2ZM19,5H5A3,3,0,0,0,2,8v9a3,3,0,0,0,3,3H19a3,3,0,0,0,3-3V8A3,3,0,0,0,19,5Zm1,12a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V11H20Zm0-8H4V8A1,1,0,0,1,5,7H19a1,1,0,0,1,1,1Z"
+                                        ></path>
+                                    </svg>
+                                    Payment Method
+                                </NavLink>
+                            </li>
+                            {/* <!-- Menu Item Payment Method --> */}
+
+                            {/* <!-- Menu Item Payment Method --> */}
+                            <li>
+                                <NavLink
+                                    href={route("admin.order.index")}
+                                    active={route().current(
+                                        "admin.order.index"
+                                    )}
+                                >
+                                    <svg
+                                        className="-mt-1 fill-current"
+                                        width="19"
+                                        height="19"
+                                        viewBox="0 0 22 22"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        id="bill"
+                                    >
+                                        <path
+                                            fill="#FCFCFE"
+                                            d="M9.5,10.5H12a1,1,0,0,0,0-2H11V8A1,1,0,0,0,9,8v.55a2.5,2.5,0,0,0,.5,4.95h1a.5.5,0,0,1,0,1H8a1,1,0,0,0,0,2H9V17a1,1,0,0,0,2,0v-.55a2.5,2.5,0,0,0-.5-4.95h-1a.5.5,0,0,1,0-1ZM21,12H18V3a1,1,0,0,0-.5-.87,1,1,0,0,0-1,0l-3,1.72-3-1.72a1,1,0,0,0-1,0l-3,1.72-3-1.72a1,1,0,0,0-1,0A1,1,0,0,0,2,3V19a3,3,0,0,0,3,3H19a3,3,0,0,0,3-3V13A1,1,0,0,0,21,12ZM5,20a1,1,0,0,1-1-1V4.73L6,5.87a1.08,1.08,0,0,0,1,0l3-1.72,3,1.72a1.08,1.08,0,0,0,1,0l2-1.14V19a3,3,0,0,0,.18,1Zm15-1a1,1,0,0,1-2,0V14h2Z"
+                                        ></path>
+                                    </svg>
+                                    Order
+                                </NavLink>
+                            </li>
+                            {/* <!-- Menu Item Payment Method --> */}
+
+                            {/* <!-- Menu Item Expense --> */}
+                            <li>
+                                <NavLink
+                                    href={route("admin.expense.index")}
+                                    active={route().current(
+                                        "admin.expense.index"
+                                    )}
+                                >
+                                    <svg
+                                        className="-mt-1 fill-current"
+                                        width="19"
+                                        height="19"
+                                        viewBox="0 0 22 22"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        id="money-withdrawal"
+                                    >
+                                        <path
+                                            fill="#FCFCFE"
+                                            d="M22,2H2A1,1,0,0,0,1,3v8a1,1,0,0,0,1,1H5v9a1,1,0,0,0,1,1H18a1,1,0,0,0,1-1V12h3a1,1,0,0,0,1-1V3A1,1,0,0,0,22,2ZM7,20V18a2,2,0,0,1,2,2Zm10,0H15a2,2,0,0,1,2-2Zm0-4a4,4,0,0,0-4,4H11a4,4,0,0,0-4-4V8H17Zm4-6H19V7a1,1,0,0,0-1-1H6A1,1,0,0,0,5,7v3H3V4H21Zm-9,5a3,3,0,1,0-3-3A3,3,0,0,0,12,15Zm0-4a1,1,0,1,1-1,1A1,1,0,0,1,12,11Z"
+                                        ></path>
+                                    </svg>
+                                    Expense
+                                </NavLink>
+                            </li>
+                            {/* <!-- Menu Item Expense --> */}
 
                             {/* <!-- Menu Item Auth Pages --> */}
                             <SidebarLinkGroup
