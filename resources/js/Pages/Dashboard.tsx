@@ -1,4 +1,3 @@
-import { Button } from "@/Components/ui/button";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import DefaultLayout from "@/Layouts/DefaultLayout";
 import { Head } from "@inertiajs/react";
@@ -20,7 +19,6 @@ export default function Dashboard() {
                         <div className="p-6 text-gray-900 dark:text-gray-100">
                             You're logged in!
                         </div>
-                        <Button variant="destructive">Button</Button>
                     </div>
                 </div>
             </div>
