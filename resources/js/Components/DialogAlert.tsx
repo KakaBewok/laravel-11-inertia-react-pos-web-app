@@ -10,27 +10,28 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "./ui/alert-dialog";
+import { router } from "@inertiajs/react";
 
 export function DialogAlert({
     children,
     handler,
-    message = "Are you sure? ",
+    question = "Are you sure? ",
+    description = "",
 }: {
     children: ReactNode;
     handler: () => void;
-    message?: string;
+    question?: string;
+    description?: string;
 }) {
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>{message}</AlertDialogTitle>
-                    {/* <AlertDialogDescription>
-                        This action cannot be undone. This will permanently
-                        delete your account and remove your data from our
-                        servers.
-                    </AlertDialogDescription> */}
+                    <AlertDialogTitle>{question}</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        {description}
+                    </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>

@@ -103,7 +103,7 @@ const DropdownUser = () => {
                     </TooltipHover>
                     <DialogAlert
                         handler={handleLogout}
-                        message="Are you sure you want to logout?"
+                        question="Are you sure you want to logout?"
                     >
                         <button className="dark:text-slate-300 dark:hover:text-slate-400 flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out text-slate-900 hover:text-slate-400 lg:text-base">
                             <svg
