@@ -1,11 +1,9 @@
+import { Link, router, usePage } from "@inertiajs/react";
 import { useState } from "react";
-import ClickOutside from "./ClickOutside";
 import UserOne from "../../../../public/images/user-01.png";
-import { Link, usePage } from "@inertiajs/react";
-import { TooltipHover } from "../Tooltip";
-import { router } from "@inertiajs/react";
-import Modal from "../Modal";
 import { DialogAlert } from "../DialogAlert";
+import { TooltipHover } from "../Tooltip";
+import ClickOutside from "./ClickOutside";
 
 const DropdownUser = () => {
     const user = usePage().props.auth.user;
@@ -103,7 +101,7 @@ const DropdownUser = () => {
                     </TooltipHover>
                     <DialogAlert
                         handler={handleLogout}
-                        question="Are you sure you want to logout?"
+                        title="Are you sure you want to logout?"
                     >
                         <button className="dark:text-slate-300 dark:hover:text-slate-400 flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out text-slate-900 hover:text-slate-400 lg:text-base">
                             <svg

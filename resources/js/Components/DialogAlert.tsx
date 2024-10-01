@@ -1,3 +1,4 @@
+
 import { ReactNode } from "react";
 import {
     AlertDialog,
@@ -8,35 +9,35 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-    AlertDialogTrigger,
+    AlertDialogTrigger
 } from "./ui/alert-dialog";
-import { router } from "@inertiajs/react";
 
 export function DialogAlert({
     children,
     handler,
-    question = "Are you sure? ",
+    title = "Are you sure? ",
     description = "",
 }: {
     children: ReactNode;
     handler: () => void;
-    question?: string;
+    title?: string;
     description?: string;
 }) {
+    
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>{question}</AlertDialogTitle>
+                    <AlertDialogTitle>{title}</AlertDialogTitle>
                     <AlertDialogDescription>
                         {description}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handler}>
-                        Continue
+                    <AlertDialogCancel className="hover:text-slate-200">Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handler} >
+                         Continue
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
