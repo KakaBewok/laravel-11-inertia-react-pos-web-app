@@ -1,13 +1,17 @@
-import DropdownUser from "./DropdownUser";
-import LogoIcon from "../../images/logo/logo-icon.svg";
 import DarkModeSwitcher from "./DarkModeSwitcher";
+import DropdownUser from "./DropdownUser";
 
 interface HeaderProps {
     sidebarOpen: boolean;
     setSidebarOpen: (arg: boolean) => void;
+    setLoading: (arg: boolean) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
+const Header: React.FC<HeaderProps> = ({
+    sidebarOpen,
+    setSidebarOpen,
+    setLoading,
+}) => {
     return (
         <header className="sticky top-0 z-40 flex w-full bg-slate-100 drop-shadow-sm dark:bg-slate-700 dark:drop-shadow-none">
             <div className="flex items-center justify-between flex-grow px-4 py-4 shadow-2 md:px-6 2xl:px-11">
@@ -60,7 +64,7 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
 
                 <div className="flex gap-5">
                     <DarkModeSwitcher className="block lg:hidden" />
-                    <DropdownUser />
+                    <DropdownUser setLoading={setLoading} />
                 </div>
             </div>
         </header>

@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import SidebarLinkGroup from "./SidebarLinkGroup";
-import { Link, usePage } from "@inertiajs/react";
-import Logo from "../../../../public/images/logo/logo.svg";
 import NavLink from "@/Components/Sidebar/NavLink";
+import { Link, usePage } from "@inertiajs/react";
+import React, { useEffect, useRef, useState } from "react";
+import Logo from "../../../../public/images/logo/logo.svg";
+import SidebarLinkGroup from "./SidebarLinkGroup";
 
 interface SidebarProps {
     sidebarOpen: boolean;
