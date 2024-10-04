@@ -7,6 +7,14 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
+    // protected $categoryService;
+
+    // Constructor injection
+    // public function __construct(CategoryService $categoryService)
+    // {
+    //     $this->categoryService = $categoryService;
+    // }
+
     /**
      * Display a listing of the resource.
      */
