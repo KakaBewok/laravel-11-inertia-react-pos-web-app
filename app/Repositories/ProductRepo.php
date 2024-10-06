@@ -1,7 +1,9 @@
 <?php
 
+namespace App\Repositories;
+
+use App\Interfaces\CrudRepository;
 use App\Models\Product;
-use CrudRepository;
 use Illuminate\Support\Collection;
 
 class ProductRepo implements CrudRepository

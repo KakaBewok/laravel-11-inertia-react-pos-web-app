@@ -2,17 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Services\ProductService;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ProductController extends Controller
 {
+    protected $productService;
+
+    // Constructor injection
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $products = $this->productService->getAllProducts();
+        return Inertia::render('Product/index', [
+            'products' => $products,
+        ]);
     }
 
     /**
