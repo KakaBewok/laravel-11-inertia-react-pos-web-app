@@ -1,6 +1,6 @@
-import DefaultLayout from "@/Layouts/DefaultLayout";
 import { CategoryClient } from "./client";
 import { CategoryColumn } from "./columns";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 interface Category {
     id: number;
@@ -17,13 +17,11 @@ const CategoriesPage = ({ categories }: { categories: Category[] }) => {
     }));
 
     return (
-        <DefaultLayout>
-            <div className="flex-col">
-                <div className="flex-1 p-8 pt-6 space-y-4">
-                    <CategoryClient data={formattedCategories} />
-                </div>
+        <AuthenticatedLayout>
+            <div className="p-2 pt-6 space-y-7">
+                <CategoryClient data={formattedCategories} />
             </div>
-        </DefaultLayout>
+        </AuthenticatedLayout>
     );
 };
 

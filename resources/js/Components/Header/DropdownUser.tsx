@@ -1,4 +1,4 @@
-import { Link, router, usePage } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import { useState } from "react";
 import UserOne from "../../../../public/images/user-01.png";
 import { TooltipHover } from "../Tooltip";
@@ -12,7 +12,8 @@ const DropdownUser = ({
     const user = usePage().props.auth.user;
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
-    const handleLogout = () => {
+    const handleLogout = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
         setLoading(true);
         router.post(
             route("logout"),
@@ -23,7 +24,8 @@ const DropdownUser = ({
         );
     };
 
-    const handleProfileMenu = () => {
+    const handleProfileMenu = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
         setLoading(true);
         router.get(
             route("profile.edit"),

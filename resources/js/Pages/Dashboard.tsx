@@ -1,10 +1,9 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import DefaultLayout from "@/Layouts/DefaultLayout";
 import { Head } from "@inertiajs/react";
 
 export default function Dashboard() {
     return (
-        <DefaultLayout
+        <AuthenticatedLayout
             head={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
                     Dashboard
@@ -22,6 +21,6 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
-        </DefaultLayout>
+        </AuthenticatedLayout>
     );
 }

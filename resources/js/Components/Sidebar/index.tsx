@@ -7,9 +7,10 @@ import SidebarLinkGroup from "./SidebarLinkGroup";
 interface SidebarProps {
     sidebarOpen: boolean;
     setSidebarOpen: (arg: boolean) => void;
+    setLoading: (arg: boolean) => void;
 }
 
-const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
+const Sidebar = ({ sidebarOpen, setSidebarOpen, setLoading }: SidebarProps) => {
     const { url } = usePage();
 
     const trigger = useRef<any>(null);
@@ -111,16 +112,22 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 activeCondition={
                                     url === "/dashboard" ||
                                     url.includes("dashboard")
+                                    // sidebarExpanded
                                 }
                             >
                                 {(handleClick, open) => {
                                     return (
                                         <React.Fragment>
-                                            <NavLink
+                                            <Link
+                                                className={
+                                                    "group relative flex items-center gap-3 rounded-sm py-2 px-4 font-medium text-slate-300 duration-200 ease-in-out hover:bg-slate-700 " +
+                                                    (route().current(
+                                                        "dashboard"
+                                                    )
+                                                        ? "bg-slate-700 dark:bg-slate-700"
+                                                        : "")
+                                                }
                                                 href={route("dashboard")}
-                                                active={route().current(
-                                                    "dashboard"
-                                                )}
                                                 onClick={(e) => {
                                                     e.preventDefault();
                                                     sidebarExpanded
@@ -173,7 +180,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                                         fill=""
                                                     />
                                                 </svg>
-                                            </NavLink>
+                                            </Link>
                                             {/* <!-- Dropdown Menu Start --> */}
                                             <div
                                                 className={`translate transform overflow-hidden ${
@@ -183,6 +190,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                                 <ul className="mt-4 mb-5 pl-7">
                                                     <li>
                                                         <NavLink
+                                                            setLoading={
+                                                                setLoading
+                                                            }
+                                                            url="admin.statistic"
                                                             href={route(
                                                                 "admin.statistic"
                                                             )}
@@ -218,6 +229,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             {/* <!-- Menu Item Category --> */}
                             <li>
                                 <NavLink
+                                    setLoading={setLoading}
+                                    url="admin.category.index"
                                     href={route("admin.category.index")}
                                     active={route().current(
                                         "admin.category.index"
@@ -245,6 +258,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             {/* <!-- Menu Item Product --> */}
                             <li>
                                 <NavLink
+                                    setLoading={setLoading}
+                                    url="admin.product.index"
                                     href={route("admin.product.index")}
                                     active={route().current(
                                         "admin.product.index"
@@ -272,6 +287,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             {/* <!-- Menu Item Photo --> */}
                             <li>
                                 <NavLink
+                                    setLoading={setLoading}
+                                    url="admin.photo.index"
                                     href={route("admin.photo.index")}
                                     active={route().current(
                                         "admin.photo.index"
@@ -299,6 +316,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             {/* <!-- Menu Item Payment Method --> */}
                             <li>
                                 <NavLink
+                                    setLoading={setLoading}
+                                    url="admin.payment_method.index"
                                     href={route("admin.payment_method.index")}
                                     active={route().current(
                                         "admin.payment_method.index"
@@ -326,6 +345,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             {/* <!-- Menu Item Order --> */}
                             <li>
                                 <NavLink
+                                    setLoading={setLoading}
+                                    url="admin.order.index"
                                     href={route("admin.order.index")}
                                     active={route().current(
                                         "admin.order.index"
@@ -353,6 +374,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             {/* <!-- Menu Item Expense --> */}
                             <li>
                                 <NavLink
+                                    setLoading={setLoading}
+                                    url="admin.expense.index"
                                     href={route("admin.expense.index")}
                                     active={route().current(
                                         "admin.expense.index"
