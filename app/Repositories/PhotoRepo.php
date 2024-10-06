@@ -4,7 +4,7 @@ use App\Models\Photo;
 use CrudRepository;
 use Illuminate\Support\Collection;
 
-class PhotoRepository implements CrudRepository
+class PhotoRepo implements CrudRepository
 {
     public function find(int $id)
     {

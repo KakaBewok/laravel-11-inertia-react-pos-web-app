@@ -4,7 +4,7 @@ use App\Models\PaymentMethod;
 use CrudRepository;
 use Illuminate\Support\Collection;
 
-class PaymentMethodRepository implements CrudRepository
+class PaymentMethodRepo implements CrudRepository
 {
     public function find(int $id)
     {

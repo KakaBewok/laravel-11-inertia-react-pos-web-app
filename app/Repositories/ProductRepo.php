@@ -1,11 +1,10 @@
 <?php
 
-use App\Models\Category;
 use App\Models\Product;
 use CrudRepository;
 use Illuminate\Support\Collection;
 
-class ProductRepository implements CrudRepository
+class ProductRepo implements CrudRepository
 {
     public function find(int $id)
     {
