@@ -2,25 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Services\CategoryService;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class CategoryController extends Controller
 {
-    // protected $categoryService;
+    protected $categoryService;
 
     // Constructor injection
-    // public function __construct(CategoryService $categoryService)
-    // {
-    //     $this->categoryService = $categoryService;
-    // }
+    public function __construct(CategoryService $categoryService)
+    {
+        $this->categoryService = $categoryService;
+    }
 
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $categories = $this->categoryService->getAllCategories();
+        return Inertia::render('Category/index', [
+            'categories' => $categories,
+        ]);
     }
 
     /**

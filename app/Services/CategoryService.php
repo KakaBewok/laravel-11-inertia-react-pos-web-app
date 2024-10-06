@@ -1,13 +1,16 @@
 <?php
 
-use App\Repositories\CategoryRepository;
+namespace App\Services;
+
+use App\Repositories\CategoryRepo;
+
 
 class CategoryService
 {
     protected $categoryRepository;
 
     // Constructor injection
-    public function __construct(CategoryRepository $categoryRepository)
+    public function __construct(CategoryRepo $categoryRepository)
     {
         $this->categoryRepository = $categoryRepository;
     }

@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 export type CategoryColumn = {
-    id: string;
+    id: number;
     name: string;
     description: string;
 };
