@@ -1,6 +1,9 @@
 "use client";
 
+import { Button } from "@/Components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
+import { ArrowUpDown } from "lucide-react";
+import { Checkbox } from "@/Components/ui/checkbox";
 
 export type CategoryColumn = {
     id: number;
@@ -10,11 +13,61 @@ export type CategoryColumn = {
 
 export const columns: ColumnDef<CategoryColumn>[] = [
     {
+        id: "select",
+        header: ({ table }) => (
+            <Checkbox
+                checked={
+                    table.getIsAllPageRowsSelected() ||
+                    (table.getIsSomePageRowsSelected() && "indeterminate")
+                }
+                onCheckedChange={(value) =>
+                    table.toggleAllPageRowsSelected(!!value)
+                }
+                aria-label="Select all"
+            />
+        ),
+        cell: ({ row }) => (
+            <Checkbox
+                checked={row.getIsSelected()}
+                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                aria-label="Select row"
+            />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+    },
+    {
         accessorKey: "name",
-        header: "Name",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() =>
+                        column.toggleSorting(column.getIsSorted() === "asc")
+                    }
+                    className="font-bold"
+                >
+                    Name
+                    <ArrowUpDown className="w-4 h-4 ml-2" />
+                </Button>
+            );
+        },
     },
     {
         accessorKey: "description",
-        header: "Description",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() =>
+                        column.toggleSorting(column.getIsSorted() === "asc")
+                    }
+                    className="font-bold"
+                >
+                    Description
+                    <ArrowUpDown className="w-4 h-4 ml-2" />
+                </Button>
+            );
+        },
     },
 ];

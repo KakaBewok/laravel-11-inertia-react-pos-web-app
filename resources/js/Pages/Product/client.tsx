@@ -20,7 +20,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
                     <Plus className="w-4 h-4" />
                 </Button>
             </div>
-            <DataTable columns={columns} data={data} />
+            <DataTable searchKey="name" columns={columns} data={data} />
         </>
     );
 };
