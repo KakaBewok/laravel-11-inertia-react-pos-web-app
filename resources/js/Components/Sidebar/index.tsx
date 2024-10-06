@@ -108,13 +108,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, setLoading }: SidebarProps) => {
 
                         <ul className="flex flex-col gap-2 mb-6">
                             {/* <!-- Menu Item Dashboard --> */}
-                            <SidebarLinkGroup
-                                activeCondition={
-                                    url === "/dashboard" ||
-                                    url.includes("dashboard")
-                                    // sidebarExpanded
-                                }
-                            >
+                            <SidebarLinkGroup activeCondition={sidebarExpanded}>
                                 {(handleClick, open) => {
                                     return (
                                         <React.Fragment>
@@ -130,11 +124,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, setLoading }: SidebarProps) => {
                                                 href={route("dashboard")}
                                                 onClick={(e) => {
                                                     e.preventDefault();
-                                                    sidebarExpanded
-                                                        ? handleClick()
-                                                        : setSidebarExpanded(
-                                                              true
-                                                          );
+                                                    handleClick();
+                                                    setSidebarExpanded(!open);
                                                 }}
                                             >
                                                 <svg
