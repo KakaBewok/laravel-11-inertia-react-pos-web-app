@@ -1,20 +1,13 @@
 "use client";
 
 import { Button } from "@/Components/ui/button";
-import { Input } from "@/Components/ui/input";
-import * as React from "react";
 import {
-    ColumnDef,
-    flexRender,
-    getCoreRowModel,
-    useReactTable,
-    getPaginationRowModel,
-    SortingState,
-    getSortedRowModel,
-    ColumnFiltersState,
-    getFilteredRowModel,
-    VisibilityState,
-} from "@tanstack/react-table";
+    DropdownMenu,
+    DropdownMenuCheckboxItem,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+} from "@/Components/ui/dropdown-menu";
+import { Input } from "@/Components/ui/input";
 import {
     Table,
     TableBody,
@@ -24,11 +17,18 @@ import {
     TableRow,
 } from "@/Components/ui/table";
 import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuTrigger,
-} from "@/Components/ui/dropdown-menu";
+    ColumnDef,
+    ColumnFiltersState,
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    SortingState,
+    useReactTable,
+    VisibilityState,
+} from "@tanstack/react-table";
+import * as React from "react";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -148,7 +148,7 @@ export function DataTable<TData, TValue>({
                             </TableRow>
                         ))}
                     </TableHeader>
-                    <TableBody className="dark:bg-slate-300 dark:text-slate-950">
+                    <TableBody className="dark:bg-slate-700 dark:text-slate-400 bg-gray-300">
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
