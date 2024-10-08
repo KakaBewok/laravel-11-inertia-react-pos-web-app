@@ -71,17 +71,6 @@ export function DataTable<TData extends DataWithId, TValue>({
         },
     });
 
-    //untuk mengambil data id yang ter-select
-    // console.log(table.getFilteredSelectedRowModel().rows[0].id);
-
-    // const handleSelection = () => {
-    //     const ids = table
-    //         .getFilteredSelectedRowModel()
-    //         .rows.map((row) => row.id);
-    //     setSelectedIds(ids);
-    //     console.log(selectedIds);
-    // };
-
     let selectedIds = table
         .getFilteredSelectedRowModel()
         .rows.map((row) => row.original.id);
@@ -135,7 +124,7 @@ export function DataTable<TData extends DataWithId, TValue>({
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-            {/* delete selected buttin */}
+            {/* delete selected button */}
             <div
                 className={`${
                     selectedIds.length < 1 ? "hidden" : "block"
