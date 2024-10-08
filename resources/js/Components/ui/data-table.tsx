@@ -30,13 +30,17 @@ import {
 } from "@tanstack/react-table";
 import * as React from "react";
 
-interface DataTableProps<TData, TValue> {
+interface DataWithId {
+    id: string;
+}
+
+interface DataTableProps<TData extends DataWithId, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
     searchKey: string;
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends DataWithId, TValue>({
     columns,
     data,
     searchKey,
@@ -68,7 +72,20 @@ export function DataTable<TData, TValue>({
     });
 
     //untuk mengambil data id yang ter-select
-    // console.log(table.getFilteredSelectedRowModel().rows[0].original.id);
+    // console.log(table.getFilteredSelectedRowModel().rows[0].id);
+
+    // const handleSelection = () => {
+    //     const ids = table
+    //         .getFilteredSelectedRowModel()
+    //         .rows.map((row) => row.id);
+    //     setSelectedIds(ids);
+    //     console.log(selectedIds);
+    // };
+
+    let ids = table
+        .getFilteredSelectedRowModel()
+        .rows.map((row) => row.original.id);
+    console.log(ids);
 
     return (
         <div>
@@ -86,7 +103,7 @@ export function DataTable<TData, TValue>({
                             .getColumn(searchKey)
                             ?.setFilterValue(event.target.value)
                     }
-                    className="max-w-sm border dark:border-slate-600"
+                    className="max-w-sm border dark:border-slate-600  border-slate-300"
                 />
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -125,12 +142,12 @@ export function DataTable<TData, TValue>({
             </div>
             {/* main table */}
             <div className="border rounded-md">
-                <Table className="border dark:border-slate-600">
+                <Table className="border dark:border-slate-600 border-slate-300">
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow
                                 key={headerGroup.id}
-                                className="border-b dark:border-slate-600"
+                                className="border-b dark:border-slate-600  border-slate-300"
                             >
                                 {headerGroup.headers.map((header) => {
                                     return (
@@ -148,7 +165,7 @@ export function DataTable<TData, TValue>({
                             </TableRow>
                         ))}
                     </TableHeader>
-                    <TableBody className="dark:bg-slate-700 dark:text-slate-400 bg-gray-300">
+                    <TableBody>
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
@@ -156,7 +173,11 @@ export function DataTable<TData, TValue>({
                                     data-state={
                                         row.getIsSelected() && "selected"
                                     }
-                                    className="border-b dark:border-slate-600"
+                                    className={`${
+                                        ids.includes(row.original.id)
+                                            ? "!bg-slate-400"
+                                            : ""
+                                    } border-b dark:border-slate-600  border-slate-300`}
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>

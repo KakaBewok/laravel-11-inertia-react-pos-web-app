@@ -1,9 +1,9 @@
 "use client";
 
 import { Button } from "@/Components/ui/button";
+import { Checkbox } from "@/Components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
-import { Checkbox } from "@/Components/ui/checkbox";
 
 export type CategoryColumn = {
     id: number;
@@ -45,7 +45,7 @@ export const columns: ColumnDef<CategoryColumn>[] = [
                     onClick={() =>
                         column.toggleSorting(column.getIsSorted() === "asc")
                     }
-                    className="font-bold"
+                    className="font-bold text-slate-800 dark:text-slate-50"
                 >
                     Name
                     <ArrowUpDown className="w-4 h-4 ml-2" />
@@ -62,7 +62,7 @@ export const columns: ColumnDef<CategoryColumn>[] = [
                     onClick={() =>
                         column.toggleSorting(column.getIsSorted() === "asc")
                     }
-                    className="font-bold"
+                    className="font-bold text-slate-800 dark:text-slate-50"
                 >
                     Description
                     <ArrowUpDown className="w-4 h-4 ml-2" />
