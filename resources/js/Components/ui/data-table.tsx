@@ -82,10 +82,10 @@ export function DataTable<TData extends DataWithId, TValue>({
     //     console.log(selectedIds);
     // };
 
-    let ids = table
+    let selectedIds = table
         .getFilteredSelectedRowModel()
         .rows.map((row) => row.original.id);
-    console.log(ids);
+    console.log(selectedIds);
 
     return (
         <div>
@@ -103,7 +103,7 @@ export function DataTable<TData extends DataWithId, TValue>({
                             .getColumn(searchKey)
                             ?.setFilterValue(event.target.value)
                     }
-                    className="max-w-sm border dark:border-slate-600  border-slate-300"
+                    className="max-w-sm border dark:border-slate-600 border-slate-300"
                 />
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -135,6 +135,33 @@ export function DataTable<TData extends DataWithId, TValue>({
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
+            {/* delete selected buttin */}
+            <div
+                className={`${
+                    selectedIds.length < 1 ? "hidden" : "block"
+                } py-2`}
+            >
+                <Button
+                    variant="destructive"
+                    className="flex items-center justify-between gap-2 dark:bg-red-500"
+                >
+                    <svg
+                        className="-mt-1 fill-current"
+                        width="19"
+                        height="19"
+                        viewBox="0 0 22 22"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        id="box"
+                    >
+                        <path
+                            fill="#F7F7FA"
+                            d="M10,18a1,1,0,0,0,1-1V11a1,1,0,0,0-2,0v6A1,1,0,0,0,10,18ZM20,6H16V5a3,3,0,0,0-3-3H11A3,3,0,0,0,8,5V6H4A1,1,0,0,0,4,8H5V19a3,3,0,0,0,3,3h8a3,3,0,0,0,3-3V8h1a1,1,0,0,0,0-2ZM10,5a1,1,0,0,1,1-1h2a1,1,0,0,1,1,1V6H10Zm7,14a1,1,0,0,1-1,1H8a1,1,0,0,1-1-1V8H17Zm-3-1a1,1,0,0,0,1-1V11a1,1,0,0,0-2,0v6A1,1,0,0,0,14,18Z"
+                        ></path>
+                    </svg>
+                    Delete selected
+                </Button>
+            </div>
             {/* number of selected rows */}
             <div className="flex-1 py-2 text-sm text-muted-foreground">
                 {table.getFilteredSelectedRowModel().rows.length} of{" "}
@@ -147,7 +174,7 @@ export function DataTable<TData extends DataWithId, TValue>({
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow
                                 key={headerGroup.id}
-                                className="border-b dark:border-slate-600  border-slate-300"
+                                className="border-b dark:border-slate-600 border-slate-200"
                             >
                                 {headerGroup.headers.map((header) => {
                                     return (
@@ -174,8 +201,8 @@ export function DataTable<TData extends DataWithId, TValue>({
                                         row.getIsSelected() && "selected"
                                     }
                                     className={`${
-                                        ids.includes(row.original.id)
-                                            ? "!bg-slate-400"
+                                        selectedIds.includes(row.original.id)
+                                            ? "!bg-slate-200 dark:!bg-slate-700"
                                             : ""
                                     } border-b dark:border-slate-600  border-slate-300`}
                                 >
