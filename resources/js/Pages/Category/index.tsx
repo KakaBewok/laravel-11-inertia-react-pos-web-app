@@ -1,9 +1,9 @@
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { CategoryClient } from "./client";
 import { CategoryColumn } from "./columns";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 interface Category {
-    id: number;
+    id: string;
     name: string;
     slug: string;
     description: string;

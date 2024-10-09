@@ -30,4 +30,9 @@ interface CrudRepository
      * Remove the specified resource from storage.
      */
     public function delete(int $id);
+
+    /**
+     * Remove some resource from storage.
+     */
+    public function deleteMany(array $ids);
 }

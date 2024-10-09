@@ -2,17 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Services\ProductService;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
+    protected $productService;
+
+    // Constructor injection
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $products = $this->productService->getAllProducts();
+        return Inertia::render('Product/index', [
+            'products' => $products,
+        ]);
     }
 
     /**
@@ -58,8 +73,17 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
+    public function destroy(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'string',
+        ]);
+
+        if(count($validated['ids']) > 1){
+            $this->productService->multipleDelete($validated['ids']);
+        } else {
+             $this->productService->delete($validated['ids'][0]);
+        }
     }
 }

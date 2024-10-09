@@ -1,5 +1,5 @@
 import NavLink from "@/Components/Sidebar/NavLink";
-import { Link, usePage } from "@inertiajs/react";
+import { Link } from "@inertiajs/react";
 import React, { useEffect, useRef, useState } from "react";
 import Logo from "../../../../public/images/logo/logo.svg";
 import SidebarLinkGroup from "./SidebarLinkGroup";
@@ -11,8 +11,6 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen, setLoading }: SidebarProps) => {
-    const { url } = usePage();
-
     const trigger = useRef<any>(null);
     const sidebar = useRef<any>(null);
 
@@ -108,33 +106,23 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, setLoading }: SidebarProps) => {
 
                         <ul className="flex flex-col gap-2 mb-6">
                             {/* <!-- Menu Item Dashboard --> */}
-                            <SidebarLinkGroup
-                                activeCondition={
-                                    url === "/dashboard" ||
-                                    url.includes("dashboard")
-                                    // sidebarExpanded
-                                }
-                            >
+                            <SidebarLinkGroup activeCondition={sidebarExpanded}>
                                 {(handleClick, open) => {
                                     return (
                                         <React.Fragment>
-                                            <Link
+                                            <button
                                                 className={
-                                                    "group relative flex items-center gap-3 rounded-sm py-2 px-4 font-medium text-slate-300 duration-200 ease-in-out hover:bg-slate-700 " +
+                                                    "group w-full relative flex items-center gap-3 rounded-sm py-2 px-4 font-medium text-slate-300 duration-200 ease-in-out hover:bg-slate-700 " +
                                                     (route().current(
                                                         "dashboard"
                                                     )
                                                         ? "bg-slate-700 dark:bg-slate-700"
                                                         : "")
                                                 }
-                                                href={route("dashboard")}
                                                 onClick={(e) => {
                                                     e.preventDefault();
-                                                    sidebarExpanded
-                                                        ? handleClick()
-                                                        : setSidebarExpanded(
-                                                              true
-                                                          );
+                                                    handleClick();
+                                                    setSidebarExpanded(!open);
                                                 }}
                                             >
                                                 <svg
@@ -180,7 +168,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, setLoading }: SidebarProps) => {
                                                         fill=""
                                                     />
                                                 </svg>
-                                            </Link>
+                                            </button>
                                             {/* <!-- Dropdown Menu Start --> */}
                                             <div
                                                 className={`translate transform overflow-hidden ${

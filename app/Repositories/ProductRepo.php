@@ -1,7 +1,9 @@
 <?php
 
+namespace App\Repositories;
+
+use App\Interfaces\CrudRepository;
 use App\Models\Product;
-use CrudRepository;
 use Illuminate\Support\Collection;
 
 class ProductRepo implements CrudRepository
@@ -38,5 +40,9 @@ class ProductRepo implements CrudRepository
             return $data->delete();
         }
         return false;
+    }
+
+     public function deleteMany(array $ids){
+        return Product::destroy($ids);
     }
 }

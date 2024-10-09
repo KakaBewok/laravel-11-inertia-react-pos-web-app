@@ -1,7 +1,9 @@
 <?php
 
+namespace App\Repositories;
+
 use App\Models\PaymentMethod;
-use CrudRepository;
+use App\Interfaces\CrudRepository;
 use Illuminate\Support\Collection;
 
 class PaymentMethodRepo implements CrudRepository
@@ -38,5 +40,9 @@ class PaymentMethodRepo implements CrudRepository
             return $data->delete();
         }
         return false;
+    }
+
+     public function deleteMany(array $ids){
+        return PaymentMethod::destroy($ids);
     }
 }

@@ -1,7 +1,9 @@
 <?php
 
+namespace App\Repositories;
+
 use App\Models\Order;
-use CrudRepository;
+use App\Interfaces\CrudRepository;
 use Illuminate\Support\Collection;
 
 class OrderRepo implements CrudRepository
@@ -38,5 +40,9 @@ class OrderRepo implements CrudRepository
             return $data->delete();
         }
         return false;
+    }
+
+    public function deleteMany(array $ids){
+        return Order::destroy($ids);
     }
 }

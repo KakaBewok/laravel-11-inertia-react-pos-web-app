@@ -3,13 +3,13 @@ import { DataTable } from "@/Components/ui/data-table";
 import { Heading } from "@/Components/ui/heading";
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import { CategoryColumn, columns } from "./columns";
+import { ProductColumn, columns } from "./columns";
 
-interface CategoryClientProps {
-    data: CategoryColumn[];
+interface ProductClientProps {
+    data: ProductColumn[];
 }
 
-export const CategoryClient: React.FC<CategoryClientProps> = ({ data }) => {
+export const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
     const handleDeleteIds = (ids: string[]) => {
@@ -22,8 +22,8 @@ export const CategoryClient: React.FC<CategoryClientProps> = ({ data }) => {
         <>
             <div className="flex items-center justify-between">
                 <Heading
-                    title={`Categories (${data.length})`}
-                    description="Manage categories for your store"
+                    title={`Products (${data.length})`}
+                    description="Manage products for your store"
                 />
                 <Button>
                     <Plus className="w-4 h-4" />
