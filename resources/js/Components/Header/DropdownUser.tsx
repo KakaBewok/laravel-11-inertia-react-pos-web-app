@@ -1,16 +1,14 @@
+import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { router, usePage } from "@inertiajs/react";
 import { useState } from "react";
 import UserOne from "../../../../public/images/user-01.png";
 import { TooltipHover } from "../Tooltip";
 import ClickOutside from "./ClickOutside";
 
-const DropdownUser = ({
-    setLoading,
-}: {
-    setLoading: (arg: boolean) => void;
-}) => {
+const DropdownUser = () => {
     const user = usePage().props.auth.user;
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const { setLoading } = useGlobalContext();
 
     const handleLogout = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
