@@ -41,4 +41,8 @@ class ProductRepo implements CrudRepository
         }
         return false;
     }
+
+     public function deleteMany(array $ids){
+        return Product::destroy($ids);
+    }
 }

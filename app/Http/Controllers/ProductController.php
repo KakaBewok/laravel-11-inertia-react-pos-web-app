@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -72,8 +73,17 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
+    public function destroy(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'string',
+        ]);
+
+        if(count($validated['ids']) > 1){
+            $this->productService->multipleDelete($validated['ids']);
+        } else {
+             $this->productService->delete($validated['ids'][0]);
+        }
     }
 }

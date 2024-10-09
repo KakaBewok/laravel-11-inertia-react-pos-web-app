@@ -1,7 +1,9 @@
 <?php
 
+namespace App\Repositories;
+
 use App\Models\Photo;
-use CrudRepository;
+use App\Interfaces\CrudRepository;
 use Illuminate\Support\Collection;
 
 class PhotoRepo implements CrudRepository
@@ -38,5 +40,9 @@ class PhotoRepo implements CrudRepository
             return $data->delete();
         }
         return false;
+    }
+
+    public function deleteMany(array $ids){
+        return Photo::destroy($ids);
     }
 }

@@ -41,4 +41,8 @@ class CategoryRepo implements CrudRepository
         }
         return false;
     }
+
+    public function deleteMany(array $ids){
+        return Category::destroy($ids);
+    }
 }

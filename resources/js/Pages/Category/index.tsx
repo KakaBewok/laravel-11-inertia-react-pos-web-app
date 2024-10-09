@@ -3,7 +3,7 @@ import { CategoryClient } from "./client";
 import { CategoryColumn } from "./columns";
 
 interface Category {
-    id: number;
+    id: string;
     name: string;
     slug: string;
     description: string;

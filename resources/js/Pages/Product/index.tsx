@@ -1,6 +1,6 @@
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { ProductClient } from "./client";
 import { ProductColumn } from "./columns";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 interface Category {
     id: number;
@@ -9,7 +9,7 @@ interface Category {
 }
 
 interface Product {
-    id: number;
+    id: string;
     name: string;
     slug: string;
     description: string;
