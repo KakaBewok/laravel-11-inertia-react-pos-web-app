@@ -15,10 +15,16 @@ export const GlobalContextProvider = ({
 }) => {
     const [loading, setLoading] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [toastVisible, setToastVisible] = useState(false);
 
     return (
         <GlobalContext.Provider
-            value={{ loading, setLoading, sidebarOpen, setSidebarOpen }}
+            value={{
+                loading,
+                setLoading,
+                sidebarOpen,
+                setSidebarOpen,
+            }}
         >
             {children}
         </GlobalContext.Provider>

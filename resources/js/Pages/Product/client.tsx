@@ -5,6 +5,8 @@ import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { router } from "@inertiajs/react";
 import { Plus } from "lucide-react";
 import { ProductColumn, columns } from "./columns";
+import toast, { Toaster } from "react-hot-toast";
+import { useEffect, useState } from "react";
 
 interface ProductClientProps {
     data: ProductColumn[];
@@ -19,6 +21,11 @@ export const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
             route("admin.product.destroy-bulk", { ids }),
             {},
             {
+                onSuccess: () => {
+                    toast("Here is your toast.");
+                    router.visit(route("admin.product.index"));
+                },
+                onError: (error) => console.log("An error occurred: ", error),
                 onFinish: () => setLoading(false),
             }
         );

@@ -78,7 +78,7 @@ class ProductController extends Controller
         $this->productService->delete($product);
     }
 
-     /**
+    /**
      * Remove many resource from storage.
      */
     public function destroy_bulk(Request $request)
@@ -87,7 +87,6 @@ class ProductController extends Controller
             'ids' => 'required|array',
             'ids.*' => 'string',
         ]);
-
-       $this->productService->multipleDelete($validated['ids']);
+        $this->productService->multipleDelete($validated['ids']);
     }
 }
