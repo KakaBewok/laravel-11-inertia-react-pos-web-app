@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
         });
         Route::middleware('can:manage products')->group(function () {
             Route::resource('product', ProductController::class);
+            Route::post('/product/destroy-bulk', [ProductController::class, 'destroy_bulk'])->name("product.destroy-bulk");
         });
         Route::middleware('can:manage photos')->group(function () {
             Route::resource('photo', PhotoController::class);

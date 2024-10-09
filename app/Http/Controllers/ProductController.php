@@ -73,17 +73,20 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request)
+    public function destroy(Product $product)
+    {
+        $this->productService->delete($product);
+    }
+
+    /**
+     * Remove many resource from storage.
+     */
+    public function destroy_bulk(Request $request)
     {
         $validated = $request->validate([
             'ids' => 'required|array',
             'ids.*' => 'string',
         ]);
-
-        if(count($validated['ids']) > 1){
-            $this->productService->multipleDelete($validated['ids']);
-        } else {
-             $this->productService->delete($validated['ids'][0]);
-        }
+        $this->productService->multipleDelete($validated['ids']);
     }
 }

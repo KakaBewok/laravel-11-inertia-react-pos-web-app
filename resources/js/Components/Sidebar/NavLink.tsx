@@ -1,18 +1,17 @@
-import { Link, InertiaLinkProps } from "@inertiajs/react";
-import { router } from "@inertiajs/react";
+import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { InertiaLinkProps, Link, router } from "@inertiajs/react";
 
 export default function NavLink({
     active = false,
-    setLoading,
     url,
     className = "",
     children,
     ...props
 }: InertiaLinkProps & {
     active?: boolean;
-    setLoading: (arg: boolean) => void;
     url: string;
 }) {
+    const { setLoading } = useGlobalContext();
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
         setLoading(true);

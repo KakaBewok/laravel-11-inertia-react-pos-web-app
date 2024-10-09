@@ -1,4 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import MainLayout from "@/Layouts/MainLayout";
 import { CategoryClient } from "./client";
 import { CategoryColumn } from "./columns";
 
@@ -17,11 +18,13 @@ const CategoriesPage = ({ categories }: { categories: Category[] }) => {
     }));
 
     return (
-        <AuthenticatedLayout>
-            <div className="p-2 pt-6 space-y-7">
-                <CategoryClient data={formattedCategories} />
-            </div>
-        </AuthenticatedLayout>
+        <MainLayout>
+            <AuthenticatedLayout>
+                <div className="p-2 pt-6 space-y-7">
+                    <CategoryClient data={formattedCategories} />
+                </div>
+            </AuthenticatedLayout>
+        </MainLayout>
     );
 };
 

@@ -1,4 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import MainLayout from "@/Layouts/MainLayout";
 import { ProductClient } from "./client";
 import { ProductColumn } from "./columns";
 
@@ -31,11 +32,13 @@ const ProductsPage = ({ products }: { products: Product[] }) => {
     }));
 
     return (
-        <AuthenticatedLayout>
-            <div className="p-2 pt-6 space-y-7">
-                <ProductClient data={formattedProducts} />
-            </div>
-        </AuthenticatedLayout>
+        <MainLayout>
+            <AuthenticatedLayout>
+                <div className="p-2 pt-6 space-y-7">
+                    <ProductClient data={formattedProducts} />
+                </div>
+            </AuthenticatedLayout>
+        </MainLayout>
     );
 };
 

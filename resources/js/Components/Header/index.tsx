@@ -1,17 +1,9 @@
+import { useGlobalContext } from "@/hooks/useGlobalContext";
 import DarkModeSwitcher from "./DarkModeSwitcher";
 import DropdownUser from "./DropdownUser";
 
-interface HeaderProps {
-    sidebarOpen: boolean;
-    setSidebarOpen: (arg: boolean) => void;
-    setLoading: (arg: boolean) => void;
-}
-
-const Header: React.FC<HeaderProps> = ({
-    sidebarOpen,
-    setSidebarOpen,
-    setLoading,
-}) => {
+const Header = () => {
+    const { sidebarOpen, setSidebarOpen } = useGlobalContext();
     return (
         <header className="sticky top-0 z-40 flex w-full bg-slate-100 drop-shadow-sm dark:bg-slate-700 dark:drop-shadow-none">
             <div className="flex items-center justify-between flex-grow px-4 py-4 shadow-2 md:px-6 2xl:px-11">
@@ -64,7 +56,7 @@ const Header: React.FC<HeaderProps> = ({
 
                 <div className="flex gap-5">
                     <DarkModeSwitcher className="block lg:hidden" />
-                    <DropdownUser setLoading={setLoading} />
+                    <DropdownUser />
                 </div>
             </div>
         </header>

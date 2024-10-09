@@ -1,21 +1,37 @@
 import { Button } from "@/Components/ui/button";
 import { DataTable } from "@/Components/ui/data-table";
 import { Heading } from "@/Components/ui/heading";
+import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { router } from "@inertiajs/react";
 import { Plus } from "lucide-react";
-import { useState } from "react";
 import { ProductColumn, columns } from "./columns";
+import { toast } from "react-toastify";
 
 interface ProductClientProps {
     data: ProductColumn[];
 }
 
 export const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
-    const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const { setLoading } = useGlobalContext();
 
     const handleDeleteIds = (ids: string[]) => {
-        setSelectedIds(ids);
-        // call delete api
-        console.log("IDs to delete:", ids);
+        setLoading(true);
+        router.post(
+            route("admin.product.destroy-bulk", { ids }),
+            {},
+            {
+                onSuccess: () => {
+                    router.visit(route("admin.product.index")),
+                        setTimeout(() => {
+                            toast.success("Deleted success.", {
+                                position: "top-center",
+                            });
+                        }, 1000);
+                },
+                onError: (error) => console.log("An error occurred: ", error),
+                onFinish: () => setLoading(false),
+            }
+        );
     };
 
     return (
