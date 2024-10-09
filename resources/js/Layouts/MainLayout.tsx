@@ -1,14 +1,13 @@
 import { GlobalContextProvider } from "@/hooks/useGlobalContext";
 import React, { ReactNode } from "react";
-import { Toaster } from "react-hot-toast";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const MainLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
     return (
         <GlobalContextProvider>
             <div className="main-layout">
-                <div className="py-2">
-                    <Toaster />
-                </div>
+                <ToastContainer autoClose={3100} />
                 {children}
             </div>
         </GlobalContextProvider>

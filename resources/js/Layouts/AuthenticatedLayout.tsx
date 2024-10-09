@@ -3,7 +3,6 @@ import { useGlobalContext } from "@/hooks/useGlobalContext";
 import React, { ReactNode } from "react";
 import Header from "../Components/Header/index";
 import Sidebar from "../Components/Sidebar/index";
-import { Toaster } from "react-hot-toast";
 
 const AuthenticatedLayout: React.FC<{ children: ReactNode }> = ({
     children,

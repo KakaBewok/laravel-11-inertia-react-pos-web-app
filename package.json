@@ -36,8 +36,8 @@
         "class-variance-authority": "^0.7.0",
         "clsx": "^2.1.1",
         "lucide-react": "^0.446.0",
-        "react-hot-toast": "^2.4.1",
         "react-modal": "^3.16.1",
+        "react-toastify": "^10.0.5",
         "tailwind-merge": "^2.5.2",
         "tailwindcss-animate": "^1.0.7"
     }
