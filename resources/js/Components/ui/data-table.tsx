@@ -38,12 +38,14 @@ interface DataTableProps<TData extends DataWithId, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
     searchKey: string;
+    onDeleteIds: (ids: string[]) => void;
 }
 
 export function DataTable<TData extends DataWithId, TValue>({
     columns,
     data,
     searchKey,
+    onDeleteIds,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] =
@@ -74,7 +76,10 @@ export function DataTable<TData extends DataWithId, TValue>({
     let selectedIds = table
         .getFilteredSelectedRowModel()
         .rows.map((row) => row.original.id);
-    console.log(selectedIds);
+
+    const handleDeleteSelectedRows = () => {
+        onDeleteIds(selectedIds);
+    };
 
     return (
         <div>
@@ -133,6 +138,7 @@ export function DataTable<TData extends DataWithId, TValue>({
                 <Button
                     variant="destructive"
                     className="flex items-center justify-between gap-2 dark:bg-red-500"
+                    onClick={handleDeleteSelectedRows}
                 >
                     <svg
                         className="-mt-1 fill-current"
@@ -152,7 +158,11 @@ export function DataTable<TData extends DataWithId, TValue>({
                 </Button>
             </div>
             {/* number of selected rows */}
-            <div className="flex-1 py-2 text-sm text-muted-foreground">
+            <div
+                className={`${
+                    selectedIds.length < 1 ? "hidden" : "block"
+                } flex-1 py-2 text-sm text-muted-foreground`}
+            >
                 {table.getFilteredSelectedRowModel().rows.length} of{" "}
                 {table.getFilteredRowModel().rows.length} row(s) selected.
             </div>

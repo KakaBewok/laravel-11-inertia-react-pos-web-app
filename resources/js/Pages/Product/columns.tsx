@@ -6,7 +6,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 
 export type ProductColumn = {
-    id: number;
+    id: string;
     name: string;
     price: string;
     unit: string;
