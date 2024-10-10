@@ -1,20 +1,24 @@
+import { AlertModal } from "@/Components/AlertModal";
 import { Button } from "@/Components/ui/button";
 import { DataTable } from "@/Components/ui/data-table";
 import { Heading } from "@/Components/ui/heading";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { router } from "@inertiajs/react";
 import { Plus } from "lucide-react";
-import { ProductColumn, columns } from "./columns";
+import { useState } from "react";
 import { toast } from "react-toastify";
+import { ProductColumn, columns } from "./columns";
 
 interface ProductClientProps {
     data: ProductColumn[];
 }
 
 export const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
-    const { setLoading } = useGlobalContext();
+    const { loading, setLoading } = useGlobalContext();
+    const [ids, setIds] = useState<string[]>([""]);
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
 
-    const handleDeleteIds = (ids: string[]) => {
+    const handleDeleteIds = () => {
         setLoading(true);
         router.post(
             route("admin.product.destroy-bulk", { ids }),
@@ -34,6 +38,11 @@ export const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
         );
     };
 
+    const openDeleteModal = (ids: string[]) => {
+        setIds(ids);
+        setModalOpen(true);
+    };
+
     return (
         <>
             <div className="flex items-center justify-between">
@@ -45,8 +54,14 @@ export const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
                     <Plus className="w-4 h-4" />
                 </Button>
             </div>
+            <AlertModal
+                isOpen={modalOpen}
+                onClose={() => setModalOpen(false)}
+                onConfirm={handleDeleteIds}
+                loading={loading}
+            />
             <DataTable
-                onDeleteIds={handleDeleteIds}
+                onDelete={openDeleteModal}
                 searchKey="name"
                 columns={columns}
                 data={data}
