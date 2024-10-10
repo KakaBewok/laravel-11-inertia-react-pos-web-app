@@ -201,7 +201,7 @@ export function DataTable<TData extends DataWithId, TValue>({
                                     }
                                     className={`${
                                         selectedIds.includes(row.original.id)
-                                            ? "!bg-gray-300 dark:!bg-slate-700"
+                                            ? "!bg-gray-600 text-slate-100 dark:!bg-slate-700"
                                             : ""
                                     } border-b dark:border-slate-600  border-slate-300`}
                                 >

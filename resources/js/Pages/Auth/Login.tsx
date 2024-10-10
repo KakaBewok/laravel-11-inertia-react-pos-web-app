@@ -3,6 +3,7 @@ import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
+import { Button } from "@/Components/ui/button";
 import GuestLayout from "@/Layouts/GuestLayout";
 import MainLayout from "@/Layouts/MainLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
@@ -35,7 +36,7 @@ export default function Login({
                 <Head title="Log in" />
 
                 {status && (
-                    <div className="mb-4 font-medium text-sm text-green-600">
+                    <div className="mb-4 text-sm font-medium text-green-600">
                         {status}
                     </div>
                 )}
@@ -53,7 +54,7 @@ export default function Login({
                             type="email"
                             name="email"
                             value={data.email}
-                            className="mt-1 block w-full"
+                            className="block w-full mt-1"
                             autoComplete="username"
                             isFocused={true}
                             onChange={(e) => setData("email", e.target.value)}
@@ -74,7 +75,7 @@ export default function Login({
                             type="password"
                             name="password"
                             value={data.password}
-                            className="mt-1 block w-full"
+                            className="block w-full mt-1"
                             autoComplete="current-password"
                             onChange={(e) =>
                                 setData("password", e.target.value)
@@ -96,7 +97,7 @@ export default function Login({
                                     setData("remember", e.target.checked)
                                 }
                             />
-                            <span className="ms-2 text-sm text-white">
+                            <span className="text-sm text-white ms-2">
                                 Remember me
                             </span>
                         </label>
@@ -106,15 +107,19 @@ export default function Login({
                         {canResetPassword && (
                             <Link
                                 href={route("password.request")}
-                                className="underline text-sm text-gray-200 hover:text-gray-300 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
+                                className="text-sm text-gray-200 underline rounded-md hover:text-gray-300 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
                             >
                                 Forgot your password?
                             </Link>
                         )}
 
-                        <PrimaryButton className="ms-4" disabled={processing}>
+                        <Button
+                            variant="secondary"
+                            className="ms-4"
+                            disabled={processing}
+                        >
                             Log in
-                        </PrimaryButton>
+                        </Button>
                     </div>
                 </form>
             </GuestLayout>
