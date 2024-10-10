@@ -42,7 +42,11 @@ export default function Login({
 
                 <form onSubmit={submit}>
                     <div>
-                        <InputLabel htmlFor="email" value="Email" />
+                        <InputLabel
+                            htmlFor="email"
+                            value="Email"
+                            className="text-white"
+                        />
 
                         <TextInput
                             id="email"
@@ -59,7 +63,11 @@ export default function Login({
                     </div>
 
                     <div className="mt-4">
-                        <InputLabel htmlFor="password" value="Password" />
+                        <InputLabel
+                            htmlFor="password"
+                            value="Password"
+                            className="text-white"
+                        />
 
                         <TextInput
                             id="password"
@@ -88,7 +96,7 @@ export default function Login({
                                     setData("remember", e.target.checked)
                                 }
                             />
-                            <span className="ms-2 text-sm text-gray-600 dark:text-gray-400">
+                            <span className="ms-2 text-sm text-white">
                                 Remember me
                             </span>
                         </label>
@@ -98,7 +106,7 @@ export default function Login({
                         {canResetPassword && (
                             <Link
                                 href={route("password.request")}
-                                className="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
+                                className="underline text-sm text-gray-200 hover:text-gray-300 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
                             >
                                 Forgot your password?
                             </Link>
