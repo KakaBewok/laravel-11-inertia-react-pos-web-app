@@ -10,7 +10,10 @@ const AuthenticatedLayout: React.FC<{ children: ReactNode }> = ({
     const { loading } = useGlobalContext();
 
     return (
-        <div className="dark:bg-slate-800 dark:text-slate-300">
+        <div
+            className="text-slate-800 bg-gradient-to-tl from-blue-200 via-purple-100 to-green-100
+         dark:text-slate-300 dark:bg-gradient-to-tl dark:from-slate-700 dark:via-slate-800 dark:to-slate-900"
+        >
             {loading && <Loading />}
             <div className="flex h-screen overflow-hidden">
                 <Sidebar />
