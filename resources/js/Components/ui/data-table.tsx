@@ -38,14 +38,14 @@ interface DataTableProps<TData extends DataWithId, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
     searchKey: string;
-    onDeleteIds: (ids: string[]) => void;
+    onDelete: (ids: string[]) => void;
 }
 
 export function DataTable<TData extends DataWithId, TValue>({
     columns,
     data,
     searchKey,
-    onDeleteIds,
+    onDelete,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] =
@@ -78,7 +78,7 @@ export function DataTable<TData extends DataWithId, TValue>({
         .rows.map((row) => row.original.id);
 
     const handleDeleteSelectedRows = () => {
-        onDeleteIds(selectedIds);
+        onDelete(selectedIds);
     };
 
     return (
