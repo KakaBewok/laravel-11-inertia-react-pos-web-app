@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function () {
         Route::get('statistic', [StatisticController::class, 'index'])->name('statistic');
         Route::middleware('can:manage categories')->group(function () {
             Route::resource('category', CategoryController::class);
+            Route::post('/category/destroy-bulk', [CategoryController::class, 'destroy_bulk'])->name("category.destroy-bulk");
         });
         Route::middleware('can:manage products')->group(function () {
             Route::resource('product', ProductController::class);
@@ -36,15 +37,19 @@ Route::middleware('auth')->group(function () {
         });
         Route::middleware('can:manage photos')->group(function () {
             Route::resource('photo', PhotoController::class);
+            Route::post('/photo/destroy-bulk', [PhotoController::class, 'destroy_bulk'])->name("photo.destroy-bulk");
         });
         Route::middleware('can:manage expenses')->group(function () {
             Route::resource('expense', ExpenseController::class);
+            Route::post('/expense/destroy-bulk', [ExpenseController::class, 'destroy_bulk'])->name("expense.destroy-bulk");
         });
         Route::middleware('can:manage payment_methods')->group(function () {
             Route::resource('payment_method', PaymentMethodController::class);
+            Route::post('/payment_method/destroy-bulk', [PaymentMethodController::class, 'destroy_bulk'])->name("payment_method.destroy-bulk");
         });
         Route::middleware('can:manage orders')->group(function () {
             Route::resource('order', OrderController::class);
+            Route::post('/order/destroy-bulk', [OrderController::class, 'destroy_bulk'])->name("order.destroy-bulk");
         });
     });
 });
