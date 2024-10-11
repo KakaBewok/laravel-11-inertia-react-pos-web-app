@@ -43,6 +43,11 @@ export const CategoryClient: React.FC<CategoryClientProps> = ({ data }) => {
         setModalOpen(true);
     };
 
+    const handleProductDetail = (id: string) => {
+        alert(id);
+        //todo: menampilkan halaman detail product, termasuk foto-foto
+    };
+
     return (
         <>
             <div className="flex items-center justify-between">
@@ -66,6 +71,7 @@ export const CategoryClient: React.FC<CategoryClientProps> = ({ data }) => {
                 searchKey="name"
                 columns={columns}
                 data={data}
+                onRowClick={handleProductDetail}
             />
         </>
     );

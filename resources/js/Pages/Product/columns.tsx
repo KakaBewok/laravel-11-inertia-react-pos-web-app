@@ -33,6 +33,7 @@ export const columns: ColumnDef<ProductColumn>[] = [
             <Checkbox
                 checked={row.getIsSelected()}
                 onCheckedChange={(value) => row.toggleSelected(!!value)}
+                onClick={(e) => e.stopPropagation()}
                 aria-label="Select row"
             />
         ),
