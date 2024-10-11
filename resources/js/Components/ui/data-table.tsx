@@ -39,6 +39,7 @@ interface DataTableProps<TData extends DataWithId, TValue> {
     data: TData[];
     searchKey: string;
     onDelete: (ids: string[]) => void;
+    onRowClick: (id: string) => void;
 }
 
 export function DataTable<TData extends DataWithId, TValue>({
@@ -46,6 +47,7 @@ export function DataTable<TData extends DataWithId, TValue>({
     data,
     searchKey,
     onDelete,
+    onRowClick,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] =
@@ -195,6 +197,7 @@ export function DataTable<TData extends DataWithId, TValue>({
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
+                                    onClick={() => onRowClick(row.original.id)}
                                     key={row.id}
                                     data-state={
                                         row.getIsSelected() && "selected"
