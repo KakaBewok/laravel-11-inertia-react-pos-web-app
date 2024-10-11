@@ -1,5 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import MainLayout from "@/Layouts/MainLayout";
+import { Head } from "@inertiajs/react";
 import { CategoryClient } from "./client";
 import { CategoryColumn } from "./columns";
 
@@ -20,6 +21,7 @@ const CategoriesPage = ({ categories }: { categories: Category[] }) => {
     return (
         <MainLayout>
             <AuthenticatedLayout>
+                <Head title="Category" />
                 <div className="p-2 pt-6 space-y-7">
                     <CategoryClient data={formattedCategories} />
                 </div>
