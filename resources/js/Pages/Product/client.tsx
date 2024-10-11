@@ -27,7 +27,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
                 onSuccess: () => {
                     router.visit(route("admin.product.index")),
                         setTimeout(() => {
-                            toast.success("Deleted success.", {
+                            toast.success("Data deleted.", {
                                 position: "top-center",
                             });
                         }, 1000);

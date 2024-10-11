@@ -6,11 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
-use Spatie\Permission\Traits\HasRoles;
 
 class Category extends Model
 {
-    use HasFactory, HasRoles;
+    use HasFactory;
 
     protected $fillable = [
         'name',
@@ -26,6 +25,6 @@ class Category extends Model
 
     public function products(): HasMany
     {
-        return $this->HasMany(Product::class, 'category_id');
+        return $this->hasMany(Product::class, 'category_id');
     }
 }

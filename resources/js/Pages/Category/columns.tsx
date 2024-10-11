@@ -9,6 +9,7 @@ export type CategoryColumn = {
     id: string;
     name: string;
     description: string;
+    product_quantity: number;
 };
 
 export const columns: ColumnDef<CategoryColumn>[] = [
@@ -65,6 +66,23 @@ export const columns: ColumnDef<CategoryColumn>[] = [
                     className="font-bold text-slate-800 dark:text-slate-50"
                 >
                     Description
+                    <ArrowUpDown className="w-4 h-4 ml-2" />
+                </Button>
+            );
+        },
+    },
+    {
+        accessorKey: "product_quantity",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() =>
+                        column.toggleSorting(column.getIsSorted() === "asc")
+                    }
+                    className="font-bold text-slate-800 dark:text-slate-50"
+                >
+                    Product Quantity
                     <ArrowUpDown className="w-4 h-4 ml-2" />
                 </Button>
             );

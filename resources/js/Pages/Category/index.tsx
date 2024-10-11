@@ -1,6 +1,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import MainLayout from "@/Layouts/MainLayout";
 import { Head } from "@inertiajs/react";
+import { Product } from "../Product";
 import { CategoryClient } from "./client";
 import { CategoryColumn } from "./columns";
 
@@ -9,6 +10,7 @@ interface Category {
     name: string;
     slug: string;
     description: string;
+    products: Product[];
 }
 
 const CategoriesPage = ({ categories }: { categories: Category[] }) => {
@@ -16,6 +18,7 @@ const CategoriesPage = ({ categories }: { categories: Category[] }) => {
         id: item.id,
         name: item.name,
         description: item.description,
+        product_quantity: item.products.length,
     }));
 
     return (

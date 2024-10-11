@@ -25,11 +25,11 @@ class Order extends Model
 
     public function paymentMethod(): BelongsTo
     {
-        return $this->BelongsTo(PaymentMethod::class);
+        return $this->belongsTo(PaymentMethod::class);
     }
 
     public function orderProducts(): HasMany
     {
-        return $this->HasMany(OrderProduct::class);
+        return $this->hasMany(OrderProduct::class);
     }
 }

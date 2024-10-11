@@ -15,7 +15,7 @@ class CategoryRepo implements CrudRepository
 
     public function all(): Collection
     {
-        return Category::all();
+        return Category::with('products')->get();
     }
 
     public function store(array $data)
