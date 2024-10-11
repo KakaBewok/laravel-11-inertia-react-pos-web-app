@@ -1,5 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import MainLayout from "@/Layouts/MainLayout";
+import { Head } from "@inertiajs/react";
 import { ProductClient } from "./client";
 import { ProductColumn } from "./columns";
 
@@ -34,6 +35,7 @@ const ProductsPage = ({ products }: { products: Product[] }) => {
     return (
         <MainLayout>
             <AuthenticatedLayout>
+                <Head title="Product" />
                 <div className="p-2 pt-6 space-y-7">
                     <ProductClient data={formattedProducts} />
                 </div>

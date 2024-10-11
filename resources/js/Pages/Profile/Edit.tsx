@@ -2,6 +2,7 @@ import { Heading } from "@/Components/ui/heading";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import MainLayout from "@/Layouts/MainLayout";
 import { PageProps } from "@/types";
+import { Head } from "@inertiajs/react";
 import DeleteUserForm from "./Partials/DeleteUserForm";
 import UpdatePasswordForm from "./Partials/UpdatePasswordForm";
 import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationForm";
@@ -13,6 +14,7 @@ export default function Edit({
     return (
         <MainLayout>
             <AuthenticatedLayout>
+                <Head title="Profile" />
                 <div className="py-8">
                     <div className="mx-auto space-y-6 max-w-7xl sm:px-6 lg:px-8">
                         <Heading
