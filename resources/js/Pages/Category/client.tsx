@@ -1,8 +1,12 @@
+import { AlertModal } from "@/Components/AlertModal";
 import { Button } from "@/Components/ui/button";
 import { DataTable } from "@/Components/ui/data-table";
 import { Heading } from "@/Components/ui/heading";
+import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { router } from "@inertiajs/react";
 import { Plus } from "lucide-react";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { CategoryColumn, columns } from "./columns";
 
 interface CategoryClientProps {
@@ -10,12 +14,33 @@ interface CategoryClientProps {
 }
 
 export const CategoryClient: React.FC<CategoryClientProps> = ({ data }) => {
-    const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const { loading, setLoading } = useGlobalContext();
+    const [ids, setIds] = useState<string[]>([""]);
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
 
-    const handleDeleteIds = (ids: string[]) => {
-        setSelectedIds(ids);
-        // call delete api
-        console.log("IDs to delete:", ids);
+    const handleDeleteIds = () => {
+        setLoading(true);
+        router.post(
+            route("admin.category.destroy-bulk", { ids }),
+            {},
+            {
+                onSuccess: () => {
+                    router.visit(route("admin.category.index")),
+                        setTimeout(() => {
+                            toast.success("Data deleted.", {
+                                position: "top-center",
+                            });
+                        }, 1000);
+                },
+                onError: (error) => console.log("An error occurred: ", error),
+                onFinish: () => setLoading(false),
+            }
+        );
+    };
+
+    const openDeleteModal = (ids: string[]) => {
+        setIds(ids);
+        setModalOpen(true);
     };
 
     return (
@@ -29,8 +54,15 @@ export const CategoryClient: React.FC<CategoryClientProps> = ({ data }) => {
                     <Plus className="w-4 h-4" />
                 </Button>
             </div>
+            <AlertModal
+                isOpen={modalOpen}
+                onClose={() => setModalOpen(false)}
+                onConfirm={handleDeleteIds}
+                loading={loading}
+                description="All products under this category will also be deleted."
+            />
             <DataTable
-                onDeleteIds={handleDeleteIds}
+                onDelete={openDeleteModal}
                 searchKey="name"
                 columns={columns}
                 data={data}
