@@ -1,7 +1,6 @@
 import Checkbox from "@/Components/Checkbox";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import { Button } from "@/Components/ui/button";
 import GuestLayout from "@/Layouts/GuestLayout";
@@ -114,8 +113,8 @@ export default function Login({
                         )}
 
                         <Button
-                            variant="secondary"
-                            className="ms-4"
+                            // variant="outline"
+                            className="ms-4 bg-slate-200 text-slate-800 hover:bg-slate-300"
                             disabled={processing}
                         >
                             Log in

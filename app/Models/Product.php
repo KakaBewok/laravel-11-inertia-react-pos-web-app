@@ -12,8 +12,6 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $with = ['category', 'photos', 'orderProducts'];
-
     protected $fillable = [
         'category_id',
         'name',
@@ -32,16 +30,16 @@ class Product extends Model
 
     public function category(): BelongsTo
     {
-        return $this->BelongsTo(Category::class);
+        return $this->belongsTo(Category::class);
     }
 
     public function photos(): HasMany
     {
-        return $this->HasMany(Photo::class);
+        return $this->hasMany(Photo::class);
     }
 
     public function orderProducts(): HasMany
     {
-        return $this->HasMany(OrderProduct::class);
+        return $this->hasMany(OrderProduct::class);
     }
 }

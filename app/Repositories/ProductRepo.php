@@ -15,7 +15,7 @@ class ProductRepo implements CrudRepository
 
     public function all(): Collection
     {
-        return Product::all();
+        return Product::with(['category', 'photos', 'orderProducts'])->get();
     }
 
     public function store(array $data)
