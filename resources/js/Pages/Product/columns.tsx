@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/Components/ui/button";
-import { Checkbox } from "@/Components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 
@@ -16,29 +15,22 @@ export type ProductColumn = {
 
 export const columns: ColumnDef<ProductColumn>[] = [
     {
-        id: "select",
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
-                }
-                onCheckedChange={(value) =>
-                    table.toggleAllPageRowsSelected(!!value)
-                }
-                aria-label="Select all"
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                onClick={(e) => e.stopPropagation()}
-                aria-label="Select row"
-            />
-        ),
-        enableSorting: false,
-        enableHiding: false,
+        accessorKey: "number",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() =>
+                        column.toggleSorting(column.getIsSorted() === "asc")
+                    }
+                    className="font-bold text-slate-800 dark:text-slate-50"
+                >
+                    Num.
+                    <ArrowUpDown className="w-4 h-4 ml-2" />
+                </Button>
+            );
+        },
+        cell: ({ row }) => row.index + 1,
     },
     {
         accessorKey: "name",
