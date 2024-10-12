@@ -39,7 +39,6 @@ interface DataTableProps<TData extends DataWithId, TValue> {
     data: TData[];
     searchKey: string;
     onDelete: (ids: string[]) => void;
-    onRowClick: (id: string) => void;
 }
 
 export function DataTable<TData extends DataWithId, TValue>({
@@ -47,7 +46,6 @@ export function DataTable<TData extends DataWithId, TValue>({
     data,
     searchKey,
     onDelete,
-    onRowClick,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] =
@@ -85,7 +83,7 @@ export function DataTable<TData extends DataWithId, TValue>({
 
     return (
         <div>
-            {/* filter & visibility column*/}
+            {/* search & visibility column*/}
             <div className="flex items-center gap-2 py-4">
                 <Input
                     placeholder="Search"
@@ -131,43 +129,68 @@ export function DataTable<TData extends DataWithId, TValue>({
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-            {/* delete selected button */}
-            <div
-                className={`${
-                    selectedIds.length < 1 ? "hidden" : "block"
-                } py-2`}
+            {/* select all button */}
+            <Button
+                variant="outline"
+                onClick={() =>
+                    table.toggleAllPageRowsSelected(
+                        !table.getIsAllPageRowsSelected()
+                    )
+                }
+                className={`flex items-center gap-1 ${
+                    selectedIds.length < 1 ? "my-4" : ""
+                } dark:bg-slate-200 dark:text-slate-800 dark:hover:bg-slate-300 hover:bg-slate-50`}
             >
-                <Button
-                    variant="destructive"
-                    className="flex items-center justify-between gap-2 dark:bg-red-500"
-                    onClick={handleDeleteSelectedRows}
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    id="check"
+                    className="fill-current"
+                    width="21"
+                    height="21"
+                    fill="none"
                 >
-                    <svg
-                        className="-mt-1 fill-current"
-                        width="19"
-                        height="19"
-                        viewBox="0 0 22 22"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        id="box"
+                    <path
+                        fill="#131316"
+                        d="M18.71,7.21a1,1,0,0,0-1.42,0L9.84,14.67,6.71,11.53A1,1,0,1,0,5.29,13l3.84,3.84a1,1,0,0,0,1.42,0l8.16-8.16A1,1,0,0,0,18.71,7.21Z"
+                    ></path>
+                </svg>
+                {table.getIsAllPageRowsSelected()
+                    ? "Deselect all"
+                    : "Select all"}
+            </Button>
+            {selectedIds.length > 0 && (
+                <div className="flex items-center justify-between w-full py-4">
+                    {/* delete selected button */}
+                    <Button
+                        variant="destructive"
+                        className="flex items-center justify-between gap-2 dark:bg-red-500"
+                        onClick={handleDeleteSelectedRows}
                     >
-                        <path
-                            fill="#F7F7FA"
-                            d="M10,18a1,1,0,0,0,1-1V11a1,1,0,0,0-2,0v6A1,1,0,0,0,10,18ZM20,6H16V5a3,3,0,0,0-3-3H11A3,3,0,0,0,8,5V6H4A1,1,0,0,0,4,8H5V19a3,3,0,0,0,3,3h8a3,3,0,0,0,3-3V8h1a1,1,0,0,0,0-2ZM10,5a1,1,0,0,1,1-1h2a1,1,0,0,1,1,1V6H10Zm7,14a1,1,0,0,1-1,1H8a1,1,0,0,1-1-1V8H17Zm-3-1a1,1,0,0,0,1-1V11a1,1,0,0,0-2,0v6A1,1,0,0,0,14,18Z"
-                        ></path>
-                    </svg>
-                    Delete selected
-                </Button>
-            </div>
-            {/* number of selected rows */}
-            <div
-                className={`${
-                    selectedIds.length < 1 ? "hidden" : "block"
-                } flex-1 py-2 text-sm text-muted-foreground`}
-            >
-                {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                {table.getFilteredRowModel().rows.length} row(s) selected.
-            </div>
+                        <svg
+                            className="-mt-1 fill-current"
+                            width="19"
+                            height="19"
+                            viewBox="0 0 22 22"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            id="box"
+                        >
+                            <path
+                                fill="#F7F7FA"
+                                d="M10,18a1,1,0,0,0,1-1V11a1,1,0,0,0-2,0v6A1,1,0,0,0,10,18ZM20,6H16V5a3,3,0,0,0-3-3H11A3,3,0,0,0,8,5V6H4A1,1,0,0,0,4,8H5V19a3,3,0,0,0,3,3h8a3,3,0,0,0,3-3V8h1a1,1,0,0,0,0-2ZM10,5a1,1,0,0,1,1-1h2a1,1,0,0,1,1,1V6H10Zm7,14a1,1,0,0,1-1,1H8a1,1,0,0,1-1-1V8H17Zm-3-1a1,1,0,0,0,1-1V11a1,1,0,0,0-2,0v6A1,1,0,0,0,14,18Z"
+                            ></path>
+                        </svg>
+                        Delete selected
+                    </Button>
+                    {/* number of selected rows */}
+                    <div className="text-sm text-muted-foreground">
+                        {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                        {table.getFilteredRowModel().rows.length} row(s)
+                        selected.
+                    </div>
+                </div>
+            )}
             {/* main table */}
             <div className="border rounded-md">
                 <Table className="border dark:border-slate-600 border-slate-300">
@@ -197,13 +220,15 @@ export function DataTable<TData extends DataWithId, TValue>({
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
-                                    onClick={() => onRowClick(row.original.id)}
+                                    onClick={() =>
+                                        row.toggleSelected(!row.getIsSelected())
+                                    }
                                     key={row.id}
                                     data-state={
                                         row.getIsSelected() && "selected"
                                     }
                                     className={`${
-                                        selectedIds.includes(row.original.id)
+                                        row.getIsSelected()
                                             ? "!bg-gray-600 text-slate-100 dark:!bg-slate-700"
                                             : ""
                                     } border-b dark:border-slate-600  border-slate-300`}
