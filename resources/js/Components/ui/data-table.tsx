@@ -96,7 +96,7 @@ export function DataTable<TData extends DataWithId, TValue>({
     };
 
     return (
-        <div>
+        <div className="cursor-pointer">
             {/* search & visibility column*/}
             <div className="flex items-center gap-2 py-4">
                 <Input
