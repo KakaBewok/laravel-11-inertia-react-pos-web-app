@@ -36,7 +36,7 @@ export const CellAction = ({ data }: { data: ProductColumn }) => {
                 <Button
                     variant="destructive"
                     onClick={() => setModalOpen(true)}
-                    className="h-10 p-0 bg-red-500 w-11 hover:bg-red-600"
+                    className="h-8 p-0 bg-red-500 w-9 hover:bg-red-600"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -55,7 +55,7 @@ export const CellAction = ({ data }: { data: ProductColumn }) => {
                 </Button>
                 <Button
                     variant="ghost"
-                    className="h-10 p-0 w-11 bg-amber-400 hover:bg-amber-500"
+                    className="h-8 p-0 w-9 bg-amber-400 hover:bg-amber-500"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -74,7 +74,7 @@ export const CellAction = ({ data }: { data: ProductColumn }) => {
                 </Button>
                 <Button
                     variant="ghost"
-                    className="h-10 p-0 w-11 bg-sky-500 hover:bg-sky-600"
+                    className="h-8 p-0 w-9 bg-sky-500 hover:bg-sky-600"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
