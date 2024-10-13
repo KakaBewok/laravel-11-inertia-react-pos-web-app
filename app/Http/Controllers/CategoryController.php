@@ -72,9 +72,9 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Category $category)
+    public function destroy(int $id)
     {
-        $this->categoryService->delete($category);
+        $this->categoryService->delete($id);
     }
 
     /**

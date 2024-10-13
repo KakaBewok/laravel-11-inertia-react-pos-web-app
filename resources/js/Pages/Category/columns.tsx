@@ -4,6 +4,7 @@ import { Button } from "@/Components/ui/button";
 import { Checkbox } from "@/Components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
+import { CellAction } from "./cell-action";
 
 export type CategoryColumn = {
     id: string;
@@ -81,5 +82,16 @@ export const columns: ColumnDef<CategoryColumn>[] = [
                 </Button>
             );
         },
+    },
+    {
+        id: "actions",
+        header: () => {
+            return (
+                <span className="font-bold text-slate-800 dark:text-slate-50">
+                    Actions
+                </span>
+            );
+        },
+        cell: ({ row }) => <CellAction data={row.original} />,
     },
 ];

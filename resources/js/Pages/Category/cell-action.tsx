@@ -1,18 +1,18 @@
 import { Button } from "@/Components/ui/button";
-import { ProductColumn } from "./columns";
+import { CategoryColumn } from "./columns";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useState } from "react";
 import { AlertModal } from "@/Components/AlertModal";
 import { router } from "@inertiajs/react";
 import { toast } from "react-toastify";
 
-export const CellAction = ({ data }: { data: ProductColumn }) => {
+export const CellAction = ({ data }: { data: CategoryColumn }) => {
     const { loading, setLoading } = useGlobalContext();
     const [modalOpen, setModalOpen] = useState<boolean>(false);
 
     const handleDeleteId = () => {
         setLoading(true);
-        router.delete(route("admin.product.destroy", data.id), {
+        router.delete(route("admin.category.destroy", data.id), {
             onSuccess: () => {
                 toast.success("Data deleted.", {
                     position: "top-center",
@@ -31,6 +31,7 @@ export const CellAction = ({ data }: { data: ProductColumn }) => {
                 onClose={() => setModalOpen(false)}
                 onConfirm={handleDeleteId}
                 loading={loading}
+                description="All products under this category will also be deleted."
             />
             <div className="flex items-center gap-2">
                 <Button
