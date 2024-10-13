@@ -20,7 +20,8 @@ class CategoryService
         return $this->categoryRepository->all();
     }
 
-     public function delete(string $id){
+    public function delete(int $id)
+    {
         try {
             return $this->categoryRepository->delete($id);
             Log::info("Deleted category id: ", $id);
@@ -32,7 +33,8 @@ class CategoryService
         }
     }
 
-    public function multipleDelete(array $ids){
+    public function multipleDelete(array $ids)
+    {
         try {
             return $this->categoryRepository->deleteMany($ids);
             Log::info("Deleted category ids: ", $ids);

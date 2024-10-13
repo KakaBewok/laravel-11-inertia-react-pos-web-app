@@ -20,7 +20,8 @@ class ProductService
         return $this->productRepository->all();
     }
 
-    public function delete(string $id){
+    public function delete(int $id)
+    {
         try {
             return $this->productRepository->delete($id);
             Log::info("Deleted product id: ", $id);
@@ -32,7 +33,8 @@ class ProductService
         }
     }
 
-    public function multipleDelete(array $ids){
+    public function multipleDelete(array $ids)
+    {
         try {
             return $this->productRepository->deleteMany($ids);
             Log::info("Deleted product ids: ", $ids);
