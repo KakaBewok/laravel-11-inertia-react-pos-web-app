@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Services\ProductService;
+use App\Services\CategoryService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
@@ -12,10 +13,12 @@ use Illuminate\Support\Facades\Log;
 class ProductController extends Controller
 {
     protected $productService;
+    protected $categoryService;
 
     // Constructor injection
-    public function __construct(ProductService $productService)
+    public function __construct(ProductService $productService, CategoryService $categoryService)
     {
+        $this->categoryService = $categoryService;
         $this->productService = $productService;
     }
 
@@ -35,7 +38,10 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        $categories = $this->categoryService->getAllCategories();
+        return Inertia::render('Product/create', [
+            'categories' => $categories,
+        ]);
     }
 
     /**

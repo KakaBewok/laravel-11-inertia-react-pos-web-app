@@ -50,7 +50,9 @@ export const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
                     title={`Products (${data.length})`}
                     description="Manage products for your store"
                 />
-                <Button>
+                <Button
+                    onClick={() => router.get(route("admin.product.create"))}
+                >
                     <Plus className="w-4 h-4" />
                 </Button>
             </div>
