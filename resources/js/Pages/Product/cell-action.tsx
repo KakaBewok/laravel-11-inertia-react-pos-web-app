@@ -36,7 +36,7 @@ export const CellAction = ({ data }: { data: ProductColumn }) => {
                 <Button
                     variant="destructive"
                     onClick={() => setModalOpen(true)}
-                    className="bg-red-500 hover:bg-red-600"
+                    className="h-10 p-0 bg-red-500 w-11 hover:bg-red-600"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -55,7 +55,7 @@ export const CellAction = ({ data }: { data: ProductColumn }) => {
                 </Button>
                 <Button
                     variant="ghost"
-                    className="bg-amber-400 hover:bg-amber-500"
+                    className="h-10 p-0 w-11 bg-amber-400 hover:bg-amber-500"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -69,6 +69,25 @@ export const CellAction = ({ data }: { data: ProductColumn }) => {
                         <path
                             fill="#F9F9FC"
                             d="M5,18H9.24a1,1,0,0,0,.71-.29l6.92-6.93h0L19.71,8a1,1,0,0,0,0-1.42L15.47,2.29a1,1,0,0,0-1.42,0L11.23,5.12h0L4.29,12.05a1,1,0,0,0-.29.71V17A1,1,0,0,0,5,18ZM14.76,4.41l2.83,2.83L16.17,8.66,13.34,5.83ZM6,13.17l5.93-5.93,2.83,2.83L8.83,16H6ZM21,20H3a1,1,0,0,0,0,2H21a1,1,0,0,0,0-2Z"
+                        ></path>
+                    </svg>
+                </Button>
+                <Button
+                    variant="ghost"
+                    className="h-10 p-0 w-11 bg-sky-500 hover:bg-sky-600"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        id="eye"
+                        className="fill-current"
+                        width="21"
+                        height="21"
+                        fill="none"
+                    >
+                        <path
+                            fill="#F9F9FC"
+                            d="M21.92,11.6C19.9,6.91,16.1,4,12,4S4.1,6.91,2.08,11.6a1,1,0,0,0,0,.8C4.1,17.09,7.9,20,12,20s7.9-2.91,9.92-7.6A1,1,0,0,0,21.92,11.6ZM12,18c-3.17,0-6.17-2.29-7.9-6C5.83,8.29,8.83,6,12,6s6.17,2.29,7.9,6C18.17,15.71,15.17,18,12,18ZM12,8a4,4,0,1,0,4,4A4,4,0,0,0,12,8Zm0,6a2,2,0,1,1,2-2A2,2,0,0,1,12,14Z"
                         ></path>
                     </svg>
                 </Button>
