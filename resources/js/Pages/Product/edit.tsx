@@ -35,7 +35,6 @@ const EditProduct: React.FC<EditProductProps> = ({
         ...product,
         photos: photos.map((photo: Photo) => photo.photo),
     };
-    console.log(initialData);
     return (
         <MainLayout>
             <AuthenticatedLayout>
