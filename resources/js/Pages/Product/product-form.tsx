@@ -3,11 +3,10 @@
 import * as z from "zod";
 import { Button } from "@/Components/ui/button";
 import { Heading } from "@/Components/ui/heading";
-import { Separator } from "@/Components/ui/separator";
 import { TrashIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     FormControl,
     FormField,
@@ -15,11 +14,9 @@ import {
     FormLabel,
     Form,
     FormMessage,
-    FormDescription,
 } from "@/Components/ui/form";
 import { Input } from "@/Components/ui/input";
 import { toast } from "react-toastify";
-import axios from "axios";
 import { AlertModal } from "@/Components/AlertModal";
 import {
     Select,
@@ -28,10 +25,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select";
-import { Checkbox } from "@/Components/ui/checkbox";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
-import MainLayout from "@/Layouts/MainLayout";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Textarea } from "@headlessui/react";
 
 const formSchema = z.object({
@@ -43,21 +37,24 @@ const formSchema = z.object({
     stock_quantity: z.coerce.number().min(1),
     photos: z
         .array(
-            z
-                .instanceof(File)
-                .refine(
-                    (file) =>
-                        ["image/jpeg", "image/png", "image/jpg"].includes(
-                            file.type
-                        ),
-                    {
-                        message:
-                            "Only .jpg, .jpeg, and .png formats are accepted",
-                    }
-                )
-                .refine((file) => file.size <= 700 * 1024, {
-                    message: "File size must be less than 700KB",
-                })
+            z.union([
+                z
+                    .instanceof(File)
+                    .refine(
+                        (file) =>
+                            ["image/jpeg", "image/png", "image/jpg"].includes(
+                                file.type
+                            ),
+                        {
+                            message:
+                                "Only .jpg, .jpeg, and .png formats are accepted",
+                        }
+                    )
+                    .refine((file) => file.size <= 700 * 1024, {
+                        message: "File size must be less than 700KB",
+                    }),
+                z.string(), // Accept string type as well
+            ])
         )
         .optional(),
 });
@@ -84,22 +81,27 @@ type ProductFormValues = z.infer<typeof formSchema>;
 interface ProductFormProps {
     initialData?:
         | (Product & {
-              photos: (File | string)[];
+              photos: string[];
           })
         | null;
     categories: Category[];
 }
+
+const urlToFile = async (
+    url: string,
+    fileName: string,
+    mimeType: string
+): Promise<File> => {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new File([blob], fileName, { type: mimeType });
+};
 
 export const ProductForm: React.FC<ProductFormProps> = ({
     initialData,
     categories,
 }) => {
     const [photoFiles, setPhotoFiles] = useState<File[]>([]);
-    const [photoUrls, setPhotoUrls] = useState<string[]>(
-        initialData?.photos.filter(
-            (photo) => typeof photo === "string"
-        ) as string[]
-    );
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const { loading, setLoading } = useGlobalContext();
@@ -119,9 +121,39 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             description: initialData?.description || "",
             unit: initialData?.unit || "",
             stock_quantity: initialData?.stock_quantity || 0,
-            photos: [],
+            photos: initialData?.photos,
         },
     });
+
+    useEffect(() => {
+        const convertUrlsToFiles = async () => {
+            if (initialData && initialData.photos.length > 0) {
+                const files = await Promise.all(
+                    initialData.photos.map((photoUrl, index) => {
+                        const filePath = `${
+                            import.meta.env.VITE_APP_URL
+                        }/${photoUrl}`;
+                        return urlToFile(
+                            filePath,
+                            `photo-${index}.jpg`,
+                            "image/jpeg"
+                        );
+                    })
+                );
+
+                setPhotoFiles(files);
+
+                const dt = new DataTransfer();
+                files.forEach((file) => dt.items.add(file));
+                if (fileInputRef.current) {
+                    fileInputRef.current.files = dt.files;
+                }
+                form.setValue("photos", files);
+            }
+        };
+
+        convertUrlsToFiles();
+    }, [initialData, form]);
 
     const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -219,48 +251,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         />
 
                         {/* category */}
-                        {/* <FormField
-                            control={form.control}
-                            name="category_id"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Category</FormLabel>
-                                    <FormControl>
-                                        <Select
-                                            disabled={loading}
-                                            onValueChange={field.onChange}
-                                            value={field.value}
-                                            defaultValue={field.value}
-                                        >
-                                            <FormControl>
-                                                <SelectTrigger className="w-full">
-                                                    <SelectValue
-                                                        defaultValue={
-                                                            field.value
-                                                        }
-                                                        placeholder="Select a category"
-                                                    />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                {categories.map(
-                                                    (category: Category) => (
-                                                        <SelectItem
-                                                            key={category.id}
-                                                            value={category.id}
-                                                        >
-                                                            {category.name}
-                                                        </SelectItem>
-                                                    )
-                                                )}
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        /> */}
-
                         <FormField
                             control={form.control}
                             name="category_id"
@@ -400,7 +390,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
                         {/* Preview Images */}
                         <div>
-                            {/* Menampilkan preview untuk file gambar yang baru diupload */}
                             <div className="flex flex-wrap items-center justify-evenly">
                                 {photoFiles.map((file, index) => (
                                     <div

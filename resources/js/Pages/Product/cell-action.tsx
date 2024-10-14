@@ -24,6 +24,17 @@ export const CellAction = ({ data }: { data: ProductColumn }) => {
         });
     };
 
+    const handleEditProduct = () => {
+        setLoading(true);
+        router.get(
+            route("admin.product.edit", data.id),
+            {},
+            {
+                onFinish: () => setLoading(false),
+            }
+        );
+    };
+
     return (
         <div>
             <AlertModal
@@ -56,6 +67,7 @@ export const CellAction = ({ data }: { data: ProductColumn }) => {
                 <Button
                     variant="ghost"
                     className="h-8 p-0 w-9 bg-amber-400 hover:bg-amber-500"
+                    onClick={handleEditProduct}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

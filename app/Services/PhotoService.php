@@ -2,34 +2,34 @@
 
 namespace App\Services;
 
-use App\Repositories\ProductRepo;
+use App\Repositories\PhotoRepo;
 use Illuminate\Support\Facades\Log;
 
-class ProductService
+class PhotoService
 {
-    protected $productRepository;
+    protected $photoRepository;
 
     // Constructor injection
-    public function __construct(ProductRepo $productRepository)
+    public function __construct(PhotoRepo $photoRepository)
     {
-        $this->productRepository = $productRepository;
+        $this->photoRepository = $photoRepository;
     }
 
-    public function getAllProducts()
+    public function getAllPhotos()
     {
-        return $this->productRepository->all();
+        return $this->photoRepository->all();
     }
 
-    public function getDetailProduct(int $id)
+    public function getDetailPhoto(int $id)
     {
-        return $this->productRepository->find($id);
+        return $this->photoRepository->find($id);
     }
 
     public function delete(int $id)
     {
         try {
-            return $this->productRepository->delete($id);
-            Log::info("Deleted product id: ", $id);
+            return $this->photoRepository->delete($id);
+            Log::info("Deleted photo id: ", $id);
         } catch (\Exception $e) {
             Log::error('Failed to delete data', [
                 'id' => $id,
@@ -41,8 +41,8 @@ class ProductService
     public function multipleDelete(array $ids)
     {
         try {
-            return $this->productRepository->deleteMany($ids);
-            Log::info("Deleted product ids: ", $ids);
+            return $this->photoRepository->deleteMany($ids);
+            Log::info("Deleted photo ids: ", $ids);
         } catch (\Exception $e) {
             Log::error('Failed to delete data', [
                 'ids' => $ids,

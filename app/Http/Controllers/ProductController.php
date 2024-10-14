@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Services\ProductService;
 use App\Services\CategoryService;
+use App\Services\PhotoService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
@@ -14,12 +15,14 @@ class ProductController extends Controller
 {
     protected $productService;
     protected $categoryService;
+    protected $photoService;
 
     // Constructor injection
-    public function __construct(ProductService $productService, CategoryService $categoryService)
+    public function __construct(ProductService $productService, CategoryService $categoryService, PhotoService $photoService)
     {
-        $this->categoryService = $categoryService;
         $this->productService = $productService;
+        $this->categoryService = $categoryService;
+        $this->photoService = $photoService;
     }
 
     /**
@@ -63,9 +66,15 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Product $product)
+    public function edit(int $id)
     {
-        //
+        $product = $this->productService->getDetailProduct($id);
+        $categories = $this->categoryService->getAllCategories();
+        return Inertia::render('Product/edit', [
+            'product' => $product,
+            'categories' => $categories,
+            'photos' => $product->photos,
+        ]);
     }
 
     /**
