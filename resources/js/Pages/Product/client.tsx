@@ -43,6 +43,17 @@ export const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
         setModalOpen(true);
     };
 
+    const handleCreateProduct = () => {
+        setLoading(true);
+        router.get(
+            route("admin.product.create"),
+            {},
+            {
+                onFinish: () => setLoading(false),
+            }
+        );
+    };
+
     return (
         <>
             <div className="flex items-center justify-between">
@@ -50,7 +61,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
                     title={`Products (${data.length})`}
                     description="Manage products for your store"
                 />
-                <Button>
+                <Button onClick={handleCreateProduct} variant="outline">
                     <Plus className="w-4 h-4" />
                 </Button>
             </div>

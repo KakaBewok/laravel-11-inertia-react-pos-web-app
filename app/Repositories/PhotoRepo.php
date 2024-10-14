@@ -42,7 +42,8 @@ class PhotoRepo implements CrudRepository
         return false;
     }
 
-    public function deleteMany(array $ids){
+    public function deleteMany(array $ids)
+    {
         return Photo::destroy($ids);
     }
 }
