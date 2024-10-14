@@ -54,7 +54,7 @@ const formSchema = z.object({
                     .refine((file) => file.size <= 700 * 1024, {
                         message: "File size must be less than 700KB",
                     }),
-                z.string(), // Accept string type as well
+                z.string(),
             ])
         )
         .optional(),
@@ -241,9 +241,17 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         <FormField
                             control={form.control}
                             name="name"
-                            render={({ field }) => (
+                            render={({ field, fieldState }) => (
                                 <FormItem>
-                                    <FormLabel>Name</FormLabel>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Name
+                                    </FormLabel>
                                     <FormControl>
                                         <Input
                                             className="dark:bg-slate-700"
@@ -252,7 +260,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                             {...field}
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="dark:text-red-500" />
                                 </FormItem>
                             )}
                         />
@@ -261,9 +269,17 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         <FormField
                             control={form.control}
                             name="price"
-                            render={({ field }) => (
+                            render={({ field, fieldState }) => (
                                 <FormItem>
-                                    <FormLabel>Price</FormLabel>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Price
+                                    </FormLabel>
                                     <FormControl>
                                         <Input
                                             className="dark:bg-slate-700"
@@ -272,7 +288,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                             {...field}
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="dark:text-red-500" />
                                 </FormItem>
                             )}
                         />
@@ -281,9 +297,17 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         <FormField
                             control={form.control}
                             name="category_id"
-                            render={({ field }) => (
+                            render={({ field, fieldState }) => (
                                 <FormItem>
-                                    <FormLabel>Category</FormLabel>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Category
+                                    </FormLabel>
                                     <Select
                                         disabled={loading}
                                         onValueChange={field.onChange}
@@ -309,7 +333,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    <FormMessage />
+                                    <FormMessage className="dark:text-red-500" />
                                 </FormItem>
                             )}
                         />
@@ -318,9 +342,17 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         <FormField
                             control={form.control}
                             name="unit"
-                            render={({ field }) => (
+                            render={({ field, fieldState }) => (
                                 <FormItem>
-                                    <FormLabel>Unit</FormLabel>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Unit
+                                    </FormLabel>
                                     <FormControl>
                                         <Select
                                             disabled={loading}
@@ -351,7 +383,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="dark:text-red-500" />
                                 </FormItem>
                             )}
                         />
@@ -360,9 +392,17 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         <FormField
                             control={form.control}
                             name="stock_quantity"
-                            render={({ field }) => (
+                            render={({ field, fieldState }) => (
                                 <FormItem>
-                                    <FormLabel>Stock</FormLabel>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Stock
+                                    </FormLabel>
                                     <FormControl>
                                         <Input
                                             className="dark:bg-slate-700"
@@ -371,7 +411,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                             {...field}
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="dark:text-red-500" />
                                 </FormItem>
                             )}
                         />
@@ -380,9 +420,17 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         <FormField
                             control={form.control}
                             name="description"
-                            render={({ field }) => (
+                            render={({ field, fieldState }) => (
                                 <FormItem>
-                                    <FormLabel>Description</FormLabel>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Description
+                                    </FormLabel>
                                     <FormControl>
                                         <Textarea
                                             className="w-full h-32 max-w-lg max-h-40 dark:bg-slate-700"
@@ -391,21 +439,31 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                             {...field}
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="dark:text-red-500" />
                                 </FormItem>
                             )}
                         />
+                    </div>
 
-                        {/* images */}
+                    {/* images */}
+                    <div className="flex flex-col gap-8">
                         <FormField
                             control={form.control}
                             name="photos"
-                            render={({ field }) => (
+                            render={({ fieldState }) => (
                                 <FormItem>
-                                    <FormLabel>Images</FormLabel>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Images
+                                    </FormLabel>
                                     <FormControl>
                                         <Input
-                                            className="dark:bg-slate-700"
+                                            className="w-full md:w-[48%] dark:bg-slate-700"
                                             ref={fileInputRef}
                                             type="file"
                                             multiple
@@ -413,36 +471,35 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                             onChange={handlePhotoChange}
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="dark:text-red-500" />
                                 </FormItem>
                             )}
                         />
 
                         {/* Preview Images */}
-                        <div>
-                            <div className="flex flex-wrap items-center justify-evenly">
-                                {photoFiles.map((file, index) => (
-                                    <div
+                        <div className="flex flex-wrap items-center justify-center gap-8 md:justify-start">
+                            {photoFiles.map((file, index) => (
+                                <div
+                                    key={index}
+                                    className="relative overflow-hidden border border-gray-200 rounded-md shadow-md w-52 h-52"
+                                >
+                                    <img
                                         key={index}
-                                        className="flex items-center"
+                                        src={URL.createObjectURL(file)}
+                                        alt={`Uploaded ${index}`}
+                                        className="object-cover w-full h-full"
+                                    />
+                                    <button
+                                        className="absolute flex items-center justify-center w-6 h-6 text-white bg-red-500 rounded-full top-2 right-2 hover:bg-red-600"
+                                        type="button"
+                                        onClick={() => removePhotoFile(index)}
                                     >
-                                        <img
-                                            key={index}
-                                            src={URL.createObjectURL(file)}
-                                            alt="Uploaded"
-                                            className="w-20 h-20"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                removePhotoFile(index)
-                                            }
-                                        >
-                                            Hapus
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
+                                        <span className="text-xs leading-none">
+                                            ✕
+                                        </span>
+                                    </button>
+                                </div>
+                            ))}
                         </div>
                     </div>
 
