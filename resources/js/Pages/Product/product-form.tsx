@@ -7,7 +7,7 @@ import { Separator } from "@/Components/ui/separator";
 import { TrashIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
     FormControl,
     FormField,
@@ -100,6 +100,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             (photo) => typeof photo === "string"
         ) as string[]
     );
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const { loading, setLoading } = useGlobalContext();
     const [open, setOpen] = useState(false);
@@ -122,53 +123,33 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         },
     });
 
-    // const onSubmit = async (data: ProductFormValues) => {
-    //     try {
-    //         setLoading(true);
-
-    //         if (initialData) {
-    //             await axios.patch(
-    //                 `/api/${params.storeId}/products/${params.productId}`,
-    //                 data
-    //             );
-    //         } else {
-    //             await axios.post(`/api/${params.storeId}/products`, data);
-    //         }
-
-    //         router.push(`/${params.storeId}/products`);
-    //         router.refresh(); // for syncronize component
-    //         toast.success(toastMessage);
-    //     } catch (error) {
-    //         toast.error("Something went wrong.");
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
-    // const onDelete = async () => {
-    //     try {
-    //         setLoading(true);
-
-    //         await axios.delete(
-    //             `/api/${params.storeId}/products/${params.productId}`
-    //         );
-    //         router.push(`/${params.storeId}/products`);
-    //         router.refresh();
-
-    //         toast.success("Product deleted.");
-    //     } catch (error) {
-    //         toast.error("Something went wrong.");
-    //     } finally {
-    //         setLoading(false);
-    //         setOpen(false);
-    //     }
-    // };
-
     const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             const files = Array.from(e.target.files);
             setPhotoFiles([...photoFiles, ...files]);
             form.setValue("photos", [...photoFiles, ...files]); // Update form state
+        }
+    };
+
+    const removePhotoFile = (index: number) => {
+        const updatedPhotoFiles = photoFiles.filter((_, i) => i !== index);
+        setPhotoFiles(updatedPhotoFiles);
+        form.setValue("photos", updatedPhotoFiles);
+
+        const dt = new DataTransfer();
+        updatedPhotoFiles.forEach((file) => dt.items.add(file));
+        if (fileInputRef.current) {
+            fileInputRef.current.files = dt.files;
+        }
+        form.setValue("photos", updatedPhotoFiles);
+    };
+
+    const onSubmit = (data: ProductFormValues) => {
+        console.log("data dari form", data);
+        form.reset();
+        setPhotoFiles([]);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
         }
     };
 
@@ -195,30 +176,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             </div>
             <Form {...form}>
                 <form
-                    onSubmit={form.handleSubmit(() => alert("submit"))}
+                    onSubmit={form.handleSubmit(onSubmit)}
                     className="w-full p-5 space-y-8 rounded-md bg-slate-50"
                 >
                     <div className="grid grid-cols-1 gap-4 md:gap-8 md:grid-cols-2">
-                        {/* images */}
-                        <FormField
-                            control={form.control}
-                            name="photos"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Images</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="file"
-                                            multiple
-                                            accept="image/jpeg, image/png, image/jpg"
-                                            onChange={handlePhotoChange}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
                         {/* name */}
                         <FormField
                             control={form.control}
@@ -258,7 +219,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         />
 
                         {/* category */}
-                        <FormField
+                        {/* <FormField
                             control={form.control}
                             name="category_id"
                             render={({ field }) => (
@@ -295,6 +256,42 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        /> */}
+
+                        <FormField
+                            control={form.control}
+                            name="category_id"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Category</FormLabel>
+                                    <Select
+                                        disabled={loading}
+                                        onValueChange={field.onChange}
+                                        value={field.value}
+                                        defaultValue={field.value}
+                                    >
+                                        <FormControl>
+                                            <SelectTrigger className="w-[180px]">
+                                                <SelectValue
+                                                    defaultValue={field.value}
+                                                    placeholder="Select a category"
+                                                />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {categories.map((category) => (
+                                                <SelectItem
+                                                    key={category.id}
+                                                    value={category.id}
+                                                >
+                                                    {category.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -379,6 +376,55 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                 </FormItem>
                             )}
                         />
+
+                        {/* images */}
+                        <FormField
+                            control={form.control}
+                            name="photos"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Images</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            ref={fileInputRef}
+                                            type="file"
+                                            multiple
+                                            accept="image/jpeg, image/png, image/jpg"
+                                            onChange={handlePhotoChange}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        {/* Preview Images */}
+                        <div>
+                            {/* Menampilkan preview untuk file gambar yang baru diupload */}
+                            <div className="flex flex-wrap items-center justify-evenly">
+                                {photoFiles.map((file, index) => (
+                                    <div
+                                        key={index}
+                                        className="flex items-center"
+                                    >
+                                        <img
+                                            key={index}
+                                            src={URL.createObjectURL(file)}
+                                            alt="Uploaded"
+                                            className="w-20 h-20"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                removePhotoFile(index)
+                                            }
+                                        >
+                                            Hapus
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
 
                     <Button

@@ -4,7 +4,6 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 
 const CreateProduct = ({ categories }: { categories: Category[] }) => {
-    console.log("list category", categories);
     return (
         <MainLayout>
             <AuthenticatedLayout>
