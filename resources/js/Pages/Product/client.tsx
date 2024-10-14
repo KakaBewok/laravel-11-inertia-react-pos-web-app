@@ -61,8 +61,12 @@ export const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
                     title={`Products (${data.length})`}
                     description="Manage products for your store"
                 />
-                <Button onClick={handleCreateProduct} variant="outline">
-                    <Plus className="w-4 h-4" />
+                <Button
+                    onClick={handleCreateProduct}
+                    variant="outline"
+                    className="dark:bg-slate-200"
+                >
+                    <Plus className="w-4 h-4 dark:text-slate-900" />
                 </Button>
             </div>
             <AlertModal
