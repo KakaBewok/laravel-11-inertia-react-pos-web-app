@@ -210,21 +210,31 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
             <div className="flex items-center justify-between">
                 <Heading title={title} description={description} />
-                {initialData && (
+                <div className="flex items-center gap-3">
                     <Button
-                        disabled={loading}
-                        variant="destructive"
-                        size="icon"
-                        onClick={() => setModalOpen(true)}
+                        variant="outline"
+                        onClick={() => window.history.back()}
+                        className="dark:bg-slate-200 dark:text-slate-900"
                     >
-                        <TrashIcon className="w-4 h-4" />
+                        Back
                     </Button>
-                )}
+                    {initialData && (
+                        <Button
+                            disabled={loading}
+                            variant="destructive"
+                            size="icon"
+                            onClick={() => setModalOpen(true)}
+                            className="bg-red-500"
+                        >
+                            <TrashIcon className="w-4 h-4" />
+                        </Button>
+                    )}
+                </div>
             </div>
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="w-full p-8 space-y-8 rounded-md bg-slate-50"
+                    className="w-full p-8 space-y-8 rounded-md bg-slate-50 dark:bg-gradient-to-b md:dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-800"
                 >
                     <div className="grid grid-cols-1 gap-4 md:gap-8 md:grid-cols-2">
                         {/* name */}
@@ -236,6 +246,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                     <FormLabel>Name</FormLabel>
                                     <FormControl>
                                         <Input
+                                            className="dark:bg-slate-700"
                                             disabled={loading}
                                             placeholder="Arabica coffe beans"
                                             {...field}
@@ -255,6 +266,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                     <FormLabel>Price</FormLabel>
                                     <FormControl>
                                         <Input
+                                            className="dark:bg-slate-700"
                                             type="number"
                                             disabled={loading}
                                             {...field}
@@ -278,7 +290,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                         value={field.value}
                                         defaultValue={field.value}
                                     >
-                                        <FormControl>
+                                        <FormControl className="dark:bg-slate-700">
                                             <SelectTrigger className="w-full">
                                                 <SelectValue
                                                     defaultValue={field.value}
@@ -316,7 +328,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                             value={field.value}
                                             defaultValue={field.value}
                                         >
-                                            <FormControl>
+                                            <FormControl className="dark:bg-slate-700">
                                                 <SelectTrigger className="w-full">
                                                     <SelectValue
                                                         defaultValue={
@@ -353,6 +365,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                     <FormLabel>Stock</FormLabel>
                                     <FormControl>
                                         <Input
+                                            className="dark:bg-slate-700"
                                             type="number"
                                             disabled={loading}
                                             {...field}
@@ -372,7 +385,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                     <FormLabel>Description</FormLabel>
                                     <FormControl>
                                         <Textarea
-                                            className="w-full h-32 max-w-lg max-h-40"
+                                            className="w-full h-32 max-w-lg max-h-40 dark:bg-slate-700"
                                             disabled={loading}
                                             placeholder="Description of Arabica coffe beans like size, color etc."
                                             {...field}
@@ -392,6 +405,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                     <FormLabel>Images</FormLabel>
                                     <FormControl>
                                         <Input
+                                            className="dark:bg-slate-700"
                                             ref={fileInputRef}
                                             type="file"
                                             multiple

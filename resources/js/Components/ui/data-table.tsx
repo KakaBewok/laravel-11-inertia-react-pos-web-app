@@ -249,9 +249,12 @@ export function DataTable<TData extends DataWithId, TValue>({
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
-                                    onClick={() =>
-                                        row.toggleSelected(!row.getIsSelected())
-                                    }
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        row.toggleSelected(
+                                            !row.getIsSelected()
+                                        );
+                                    }}
                                     key={row.id}
                                     data-state={
                                         row.getIsSelected() && "selected"
