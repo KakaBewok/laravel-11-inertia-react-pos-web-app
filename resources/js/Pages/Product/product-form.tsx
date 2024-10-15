@@ -117,7 +117,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const { loading, setLoading } = useGlobalContext();
-    const [modalOpen, setModalOpen] = useState(false);
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
 
     const title = initialData ? "Edit product" : "Create product";
     const description = initialData ? "Edit a product" : "Add a new product";
@@ -190,12 +190,26 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     // TODO: create api delete with photo
     const handleDeleteId = () => {
         setLoading(true);
+        console.log("id product edit: ", initialData?.id);
         router.delete(route("admin.product.destroy", initialData?.id), {
             onSuccess: () => {
+                router.replace(route("admin.product.index"));
+                router.reload();
                 toast.success("Data deleted.", {
                     position: "top-center",
                 }),
                     setModalOpen(false);
+
+                //
+
+                // Redirect ke halaman daftar product setelah delete berhasil
+                // router.visit(route("admin.product.index"), {
+                //     onSuccess: () => {
+                //         toast.success("Data deleted.", {
+                //             position: "top-center",
+                //         });
+                //     },
+                // });
             },
             onError: (error) => console.log("An error occurred: ", error),
             onFinish: () => setLoading(false),
@@ -487,7 +501,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                         />
                                     </FormControl>
                                     {fieldState.error && (
-                                        <ul className="text-sm text-red-500 flex flex-col gap-6 md:gap-3 py-2">
+                                        <ul className="flex flex-col gap-6 py-2 text-sm text-red-500 md:gap-3">
                                             {(Array.isArray(fieldState.error)
                                                 ? fieldState.error
                                                 : [fieldState.error]
@@ -512,7 +526,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                             {photoFiles.map((file, index) => (
                                 <div
                                     key={index}
-                                    className="relative overflow-hidden border dark:border-gray-200 border-slate-300 rounded-md shadow-md w-52 h-52"
+                                    className="relative overflow-hidden border rounded-md shadow-md dark:border-gray-200 border-slate-300 w-52 h-52"
                                 >
                                     <img
                                         key={index}
