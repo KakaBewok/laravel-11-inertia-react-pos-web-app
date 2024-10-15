@@ -50,7 +50,7 @@ const formSchema = z.object({
     unit: z.string().min(1, { message: "Unit is required" }),
     stock_quantity: z.coerce
         .number()
-        .min(1, { message: "Stock must be greater than or equal to 1" }),
+        .min(0, { message: "Stock must be greater than or equal to 0" }),
     photos: z
         .array(
             z.union([
@@ -59,7 +59,7 @@ const formSchema = z.object({
                     .refine(
                         (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
                         {
-                            message: " must be jpg, jpeg, png and webp formats",
+                            message: " must be jpg, jpeg, png or webp formats",
                         }
                     )
                     .refine((file) => file.size <= MAX_FILE_SIZE * 1024, {
@@ -147,7 +147,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         }/${photoUrl}`;
                         return urlToFile(
                             filePath,
-                            `photo-${index}.jpg`,
+                            `product-image-${index}.jpg`,
                             "image/jpeg"
                         );
                     })
@@ -171,14 +171,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         if (e.target.files) {
             const files = Array.from(e.target.files);
             setPhotoFiles([...photoFiles, ...files]);
-            form.setValue("photos", [...photoFiles, ...files]); // Update form state
+            form.setValue("photos", [...photoFiles, ...files]);
         }
     };
 
     const removePhotoFile = (index: number) => {
         const updatedPhotoFiles = photoFiles.filter((_, i) => i !== index);
         setPhotoFiles(updatedPhotoFiles);
-        form.setValue("photos", updatedPhotoFiles);
 
         const dt = new DataTransfer();
         updatedPhotoFiles.forEach((file) => dt.items.add(file));
@@ -188,6 +187,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         form.setValue("photos", updatedPhotoFiles);
     };
 
+    // TODO: create api delete with photo
     const handleDeleteId = () => {
         setLoading(true);
         router.delete(route("admin.product.destroy", initialData?.id), {
@@ -203,7 +203,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     };
 
     const onSubmit = (data: ProductFormValues) => {
-        console.log("data dari form", data);
+        console.log("form data: ", data);
         form.reset();
         setPhotoFiles([]);
         if (fileInputRef.current) {
@@ -482,7 +482,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                             ref={fileInputRef}
                                             type="file"
                                             multiple
-                                            accept="image/jpeg, image/png, image/jpg"
+                                            accept="image/jpeg, image/png, image/jpg, image/webp"
                                             onChange={handlePhotoChange}
                                         />
                                     </FormControl>
@@ -493,7 +493,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                                 : [fieldState.error]
                                             ).map((error, index) => (
                                                 <li key={index}>
-                                                    {`Image number ${
+                                                    {`- Image number ${
                                                         index + 1
                                                     } ${
                                                         error?.message ||
@@ -536,7 +536,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
                     <Button
                         disabled={loading}
-                        className="w-full md:w-1/2"
+                        className="w-full lg:w-1/2"
                         type="submit"
                     >
                         {action}
