@@ -1,6 +1,5 @@
 "use client";
 
-import { AlertModal } from "@/Components/AlertModal";
 import { Button } from "@/Components/ui/button";
 import {
     Form,
@@ -24,7 +23,6 @@ import { Textarea } from "@/Components/ui/textarea";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "@inertiajs/react";
-import { TrashIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -115,9 +113,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 }) => {
     const [photoFiles, setPhotoFiles] = useState<File[]>([]);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
-
     const { loading, setLoading } = useGlobalContext();
-    const [modalOpen, setModalOpen] = useState<boolean>(false);
 
     const title = initialData ? "Edit product" : "Create product";
     const description = initialData ? "Edit a product" : "Add a new product";
@@ -187,74 +183,37 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         form.setValue("photos", updatedPhotoFiles);
     };
 
-    // TODO: create api delete with photo
-    const handleDeleteId = () => {
+    const onSubmit = (data: ProductFormValues) => {
+        console.log("form data: ", data);
         setLoading(true);
-        console.log("id product edit: ", initialData?.id);
-        router.delete(route("admin.product.destroy", initialData?.id), {
+        router.post(route("admin.product.store"), data, {
             onSuccess: () => {
-                router.replace(route("admin.product.index"));
-                router.reload();
-                toast.success("Data deleted.", {
-                    position: "top-center",
-                }),
-                    setModalOpen(false);
-
-                //
-
-                // Redirect ke halaman daftar product setelah delete berhasil
-                // router.visit(route("admin.product.index"), {
-                //     onSuccess: () => {
-                //         toast.success("Data deleted.", {
-                //             position: "top-center",
-                //         });
-                //     },
-                // });
+                router.visit(route("admin.product.index")),
+                    toast.success(toastMessage, {
+                        position: "top-center",
+                    });
+                form.reset();
+                setPhotoFiles([]);
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = "";
+                }
             },
             onError: (error) => console.log("An error occurred: ", error),
             onFinish: () => setLoading(false),
         });
     };
 
-    const onSubmit = (data: ProductFormValues) => {
-        console.log("form data: ", data);
-        form.reset();
-        setPhotoFiles([]);
-        if (fileInputRef.current) {
-            fileInputRef.current.value = "";
-        }
-    };
-
     return (
         <>
-            <AlertModal
-                isOpen={modalOpen}
-                onClose={() => setModalOpen(false)}
-                onConfirm={handleDeleteId}
-                loading={loading}
-            />
             <div className="flex items-center justify-between">
                 <Heading title={title} description={description} />
-                <div className="flex items-center gap-3">
-                    <Button
-                        variant="outline"
-                        onClick={() => window.history.back()}
-                        className="dark:bg-slate-200 dark:text-slate-900"
-                    >
-                        Back
-                    </Button>
-                    {initialData && (
-                        <Button
-                            disabled={loading}
-                            variant="destructive"
-                            size="icon"
-                            onClick={() => setModalOpen(true)}
-                            className="bg-red-500"
-                        >
-                            <TrashIcon className="w-4 h-4" />
-                        </Button>
-                    )}
-                </div>
+                <Button
+                    variant="outline"
+                    onClick={() => window.history.back()}
+                    className="dark:bg-slate-200 dark:text-slate-900"
+                >
+                    Back
+                </Button>
             </div>
             <Form {...form}>
                 <form
