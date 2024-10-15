@@ -30,6 +30,14 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as z from "zod";
 
+const MAX_FILE_SIZE = 300; // in kilobytes
+const ACCEPTED_IMAGE_TYPES = [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp",
+];
+
 const formSchema = z.object({
     name: z
         .string()
@@ -49,17 +57,13 @@ const formSchema = z.object({
                 z
                     .instanceof(File)
                     .refine(
-                        (file) =>
-                            ["image/jpeg", "image/png", "image/jpg"].includes(
-                                file.type
-                            ),
+                        (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
                         {
-                            message:
-                                "Only .jpg, .jpeg, and .png formats are accepted",
+                            message: " must be jpg, jpeg, png and webp formats",
                         }
                     )
-                    .refine((file) => file.size <= 300 * 1024, {
-                        message: "File size must be less than 300KB",
+                    .refine((file) => file.size <= MAX_FILE_SIZE * 1024, {
+                        message: ` is more than ${MAX_FILE_SIZE}KB`,
                     }),
                 z.string(),
             ])
@@ -241,7 +245,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="w-full p-8 space-y-8 rounded-md bg-slate-50 dark:bg-gradient-to-b md:dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-800"
+                    className="w-full p-8 space-y-8 rounded-md bg-slate-50 dark:bg-gradient-to-tr md:dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-800"
                 >
                     <div className="grid grid-cols-1 gap-4 md:gap-8 md:grid-cols-2">
                         {/* name */}
@@ -349,56 +353,50 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         <FormField
                             control={form.control}
                             name="unit"
-                            render={({ field, fieldState }) => {
-                                console.log(
-                                    "fieldState unit: ",
-                                    fieldState.error?.message
-                                );
-                                return (
-                                    <FormItem>
-                                        <FormLabel
-                                            className={
-                                                fieldState.error
-                                                    ? "text-red-500"
-                                                    : "dark:text-gray-300"
-                                            }
+                            render={({ field, fieldState }) => (
+                                <FormItem>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Unit
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Select
+                                            disabled={loading}
+                                            onValueChange={field.onChange}
+                                            value={field.value}
+                                            defaultValue={field.value}
                                         >
-                                            Unit
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Select
-                                                disabled={loading}
-                                                onValueChange={field.onChange}
-                                                value={field.value}
-                                                defaultValue={field.value}
-                                            >
-                                                <FormControl className="dark:bg-slate-700">
-                                                    <SelectTrigger className="w-full">
-                                                        <SelectValue
-                                                            defaultValue={
-                                                                field.value
-                                                            }
-                                                            placeholder="Select a unit"
-                                                        />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    <SelectItem value="Gram">
-                                                        Gram
-                                                    </SelectItem>
-                                                    <SelectItem value="Kilogram">
-                                                        Kilogram
-                                                    </SelectItem>
-                                                    <SelectItem value="Pcs">
-                                                        Pcs
-                                                    </SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </FormControl>
-                                        <FormMessage className="dark:text-red-500" />
-                                    </FormItem>
-                                );
-                            }}
+                                            <FormControl className="dark:bg-slate-700">
+                                                <SelectTrigger className="w-full">
+                                                    <SelectValue
+                                                        defaultValue={
+                                                            field.value
+                                                        }
+                                                        placeholder="Select a unit"
+                                                    />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="Gram">
+                                                    Gram
+                                                </SelectItem>
+                                                <SelectItem value="Kilogram">
+                                                    Kilogram
+                                                </SelectItem>
+                                                <SelectItem value="Pcs">
+                                                    Pcs
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                    <FormMessage className="dark:text-red-500" />
+                                </FormItem>
+                            )}
                         />
 
                         {/* stock_quantity */}
@@ -463,41 +461,50 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         <FormField
                             control={form.control}
                             name="photos"
-                            render={({ fieldState }) => {
-                                console.log(
-                                    "fieldState images:",
-                                    fieldState.error?.message
-                                );
-                                return (
-                                    <FormItem>
-                                        <FormLabel
-                                            className={
-                                                fieldState.error
-                                                    ? "text-red-500"
-                                                    : "dark:text-gray-300"
-                                            }
-                                        >
-                                            Images
-                                        </FormLabel>
-                                        <FormDescription>
-                                            Upload images up to 300KB (jpg,
-                                            jpeg, png only).
-                                        </FormDescription>
-                                        <FormControl>
-                                            <Input
-                                                className="w-full md:w-[48%] dark:bg-slate-700"
-                                                ref={fileInputRef}
-                                                type="file"
-                                                multiple
-                                                accept="image/jpeg, image/png, image/jpg"
-                                                onChange={handlePhotoChange}
-                                            />
-                                        </FormControl>
-                                        <p>{fieldState.error?.message}</p>
-                                        <FormMessage className="dark:text-red-500" />
-                                    </FormItem>
-                                );
-                            }}
+                            render={({ fieldState }) => (
+                                <FormItem>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Product Images
+                                    </FormLabel>
+                                    <FormDescription>
+                                        Upload each image up to {MAX_FILE_SIZE}
+                                        KB (jpg, jpeg, png, webp only).
+                                    </FormDescription>
+                                    <FormControl>
+                                        <Input
+                                            className="w-full md:w-[48%] dark:bg-slate-700"
+                                            ref={fileInputRef}
+                                            type="file"
+                                            multiple
+                                            accept="image/jpeg, image/png, image/jpg"
+                                            onChange={handlePhotoChange}
+                                        />
+                                    </FormControl>
+                                    {fieldState.error && (
+                                        <ul className="text-sm text-red-500 flex flex-col gap-6 md:gap-3 py-2">
+                                            {(Array.isArray(fieldState.error)
+                                                ? fieldState.error
+                                                : [fieldState.error]
+                                            ).map((error, index) => (
+                                                <li key={index}>
+                                                    {`Image number ${
+                                                        index + 1
+                                                    } ${
+                                                        error?.message ||
+                                                        "Unknown error"
+                                                    }`}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </FormItem>
+                            )}
                         />
 
                         {/* Preview Images */}
@@ -529,7 +536,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
                     <Button
                         disabled={loading}
-                        className="ml-auto"
+                        className="w-full md:w-1/2"
                         type="submit"
                     >
                         {action}
