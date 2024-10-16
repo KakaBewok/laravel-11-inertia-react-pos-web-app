@@ -27,14 +27,7 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as z from "zod";
-
-const MAX_FILE_SIZE = 300; // in kilobytes
-const ACCEPTED_IMAGE_TYPES = [
-    "image/jpeg",
-    "image/jpg",
-    "image/png",
-    "image/webp",
-];
+import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "../../config";
 
 const formSchema = z.object({
     name: z
@@ -140,7 +133,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     initialData.photos.map((photoUrl, index) => {
                         const filePath = `${
                             import.meta.env.VITE_APP_URL
-                        }/${photoUrl}`;
+                        }/storage/${photoUrl}`;
                         return urlToFile(
                             filePath,
                             `product-image-${index}.jpg`,
@@ -188,15 +181,17 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         setLoading(true);
         router.post(route("admin.product.store"), data, {
             onSuccess: () => {
-                router.visit(route("admin.product.index")),
-                    toast.success(toastMessage, {
-                        position: "top-center",
-                    });
                 form.reset();
                 setPhotoFiles([]);
                 if (fileInputRef.current) {
                     fileInputRef.current.value = "";
                 }
+                router.visit(route("admin.product.index")),
+                    setTimeout(() => {
+                        toast.success(toastMessage, {
+                            position: "top-center",
+                        });
+                    }, 1000);
             },
             onError: (error) => console.log("An error occurred: ", error),
             onFinish: () => setLoading(false),
