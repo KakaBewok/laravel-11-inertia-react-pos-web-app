@@ -6,6 +6,7 @@ use App\Repositories\ProductRepo;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\UploadedFile;
 use App\Models\Product;
+use Illuminate\Support\Facades\Storage;
 
 class ProductService
 {
@@ -67,6 +68,17 @@ class ProductService
     public function delete(int $id)
     {
         try {
+            $product = $this->productRepository->find($id);
+
+            if (!$product->photos->isEmpty()) {
+                foreach ($product->photos as $photo) {
+                    $filePath = $photo->photo;
+                    if (Storage::disk('public')->exists($filePath)) {
+                        Storage::disk('public')->delete($filePath);
+                    }
+                }
+            }
+
             return $this->productRepository->delete($id);
             Log::info("Deleted product id: ", $id);
         } catch (\Exception $e) {
