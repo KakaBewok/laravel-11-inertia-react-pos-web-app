@@ -13,6 +13,10 @@ class ProductRepo implements CrudRepository
          return Product::with(['category', 'photos', 'orderProducts'])->find($id);
     }
 
+    public function getManyProducts(array $ids){
+        return Product::with(['category', 'photos', 'orderProducts'])->whereIn('id', $ids)->get();
+    }
+
     public function all(): Collection
     {
         return Product::with(['category', 'photos', 'orderProducts'])->orderBy('created_at', 'desc')->get();
