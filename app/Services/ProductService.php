@@ -72,7 +72,7 @@ class ProductService
 
             $this->deleteProductPhotos($product);
             return $this->productRepository->delete($id);
-            Log::info("Deleted product id: ", $id);
+            Log::info("Deleted product id and name: ", $id, $product->name);
         } catch (\Exception $e) {
             Log::error('Failed to delete data', [
                 'id' => $id,
