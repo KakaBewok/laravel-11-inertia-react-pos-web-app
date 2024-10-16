@@ -20,7 +20,7 @@ class ProductService
 
     public function store(array $validatedData)
     {
-         try {
+        try {
             $photoPaths = [];
             if (!empty($validatedData['photos'])) {
                 foreach ($validatedData['photos'] as $photo) {
@@ -51,7 +51,7 @@ class ProductService
                 );
             }
         } catch (\Exception $e) {
-            Log::error('Error when creating product: '. $e->getMessage());
+            Log::error('Error when creating product: ' . $e->getMessage());
         }
     }
 
@@ -63,6 +63,33 @@ class ProductService
     public function getDetailProduct(int $id)
     {
         return $this->productRepository->find($id);
+    }
+
+    public function update(Product $product, array $data)
+    {
+        // if (isset($data['photos']) && is_array($data['photos'])) {
+        //     // Delete old photos if needed
+        //     if ($product->photos->isNotEmpty()) {
+        //         $product->photos->each(function ($photo) {
+        //             if (Storage::disk('public')->exists($photo->photo)) {
+        //                 Storage::disk('public')->delete($photo->photo);
+        //             }
+        //             $photo->delete();  // Delete photo record from the database
+        //         });
+        //     }
+
+        //     // Store new photos
+        //     foreach ($data['photos'] as $photoFile) {
+        //         $photoPath = $photoFile->store('photos', 'public'); // Store new photo in public disk
+
+        //         // Save photo path in database
+        //         $product->photos()->create([
+        //             'photo' => $photoPath,
+        //         ]);
+        //     }
+        // }
+        // // Update other product fields if provided
+        // $product->update($data);
     }
 
     public function delete(int $id)
@@ -99,7 +126,7 @@ class ProductService
     }
 
     protected function deleteProductPhotos($product)
-    {  
+    {
         if ($product->photos->isNotEmpty()) {
             foreach ($product->photos as $photo) {
                 if (Storage::disk('public')->exists($photo->photo)) {
