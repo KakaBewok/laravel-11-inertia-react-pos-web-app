@@ -177,7 +177,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     };
 
     const onSubmit = (data: ProductFormValues) => {
-        console.log("form data: ", data);
         setLoading(true);
         router.post(route("admin.product.store"), data, {
             onSuccess: () => {
