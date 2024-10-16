@@ -10,7 +10,7 @@ class ProductRepo implements CrudRepository
 {
     public function find(int $id)
     {
-        return Product::find($id);
+         return Product::with(['category', 'photos', 'orderProducts'])->find($id);
     }
 
     public function all(): Collection
