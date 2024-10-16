@@ -38,7 +38,7 @@ class ProductService
                 'name' => $validatedData['name'],
                 'price' => $validatedData['price'],
                 'category_id' => $validatedData['category_id'],
-                'description' => $validatedData['description'] ?? null,
+                'description' => $validatedData['description'] ?? "",
                 'unit' => $validatedData['unit'],
                 'stock_quantity' => $validatedData['stock_quantity'],
             ]);
@@ -70,15 +70,7 @@ class ProductService
         try {
             $product = $this->productRepository->find($id);
 
-            if (!$product->photos->isEmpty()) {
-                foreach ($product->photos as $photo) {
-                    $filePath = $photo->photo;
-                    if (Storage::disk('public')->exists($filePath)) {
-                        Storage::disk('public')->delete($filePath);
-                    }
-                }
-            }
-
+            $this->deleteProductPhotos($product);
             return $this->productRepository->delete($id);
             Log::info("Deleted product id: ", $id);
         } catch (\Exception $e) {
@@ -92,13 +84,28 @@ class ProductService
     public function multipleDelete(array $ids)
     {
         try {
-            return $this->productRepository->deleteMany($ids);
+            $products = $this->productRepository->getManyProducts($ids);
+            foreach ($products as $product) {
+                $this->deleteProductPhotos($product);
+                $this->productRepository->delete($product->id);
+            }
             Log::info("Deleted product ids: ", $ids);
         } catch (\Exception $e) {
             Log::error('Failed to delete data', [
                 'ids' => $ids,
                 'error_message' => $e->getMessage(),
             ]);
+        }
+    }
+
+    protected function deleteProductPhotos($product)
+    {  
+        if ($product->photos->isNotEmpty()) {
+            foreach ($product->photos as $photo) {
+                if (Storage::disk('public')->exists($photo->photo)) {
+                    Storage::disk('public')->delete($photo->photo);
+                }
+            }
         }
     }
 }

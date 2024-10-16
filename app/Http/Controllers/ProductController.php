@@ -10,7 +10,6 @@ use App\Services\CategoryService;
 use App\Services\PhotoService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
