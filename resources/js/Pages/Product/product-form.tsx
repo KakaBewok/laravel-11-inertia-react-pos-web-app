@@ -178,6 +178,27 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
     const onSubmit = (data: ProductFormValues) => {
         setLoading(true);
+
+        if (initialData) {
+            router.patch(route("admin.product.update"), data, {
+                onSuccess: () => {
+                    form.reset();
+                    setPhotoFiles([]);
+                    if (fileInputRef.current) {
+                        fileInputRef.current.value = "";
+                    }
+                    router.visit(route("admin.product.index")),
+                        setTimeout(() => {
+                            toast.success(toastMessage, {
+                                position: "top-center",
+                            });
+                        }, 1000);
+                },
+                onError: (error) => console.log("An error occurred: ", error),
+                onFinish: () => setLoading(false),
+            });
+        }
+
         router.post(route("admin.product.store"), data, {
             onSuccess: () => {
                 form.reset();
