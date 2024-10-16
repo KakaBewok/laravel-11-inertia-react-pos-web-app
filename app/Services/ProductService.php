@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Repositories\ProductRepo;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\UploadedFile;
+use App\Models\Product;
 
 class ProductService
 {
@@ -13,6 +15,43 @@ class ProductService
     public function __construct(ProductRepo $productRepository)
     {
         $this->productRepository = $productRepository;
+    }
+
+    public function store(array $validatedData)
+    {
+         try {
+            $photoPaths = [];
+            if (!empty($validatedData['photos'])) {
+                foreach ($validatedData['photos'] as $photo) {
+                    if ($photo instanceof UploadedFile) {
+                        // store image to storage/public/images
+                        $photoPath = $photo->store('images', 'public');
+                        $photoPaths[] = $photoPath;
+                    } else {
+                        $photoPaths[] = $photo;
+                    }
+                }
+            }
+
+            $product = Product::create([
+                'name' => $validatedData['name'],
+                'price' => $validatedData['price'],
+                'category_id' => $validatedData['category_id'],
+                'description' => $validatedData['description'] ?? null,
+                'unit' => $validatedData['unit'],
+                'stock_quantity' => $validatedData['stock_quantity'],
+            ]);
+
+            if (!empty($photoPaths)) {
+                $product->photos()->createMany(
+                    array_map(function ($path) {
+                        return ['photo' => $path];
+                    }, $photoPaths)
+                );
+            }
+        } catch (\Exception $e) {
+            Log::error('Error when creating product: '. $e->getMessage());
+        }
     }
 
     public function getAllProducts()

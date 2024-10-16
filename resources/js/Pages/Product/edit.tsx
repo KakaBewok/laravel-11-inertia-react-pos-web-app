@@ -1,7 +1,7 @@
-import MainLayout from "@/Layouts/MainLayout";
-import { Category, ProductForm } from "./product-form";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import MainLayout from "@/Layouts/MainLayout";
 import { Head } from "@inertiajs/react";
+import { Category, ProductForm } from "./product-form";
 
 interface Photo {
     id: string;

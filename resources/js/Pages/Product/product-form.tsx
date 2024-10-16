@@ -1,23 +1,17 @@
 "use client";
 
-import * as z from "zod";
 import { Button } from "@/Components/ui/button";
-import { Heading } from "@/Components/ui/heading";
-import { TrashIcon } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useRef, useState } from "react";
 import {
+    Form,
     FormControl,
+    FormDescription,
     FormField,
     FormItem,
     FormLabel,
-    Form,
     FormMessage,
 } from "@/Components/ui/form";
+import { Heading } from "@/Components/ui/heading";
 import { Input } from "@/Components/ui/input";
-import { toast } from "react-toastify";
-import { AlertModal } from "@/Components/AlertModal";
 import {
     Select,
     SelectContent,
@@ -25,36 +19,44 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select";
-import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { Textarea } from "@/Components/ui/textarea";
+import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "@inertiajs/react";
+import { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import * as z from "zod";
+import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "../../config";
 
 const formSchema = z.object({
-    name: z.string().min(3),
-    price: z.coerce.number().min(1),
-    category_id: z.string().min(1),
-    description: z.string().min(3).optional(),
-    unit: z.string().min(1),
-    stock_quantity: z.coerce.number().min(1),
+    name: z
+        .string()
+        .min(3, { message: "Name must contain at least 3 character(s)" }),
+    price: z.coerce
+        .number()
+        .min(0, { message: "Price must be greater than or equal to 0" }),
+    category_id: z.string().min(1, { message: "Category is required" }),
+    description: z.string().optional(),
+    unit: z.string().min(1, { message: "Unit is required" }),
+    stock_quantity: z.coerce
+        .number()
+        .min(0, { message: "Stock must be greater than or equal to 0" }),
     photos: z
         .array(
             z.union([
                 z
                     .instanceof(File)
                     .refine(
-                        (file) =>
-                            ["image/jpeg", "image/png", "image/jpg"].includes(
-                                file.type
-                            ),
+                        (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
                         {
-                            message:
-                                "Only .jpg, .jpeg, and .png formats are accepted",
+                            message: " must be jpg, jpeg, png or webp formats",
                         }
                     )
-                    .refine((file) => file.size <= 700 * 1024, {
-                        message: "File size must be less than 700KB",
+                    .refine((file) => file.size <= MAX_FILE_SIZE * 1024, {
+                        message: ` is more than ${MAX_FILE_SIZE}KB`,
                     }),
-                z.string(), // Accept string type as well
+                z.string(),
             ])
         )
         .optional(),
@@ -104,9 +106,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 }) => {
     const [photoFiles, setPhotoFiles] = useState<File[]>([]);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
-
     const { loading, setLoading } = useGlobalContext();
-    const [modalOpen, setModalOpen] = useState(false);
 
     const title = initialData ? "Edit product" : "Create product";
     const description = initialData ? "Edit a product" : "Add a new product";
@@ -133,10 +133,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     initialData.photos.map((photoUrl, index) => {
                         const filePath = `${
                             import.meta.env.VITE_APP_URL
-                        }/${photoUrl}`;
+                        }/storage/${photoUrl}`;
                         return urlToFile(
                             filePath,
-                            `photo-${index}.jpg`,
+                            `product-image-${index}.jpg`,
                             "image/jpeg"
                         );
                     })
@@ -160,14 +160,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         if (e.target.files) {
             const files = Array.from(e.target.files);
             setPhotoFiles([...photoFiles, ...files]);
-            form.setValue("photos", [...photoFiles, ...files]); // Update form state
+            form.setValue("photos", [...photoFiles, ...files]);
         }
     };
 
     const removePhotoFile = (index: number) => {
         const updatedPhotoFiles = photoFiles.filter((_, i) => i !== index);
         setPhotoFiles(updatedPhotoFiles);
-        form.setValue("photos", updatedPhotoFiles);
 
         const dt = new DataTransfer();
         updatedPhotoFiles.forEach((file) => dt.items.add(file));
@@ -177,73 +176,61 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         form.setValue("photos", updatedPhotoFiles);
     };
 
-    const handleDeleteId = () => {
+    const onSubmit = (data: ProductFormValues) => {
+        console.log("form data: ", data);
         setLoading(true);
-        router.delete(route("admin.product.destroy", initialData?.id), {
+        router.post(route("admin.product.store"), data, {
             onSuccess: () => {
-                toast.success("Data deleted.", {
-                    position: "top-center",
-                }),
-                    setModalOpen(false);
+                form.reset();
+                setPhotoFiles([]);
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = "";
+                }
+                router.visit(route("admin.product.index")),
+                    setTimeout(() => {
+                        toast.success(toastMessage, {
+                            position: "top-center",
+                        });
+                    }, 1000);
             },
             onError: (error) => console.log("An error occurred: ", error),
             onFinish: () => setLoading(false),
         });
     };
 
-    const onSubmit = (data: ProductFormValues) => {
-        console.log("data dari form", data);
-        form.reset();
-        setPhotoFiles([]);
-        if (fileInputRef.current) {
-            fileInputRef.current.value = "";
-        }
-    };
-
     return (
         <>
-            <AlertModal
-                isOpen={modalOpen}
-                onClose={() => setModalOpen(false)}
-                onConfirm={handleDeleteId}
-                loading={loading}
-            />
             <div className="flex items-center justify-between">
                 <Heading title={title} description={description} />
-                <div className="flex items-center gap-3">
-                    <Button
-                        variant="outline"
-                        onClick={() => window.history.back()}
-                        className="dark:bg-slate-200 dark:text-slate-900"
-                    >
-                        Back
-                    </Button>
-                    {initialData && (
-                        <Button
-                            disabled={loading}
-                            variant="destructive"
-                            size="icon"
-                            onClick={() => setModalOpen(true)}
-                            className="bg-red-500"
-                        >
-                            <TrashIcon className="w-4 h-4" />
-                        </Button>
-                    )}
-                </div>
+                <Button
+                    variant="outline"
+                    onClick={() => window.history.back()}
+                    className="dark:bg-slate-200 dark:text-slate-900"
+                >
+                    Back
+                </Button>
             </div>
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="w-full p-8 space-y-8 rounded-md bg-slate-50 dark:bg-gradient-to-b md:dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-800"
+                    className="w-full p-8 space-y-8 rounded-md bg-slate-50 dark:bg-gradient-to-tr md:dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-800"
                 >
                     <div className="grid grid-cols-1 gap-4 md:gap-8 md:grid-cols-2">
                         {/* name */}
                         <FormField
                             control={form.control}
                             name="name"
-                            render={({ field }) => (
+                            render={({ field, fieldState }) => (
                                 <FormItem>
-                                    <FormLabel>Name</FormLabel>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Name
+                                    </FormLabel>
                                     <FormControl>
                                         <Input
                                             className="dark:bg-slate-700"
@@ -252,7 +239,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                             {...field}
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="dark:text-red-500" />
                                 </FormItem>
                             )}
                         />
@@ -261,9 +248,17 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         <FormField
                             control={form.control}
                             name="price"
-                            render={({ field }) => (
+                            render={({ field, fieldState }) => (
                                 <FormItem>
-                                    <FormLabel>Price</FormLabel>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Price
+                                    </FormLabel>
                                     <FormControl>
                                         <Input
                                             className="dark:bg-slate-700"
@@ -272,7 +267,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                             {...field}
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="dark:text-red-500" />
                                 </FormItem>
                             )}
                         />
@@ -281,9 +276,17 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         <FormField
                             control={form.control}
                             name="category_id"
-                            render={({ field }) => (
+                            render={({ field, fieldState }) => (
                                 <FormItem>
-                                    <FormLabel>Category</FormLabel>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Category
+                                    </FormLabel>
                                     <Select
                                         disabled={loading}
                                         onValueChange={field.onChange}
@@ -309,7 +312,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    <FormMessage />
+                                    <FormMessage className="dark:text-red-500" />
                                 </FormItem>
                             )}
                         />
@@ -318,9 +321,17 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         <FormField
                             control={form.control}
                             name="unit"
-                            render={({ field }) => (
+                            render={({ field, fieldState }) => (
                                 <FormItem>
-                                    <FormLabel>Unit</FormLabel>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Unit
+                                    </FormLabel>
                                     <FormControl>
                                         <Select
                                             disabled={loading}
@@ -351,7 +362,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="dark:text-red-500" />
                                 </FormItem>
                             )}
                         />
@@ -360,9 +371,17 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         <FormField
                             control={form.control}
                             name="stock_quantity"
-                            render={({ field }) => (
+                            render={({ field, fieldState }) => (
                                 <FormItem>
-                                    <FormLabel>Stock</FormLabel>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Stock
+                                    </FormLabel>
                                     <FormControl>
                                         <Input
                                             className="dark:bg-slate-700"
@@ -371,7 +390,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                             {...field}
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="dark:text-red-500" />
                                 </FormItem>
                             )}
                         />
@@ -380,9 +399,17 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         <FormField
                             control={form.control}
                             name="description"
-                            render={({ field }) => (
+                            render={({ field, fieldState }) => (
                                 <FormItem>
-                                    <FormLabel>Description</FormLabel>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Description
+                                    </FormLabel>
                                     <FormControl>
                                         <Textarea
                                             className="w-full h-32 max-w-lg max-h-40 dark:bg-slate-700"
@@ -391,64 +418,93 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                             {...field}
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="dark:text-red-500" />
                                 </FormItem>
                             )}
                         />
+                    </div>
 
-                        {/* images */}
+                    {/* images */}
+                    <div className="flex flex-col gap-8">
                         <FormField
                             control={form.control}
                             name="photos"
-                            render={({ field }) => (
+                            render={({ fieldState }) => (
                                 <FormItem>
-                                    <FormLabel>Images</FormLabel>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Product Images
+                                    </FormLabel>
+                                    <FormDescription>
+                                        Upload each image up to {MAX_FILE_SIZE}
+                                        KB (jpg, jpeg, png, webp only).
+                                    </FormDescription>
                                     <FormControl>
                                         <Input
-                                            className="dark:bg-slate-700"
+                                            className="w-full md:w-[48%] dark:bg-slate-700"
                                             ref={fileInputRef}
                                             type="file"
                                             multiple
-                                            accept="image/jpeg, image/png, image/jpg"
+                                            accept="image/jpeg, image/png, image/jpg, image/webp"
                                             onChange={handlePhotoChange}
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    {fieldState.error && (
+                                        <ul className="flex flex-col gap-6 py-2 text-sm text-red-500 md:gap-3">
+                                            {(Array.isArray(fieldState.error)
+                                                ? fieldState.error
+                                                : [fieldState.error]
+                                            ).map((error, index) => (
+                                                <li key={index}>
+                                                    {`- Image number ${
+                                                        index + 1
+                                                    } ${
+                                                        error?.message ||
+                                                        "Unknown error"
+                                                    }`}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
                                 </FormItem>
                             )}
                         />
 
                         {/* Preview Images */}
-                        <div>
-                            <div className="flex flex-wrap items-center justify-evenly">
-                                {photoFiles.map((file, index) => (
-                                    <div
+                        <div className="flex flex-wrap items-center justify-center gap-8 md:justify-start">
+                            {photoFiles.map((file, index) => (
+                                <div
+                                    key={index}
+                                    className="relative overflow-hidden border rounded-md shadow-md dark:border-gray-200 border-slate-300 w-52 h-52"
+                                >
+                                    <img
                                         key={index}
-                                        className="flex items-center"
+                                        src={URL.createObjectURL(file)}
+                                        alt={`Uploaded ${index}`}
+                                        className="object-cover w-full h-full"
+                                    />
+                                    <button
+                                        className="absolute flex items-center justify-center w-6 h-6 text-white bg-red-500 rounded-full top-2 right-2"
+                                        type="button"
+                                        onClick={() => removePhotoFile(index)}
                                     >
-                                        <img
-                                            key={index}
-                                            src={URL.createObjectURL(file)}
-                                            alt="Uploaded"
-                                            className="w-20 h-20"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                removePhotoFile(index)
-                                            }
-                                        >
-                                            Hapus
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
+                                        <span className="text-xs leading-none">
+                                            ✕
+                                        </span>
+                                    </button>
+                                </div>
+                            ))}
                         </div>
                     </div>
 
                     <Button
                         disabled={loading}
-                        className="ml-auto"
+                        className="w-full lg:w-1/2"
                         type="submit"
                     >
                         {action}
