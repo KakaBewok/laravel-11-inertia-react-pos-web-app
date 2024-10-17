@@ -95,11 +95,7 @@ class ProductService
     public function delete(int $id)
     {
         try {
-            $product = $this->productRepository->find($id);
-
-            $this->deleteProductPhotos($product);
-            return $this->productRepository->delete($id);
-            Log::info("Deleted product id and name: ", $id, $product->name);
+            $this->productRepository->delete($id);
         } catch (\Exception $e) {
             Log::error('Failed to delete data', [
                 'id' => $id,
@@ -111,28 +107,12 @@ class ProductService
     public function multipleDelete(array $ids)
     {
         try {
-            $products = $this->productRepository->getManyProducts($ids);
-            foreach ($products as $product) {
-                $this->deleteProductPhotos($product);
-                $this->productRepository->delete($product->id);
-            }
-            Log::info("Deleted product ids: ", $ids);
+            $this->productRepository->deleteMany($ids);
         } catch (\Exception $e) {
             Log::error('Failed to delete data', [
                 'ids' => $ids,
                 'error_message' => $e->getMessage(),
             ]);
-        }
-    }
-
-    protected function deleteProductPhotos($product)
-    {
-        if ($product->photos->isNotEmpty()) {
-            foreach ($product->photos as $photo) {
-                if (Storage::disk('public')->exists($photo->photo)) {
-                    Storage::disk('public')->delete($photo->photo);
-                }
-            }
         }
     }
 }
