@@ -19,10 +19,13 @@ class UpdateProductRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+
+    //  'name' => 'required|string|min:3|unique:products,name,' . $productId,
+
+   public function rules(): array
     {
-          return [
-            'name' => 'required|string|min:3|unique:products,name'. $this->route('id'),
+        return [
+            'name' => 'required|string|min:3',
             'price' => 'required|numeric|min:0',
             'category_id' => 'required|string|min:1',
             'description' => 'nullable|string',
@@ -33,7 +36,7 @@ class UpdateProductRequest extends FormRequest
         ];
     }
 
-     public function messages()
+    public function messages()
     {
         return [
             'name.required' => 'Name is required.',
