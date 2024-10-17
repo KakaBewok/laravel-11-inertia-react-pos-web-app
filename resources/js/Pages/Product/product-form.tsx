@@ -176,48 +176,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         form.setValue("photos", updatedPhotoFiles);
     };
 
-    // const onSubmit = (data: ProductFormValues) => {
-    //     setLoading(true);
-
-    //     if (initialData) {
-    //         router.patch(route("admin.product.update"), data, {
-    //             onSuccess: () => {
-    //                 form.reset();
-    //                 setPhotoFiles([]);
-    //                 if (fileInputRef.current) {
-    //                     fileInputRef.current.value = "";
-    //                 }
-    //                 router.visit(route("admin.product.index")),
-    //                     setTimeout(() => {
-    //                         toast.success(toastMessage, {
-    //                             position: "top-center",
-    //                         });
-    //                     }, 1000);
-    //             },
-    //             onError: (error) => console.log("An error occurred: ", error),
-    //             onFinish: () => setLoading(false),
-    //         });
-    //     } else {
-    //         router.post(route("admin.product.store"), data, {
-    //             onSuccess: () => {
-    //                 form.reset();
-    //                 setPhotoFiles([]);
-    //                 if (fileInputRef.current) {
-    //                     fileInputRef.current.value = "";
-    //                 }
-    //                 router.visit(route("admin.product.index")),
-    //                     setTimeout(() => {
-    //                         toast.success(toastMessage, {
-    //                             position: "top-center",
-    //                         });
-    //                     }, 1000);
-    //             },
-    //             onError: (error) => console.log("An error occurred: ", error),
-    //             onFinish: () => setLoading(false),
-    //         });
-    //     }
-    // };
-
     const onSubmit = (data: ProductFormValues) => {
         setLoading(true);
 
@@ -230,7 +188,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         };
 
         const handleSuccess = () => {
-            console.log("data update: ", data);
+            console.log(data);
             clearForm();
             router.visit(route("admin.product.index"));
             setTimeout(() => {
@@ -247,15 +205,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         const handleFinish = () => setLoading(false);
 
         initialData
-            ? router.patch(
-                  route("admin.product.update", initialData?.id),
-                  data,
-                  {
-                      onSuccess: handleSuccess,
-                      onError: handleError,
-                      onFinish: handleFinish,
-                  }
-              )
+            ? router.put(route("admin.product.update", initialData?.id), data, {
+                  onSuccess: handleSuccess,
+                  onError: handleError,
+                  onFinish: handleFinish,
+              })
             : router.post(route("admin.product.store"), data, {
                   onSuccess: handleSuccess,
                   onError: handleError,

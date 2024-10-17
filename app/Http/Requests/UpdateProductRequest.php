@@ -21,27 +21,19 @@ class UpdateProductRequest extends FormRequest
      */
     public function rules(): array
     {
-        $productId = $this->route('product') ? $this->route('product')->id : null;
-
-        return [
-            'name' => [
-                'sometimes',
-                'required',
-                'string',
-                'min:3',
-                'unique:products,name,' . $productId, // Menambahkan pengecualian jika data sedang diupdate
-            ],
-            'price' => 'sometimes|required|numeric|min:0',
-            'category_id' => 'sometimes|required|string|min:1',
+          return [
+            'name' => 'required|string|min:3|unique:products,name'. $this->route('id'),
+            'price' => 'required|numeric|min:0',
+            'category_id' => 'required|string|min:1',
             'description' => 'nullable|string',
-            'unit' => 'sometimes|required|string|min:1',
-            'stock_quantity' => 'sometimes|required|numeric|min:0',
+            'unit' => 'required|string|min:1',
+            'stock_quantity' => 'required|numeric|min:0',
             'photos' => 'nullable|array',
             'photos.*' => 'nullable|file|mimes:' . implode(',', config('constants.ACCEPTED_IMAGE_TYPES')) . '|max:' . (config('constants.MAX_FILE_SIZE') * 1024),
         ];
     }
 
-    public function messages()
+     public function messages()
     {
         return [
             'name.required' => 'Name is required.',
