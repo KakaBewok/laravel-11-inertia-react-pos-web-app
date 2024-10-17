@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Services\ProductService;
 use App\Services\CategoryService;
 use App\Services\PhotoService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -81,7 +83,11 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(StoreProductRequest $request, Product $product) {}
+    public function update(UpdateProductRequest $request, Product $product) {
+        dd($request->all());
+        $validatedData = $request->validated();
+        $this->productService->update($product, $validatedData);
+    }
 
     /**
      * Remove the specified resource from storage.

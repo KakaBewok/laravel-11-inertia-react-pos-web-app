@@ -179,43 +179,42 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     const onSubmit = (data: ProductFormValues) => {
         setLoading(true);
 
-        if (initialData) {
-            router.patch(route("admin.product.update"), data, {
-                onSuccess: () => {
-                    form.reset();
-                    setPhotoFiles([]);
-                    if (fileInputRef.current) {
-                        fileInputRef.current.value = "";
-                    }
-                    router.visit(route("admin.product.index")),
-                        setTimeout(() => {
-                            toast.success(toastMessage, {
-                                position: "top-center",
-                            });
-                        }, 1000);
-                },
-                onError: (error) => console.log("An error occurred: ", error),
-                onFinish: () => setLoading(false),
-            });
-        }
+        const clearForm = () => {
+            form.reset();
+            setPhotoFiles([]);
+            if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+            }
+        };
 
-        router.post(route("admin.product.store"), data, {
-            onSuccess: () => {
-                form.reset();
-                setPhotoFiles([]);
-                if (fileInputRef.current) {
-                    fileInputRef.current.value = "";
-                }
-                router.visit(route("admin.product.index")),
-                    setTimeout(() => {
-                        toast.success(toastMessage, {
-                            position: "top-center",
-                        });
-                    }, 1000);
-            },
-            onError: (error) => console.log("An error occurred: ", error),
-            onFinish: () => setLoading(false),
-        });
+        const handleSuccess = () => {
+            console.log(data);
+            clearForm();
+            router.visit(route("admin.product.index"));
+            setTimeout(() => {
+                toast.success(toastMessage, {
+                    position: "top-center",
+                });
+            }, 1000);
+        };
+
+        const handleError = (error: any) => {
+            console.log("An error occurred: ", error);
+        };
+
+        const handleFinish = () => setLoading(false);
+
+        initialData
+            ? router.put(route("admin.product.update", initialData?.id), data, {
+                  onSuccess: handleSuccess,
+                  onError: handleError,
+                  onFinish: handleFinish,
+              })
+            : router.post(route("admin.product.store"), data, {
+                  onSuccess: handleSuccess,
+                  onError: handleError,
+                  onFinish: handleFinish,
+              });
     };
 
     return (
