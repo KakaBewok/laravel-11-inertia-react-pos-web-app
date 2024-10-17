@@ -188,7 +188,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         };
 
         const handleSuccess = () => {
-            console.log(data);
+            console.log("form data: ", data);
             clearForm();
             router.visit(route("admin.product.index"));
             setTimeout(() => {
@@ -205,11 +205,15 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         const handleFinish = () => setLoading(false);
 
         initialData
-            ? router.put(route("admin.product.update", initialData?.id), data, {
-                  onSuccess: handleSuccess,
-                  onError: handleError,
-                  onFinish: handleFinish,
-              })
+            ? router.patch(
+                  route("admin.product.update", initialData?.id),
+                  data,
+                  {
+                      onSuccess: handleSuccess,
+                      onError: handleError,
+                      onFinish: handleFinish,
+                  }
+              )
             : router.post(route("admin.product.store"), data, {
                   onSuccess: handleSuccess,
                   onError: handleError,

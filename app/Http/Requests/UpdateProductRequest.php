@@ -20,9 +20,7 @@ class UpdateProductRequest extends FormRequest
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
 
-    //  'name' => 'required|string|min:3|unique:products,name,' . $productId,
-
-   public function rules(): array
+    public function rules(): array
     {
         return [
             'name' => 'required|string|min:3',
