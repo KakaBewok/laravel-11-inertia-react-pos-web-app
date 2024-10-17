@@ -16,11 +16,17 @@ class ProductObserver
     }
 
     /**
-     * Handle the Product "updated" event.
+     * Handle the Product "updating" event.
      */
-    public function updated(Product $product): void
+    public function updating(Product $product): void
     {
-        //
+        // if ($product->photos->isNotEmpty()) {
+        //     foreach ($product->photos as $photo) {
+        //         if (Storage::disk('public')->exists($photo->photo)) {
+        //             Storage::disk('public')->delete($photo->photo);
+        //         }
+        //     }
+        // }
     }
 
     /**
@@ -28,7 +34,7 @@ class ProductObserver
      */
     public function deleting(Product $product): void
     {
-         if ($product->photos->isNotEmpty()) {
+        if ($product->photos->isNotEmpty()) {
             foreach ($product->photos as $photo) {
                 if (Storage::disk('public')->exists($photo->photo)) {
                     Storage::disk('public')->delete($photo->photo);

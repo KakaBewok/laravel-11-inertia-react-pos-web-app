@@ -67,29 +67,11 @@ class ProductService
 
     public function update(Product $product, array $data)
     {
-        // if (isset($data['photos']) && is_array($data['photos'])) {
-        //     // Delete old photos if needed
-        //     if ($product->photos->isNotEmpty()) {
-        //         $product->photos->each(function ($photo) {
-        //             if (Storage::disk('public')->exists($photo->photo)) {
-        //                 Storage::disk('public')->delete($photo->photo);
-        //             }
-        //             $photo->delete();  // Delete photo record from the database
-        //         });
-        //     }
-
-        //     // Store new photos
-        //     foreach ($data['photos'] as $photoFile) {
-        //         $photoPath = $photoFile->store('photos', 'public'); // Store new photo in public disk
-
-        //         // Save photo path in database
-        //         $product->photos()->create([
-        //             'photo' => $photoPath,
-        //         ]);
-        //     }
-        // }
-        // // Update other product fields if provided
-        // $product->update($data);
+        try {
+            $this->productRepository->update($product->id, $data);
+        } catch (\Exception $e) {
+            Log::error('Error when updating product: '. $e->getMessage());
+        }
     }
 
     public function delete(int $id)
