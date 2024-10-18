@@ -207,7 +207,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         initialData
             ? router.post(
                   route("admin.product.update", initialData?.id),
-                  { ...data, _method: "PATCH" },
+                  {
+                      ...data,
+                      _method: "PATCH",
+                  },
                   {
                       onSuccess: handleSuccess,
                       onError: handleError,

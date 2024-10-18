@@ -22,7 +22,7 @@ class UpdateProductRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
+         return [
             'name' => 'required|string|min:3',
             'price' => 'required|numeric|min:0',
             'category_id' => 'required|string|min:1',
@@ -39,7 +39,6 @@ class UpdateProductRequest extends FormRequest
         return [
             'name.required' => 'Name is required.',
             'name.min' => 'Name must contain at least 3 characters.',
-            'name.unique' => 'The name has already been taken.',
             'price.required' => 'Price is required.',
             'price.numeric' => 'Price must be a number.',
             'price.min' => 'Price must be greater than or equal to 0.',

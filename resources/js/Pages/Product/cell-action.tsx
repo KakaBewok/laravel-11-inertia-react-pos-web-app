@@ -1,10 +1,10 @@
-import { Button } from "@/Components/ui/button";
-import { ProductColumn } from "./columns";
-import { useGlobalContext } from "@/hooks/useGlobalContext";
-import { useState } from "react";
 import { AlertModal } from "@/Components/AlertModal";
+import { Button } from "@/Components/ui/button";
+import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { router } from "@inertiajs/react";
+import { useState } from "react";
 import { toast } from "react-toastify";
+import { ProductColumn } from "./columns";
 
 export const CellAction = ({ data }: { data: ProductColumn }) => {
     const { loading, setLoading } = useGlobalContext();
