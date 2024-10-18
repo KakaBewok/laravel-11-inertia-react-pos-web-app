@@ -20,13 +20,7 @@ class ProductObserver
      */
     public function updating(Product $product): void
     {
-        // if ($product->photos->isNotEmpty()) {
-        //     foreach ($product->photos as $photo) {
-        //         if (Storage::disk('public')->exists($photo->photo)) {
-        //             Storage::disk('public')->delete($photo->photo);
-        //         }
-        //     }
-        // }
+        //
     }
 
     /**

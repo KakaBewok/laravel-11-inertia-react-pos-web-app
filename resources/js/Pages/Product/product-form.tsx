@@ -188,7 +188,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         };
 
         const handleSuccess = () => {
-            console.log("form data: ", data);
             clearForm();
             router.visit(route("admin.product.index"));
             setTimeout(() => {
