@@ -18,7 +18,7 @@ return new class extends Migration
                 indexName: 'products_category_id'
             )->onDelete('cascade');
             $table->string('name')->unique();
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->string('slug');
             $table->unsignedBigInteger('price');
             $table->string('unit');
