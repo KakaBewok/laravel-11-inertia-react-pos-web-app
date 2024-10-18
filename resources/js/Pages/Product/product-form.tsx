@@ -205,9 +205,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         const handleFinish = () => setLoading(false);
 
         initialData
-            ? router.patch(
+            ? router.post(
                   route("admin.product.update", initialData?.id),
-                  data,
+                  { ...data, _method: "PATCH" },
                   {
                       onSuccess: handleSuccess,
                       onError: handleError,
