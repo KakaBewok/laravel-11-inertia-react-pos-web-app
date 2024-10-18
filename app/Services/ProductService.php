@@ -68,9 +68,66 @@ class ProductService
     public function update(Product $product, array $data)
     {
         try {
-            $this->productRepository->update($product->id, $data);
+            // Update existing product fields
+            $updatedProduct = [
+                'name' => $data['name'],
+                'price' => $data['price'],
+                'category_id' => $data['category_id'],
+                'description' => $data['description'] ?? '',
+                'unit' => $data['unit'],
+                'stock_quantity' => $data['stock_quantity'],
+            ];
+            $this->productRepository->update($product->id, $updatedProduct);
+
+            // Handle photos
+            $photoPaths = [];
+            if (!empty($data['photos'])) {
+                foreach ($data['photos'] as $photo) {
+                    if ($photo instanceof UploadedFile) {
+                        // If it's a new photo, store the image to storage/public/images
+                        $photoPath = $photo->store('images', 'public');
+                        $photoPaths[] = $photoPath;
+                    } else {
+                        // If it's an existing photo, keep the original path
+                        $photoPaths[] = $photo;
+                    }
+                }
+            } else {
+                // If no photos are uploaded, delete all existing photos
+                $existingPhotos = $product->photos()->pluck('photo')->toArray();
+                foreach ($existingPhotos as $oldPhoto) {
+                    if (Storage::disk('public')->exists($oldPhoto)) {
+                        Storage::disk('public')->delete($oldPhoto); // Delete the old photo file
+                    }
+                }
+                // Delete from the database
+                $product->photos()->delete();
+            }   
+
+            // Sync photos: remove old ones and add new ones
+            if (!empty($photoPaths)) {
+                // Delete old photos that are not included in the updated list
+                $existingPhotos = $product->photos()->pluck('photo')->toArray();
+                $photosToDelete = array_diff($existingPhotos, $photoPaths);
+                if (!empty($photosToDelete)) {
+                    foreach ($photosToDelete as $oldPhoto) {
+                        if (Storage::disk('public')->exists($oldPhoto)) {
+                            Storage::disk('public')->delete($oldPhoto); // Delete the old photo file
+                        }
+                    }
+                    // Delete from the database
+                    $product->photos()->whereIn('photo', $photosToDelete)->delete();
+                }
+
+                // Add new photos that are not yet in the database
+                foreach ($photoPaths as $path) {
+                    if (!in_array($path, $existingPhotos)) {
+                        $product->photos()->create(['photo' => $path]);
+                    }
+                }
+            }
         } catch (\Exception $e) {
-            Log::error('Error when updating product: '. $e->getMessage());
+            Log::error('Error when updating product: ' . $e->getMessage());
         }
     }
 
