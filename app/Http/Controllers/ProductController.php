@@ -11,7 +11,6 @@ use App\Services\CategoryService;
 use App\Services\PhotoService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -73,6 +72,8 @@ class ProductController extends Controller
     {
         $product = $this->productService->getDetailProduct($id);
         $categories = $this->categoryService->getAllCategories();
+        $product->category_id = (string) $product->category_id;
+
         return Inertia::render('Product/edit', [
             'product' => $product,
             'categories' => $categories,

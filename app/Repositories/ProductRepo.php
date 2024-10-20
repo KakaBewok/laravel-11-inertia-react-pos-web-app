@@ -10,10 +10,11 @@ class ProductRepo implements CrudRepository
 {
     public function find(int $id)
     {
-         return Product::with(['category', 'photos', 'orderProducts'])->find($id);
+        return Product::with(['category', 'photos', 'orderProducts'])->find($id);
     }
 
-    public function getManyProducts(array $ids){
+    public function getManyProducts(array $ids)
+    {
         return Product::with(['category', 'photos', 'orderProducts'])->whereIn('id', $ids)->get();
     }
 
@@ -44,7 +45,8 @@ class ProductRepo implements CrudRepository
         return false;
     }
 
-     public function deleteMany(array $ids){
+    public function deleteMany(array $ids)
+    {
         return Product::destroy($ids);
     }
 }
