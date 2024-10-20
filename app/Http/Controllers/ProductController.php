@@ -72,6 +72,8 @@ class ProductController extends Controller
     {
         $product = $this->productService->getDetailProduct($id);
         $categories = $this->categoryService->getAllCategories();
+        $product->category_id = (string) $product->category_id;
+
         return Inertia::render('Product/edit', [
             'product' => $product,
             'categories' => $categories,

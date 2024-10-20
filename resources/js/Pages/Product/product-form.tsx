@@ -188,7 +188,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         };
 
         const handleSuccess = () => {
-            console.log(data);
             clearForm();
             router.visit(route("admin.product.index"));
             setTimeout(() => {
@@ -316,13 +315,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                     <Select
                                         disabled={loading}
                                         onValueChange={field.onChange}
-                                        value={field.value}
-                                        defaultValue={field.value}
+                                        value={field.value.toString()}
+                                        defaultValue={field.value.toString()}
                                     >
                                         <FormControl className="dark:bg-slate-700">
                                             <SelectTrigger className="w-full">
                                                 <SelectValue
-                                                    defaultValue={field.value}
+                                                    defaultValue={field.value.toString()}
                                                     placeholder="Select a category"
                                                 />
                                             </SelectTrigger>
@@ -330,8 +329,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                         <SelectContent>
                                             {categories.map((category) => (
                                                 <SelectItem
-                                                    key={category.id}
-                                                    value={category.id}
+                                                    key={category.id.toString()}
+                                                    value={category.id.toString()}
                                                 >
                                                     {category.name}
                                                 </SelectItem>
