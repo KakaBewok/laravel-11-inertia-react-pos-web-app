@@ -1,24 +1,10 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import MainLayout from "@/Layouts/MainLayout";
 import { Head } from "@inertiajs/react";
-import { Category, ProductForm } from "./product-form";
-
-interface Photo {
-    id: string;
-    photo: string;
-    product_id: string;
-}
-
-export interface Product {
-    id: string;
-    name: string;
-    slug: string;
-    description: string;
-    price: number;
-    unit: string;
-    stock_quantity: number;
-    category_id: string;
-}
+import { ProductForm } from "./product-form";
+import Product from "@/interfaces/Product";
+import Category from "@/interfaces/Category";
+import Photo from "@/interfaces/Photo";
 
 interface EditProductProps {
     product: Product;

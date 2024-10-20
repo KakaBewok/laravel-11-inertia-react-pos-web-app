@@ -8,9 +8,9 @@ import { CellAction } from "./cell-action";
 export type ProductColumn = {
     id: string;
     name: string;
-    price: string;
+    price: number;
     unit: string;
-    stock_quantity: string;
+    stock_quantity: number;
     category: string;
 };
 

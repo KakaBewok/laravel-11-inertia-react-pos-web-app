@@ -35,6 +35,17 @@ export const CellAction = ({ data }: { data: ProductColumn }) => {
         );
     };
 
+    const handleShowDetailsProduct = () => {
+        setLoading(true);
+        router.get(
+            route("admin.product.show", data.id),
+            {},
+            {
+                onFinish: () => setLoading(false),
+            }
+        );
+    };
+
     return (
         <div>
             <AlertModal
@@ -87,6 +98,7 @@ export const CellAction = ({ data }: { data: ProductColumn }) => {
                 <Button
                     variant="ghost"
                     className="h-8 p-0 w-9 bg-sky-500 hover:bg-sky-600"
+                    onClick={handleShowDetailsProduct}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

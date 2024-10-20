@@ -1,7 +1,8 @@
 import MainLayout from "@/Layouts/MainLayout";
-import { Category, ProductForm } from "./product-form";
+import { ProductForm } from "./product-form";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
+import Category from "@/interfaces/Category";
 
 const CreateProduct = ({ categories }: { categories: Category[] }) => {
     return (

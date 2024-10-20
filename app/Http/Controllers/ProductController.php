@@ -62,7 +62,12 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
+        // dd($product);
+        return Inertia::render('Product/details', [
+            'product' => $product,
+            // 'category' => $product->category,
+            // 'photos' => $product->photos
+        ]);
     }
 
     /**
