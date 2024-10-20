@@ -154,8 +154,10 @@ class ProductService
         // Find photos to delete
         $photosToDelete = array_diff($existingPhotos, $photoPaths);
 
-        // Delete old photos
-        $this->deletePhotos($product, $photosToDelete);
+        if (!empty($photosToDelete)) {
+            // Delete old photos
+            $this->deletePhotos($product, $photosToDelete);
+        }
 
         // Add new photos that are not yet in the database
         $this->addNewPhotos($product, $photoPaths, $existingPhotos);
