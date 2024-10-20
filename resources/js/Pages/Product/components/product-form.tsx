@@ -27,7 +27,7 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as z from "zod";
-import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "../../config";
+import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "../../../config";
 import Product from "@/interfaces/Product";
 import Category from "@/interfaces/Category";
 

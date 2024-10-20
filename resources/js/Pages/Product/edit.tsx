@@ -1,22 +1,18 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import MainLayout from "@/Layouts/MainLayout";
 import { Head } from "@inertiajs/react";
-import { ProductForm } from "./product-form";
+import { ProductForm } from "./components/product-form";
 import Product from "@/interfaces/Product";
 import Category from "@/interfaces/Category";
 import Photo from "@/interfaces/Photo";
 
-interface EditProductProps {
+interface EditPageProps {
     product: Product;
     photos: Photo[];
     categories: Category[];
 }
 
-const EditProduct: React.FC<EditProductProps> = ({
-    product,
-    photos,
-    categories,
-}) => {
+const EditPage: React.FC<EditPageProps> = ({ product, photos, categories }) => {
     const initialData: Product & { photos: string[] } = {
         ...product,
         photos: photos.map((photo: Photo) => photo.photo),
@@ -38,4 +34,4 @@ const EditProduct: React.FC<EditProductProps> = ({
     );
 };
 
-export default EditProduct;
+export default EditPage;

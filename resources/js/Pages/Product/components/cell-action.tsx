@@ -56,6 +56,7 @@ export const CellAction = ({ data }: { data: ProductColumn }) => {
             />
             <div className="flex items-center gap-2">
                 <Button
+                    disabled={loading}
                     variant="destructive"
                     onClick={() => setModalOpen(true)}
                     className="h-8 p-0 bg-red-500 w-9 hover:bg-red-600"
@@ -76,6 +77,7 @@ export const CellAction = ({ data }: { data: ProductColumn }) => {
                     </svg>
                 </Button>
                 <Button
+                    disabled={loading}
                     variant="ghost"
                     className="h-8 p-0 w-9 bg-amber-400 hover:bg-amber-500"
                     onClick={handleEditProduct}
@@ -96,6 +98,7 @@ export const CellAction = ({ data }: { data: ProductColumn }) => {
                     </svg>
                 </Button>
                 <Button
+                    disabled={loading}
                     variant="ghost"
                     className="h-8 p-0 w-9 bg-sky-500 hover:bg-sky-600"
                     onClick={handleShowDetailsProduct}

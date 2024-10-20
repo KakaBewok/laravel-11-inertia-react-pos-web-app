@@ -1,10 +1,10 @@
 import MainLayout from "@/Layouts/MainLayout";
-import { ProductForm } from "./product-form";
+import { ProductForm } from "./components/product-form";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import Category from "@/interfaces/Category";
 
-const CreateProduct = ({ categories }: { categories: Category[] }) => {
+const CreatePage = ({ categories }: { categories: Category[] }) => {
     return (
         <MainLayout>
             <AuthenticatedLayout>
@@ -19,4 +19,4 @@ const CreateProduct = ({ categories }: { categories: Category[] }) => {
     );
 };
 
-export default CreateProduct;
+export default CreatePage;

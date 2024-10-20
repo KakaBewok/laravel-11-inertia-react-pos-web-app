@@ -16,7 +16,9 @@ export function CarouselPhoto({ photos }: { photos: Photo[] }) {
                 {photos.map((photo) => (
                     <CarouselItem key={photo.id}>
                         <img
-                            src={`http://localhost:8000/storage/${photo.photo}`}
+                            src={`${import.meta.env.VITE_APP_URL}/storage/${
+                                photo.photo
+                            }`}
                             alt="Product photo"
                             className="object-contain w-full h-full"
                         />
@@ -28,3 +30,4 @@ export function CarouselPhoto({ photos }: { photos: Photo[] }) {
         </Carousel>
     );
 }
+// TODO: buat gambar default kalo gambar tidak ada.

@@ -3,14 +3,14 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import MainLayout from "@/Layouts/MainLayout";
 import { Head } from "@inertiajs/react";
-import { ProductClient } from "./client";
-import { ProductColumn } from "./columns";
+import { ProductClient } from "./components/client";
+import { ProductColumn } from "@/Pages/Product/components/columns";
 import Category from "@/interfaces/Category";
 import Product from "@/interfaces/Product";
 
 type ProductProps = Product & { category: Category };
 
-const ProductsPage = ({ products }: { products: ProductProps[] }) => {
+const ProductPage = ({ products }: { products: ProductProps[] }) => {
     const formattedProducts: ProductColumn[] = products.map((item) => ({
         id: item.id,
         name: item.name,
@@ -32,4 +32,4 @@ const ProductsPage = ({ products }: { products: ProductProps[] }) => {
     );
 };
 
-export default ProductsPage;
+export default ProductPage;
