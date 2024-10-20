@@ -10,19 +10,17 @@ interface DetailsProductProps {
     photos: Photo[];
 }
 
-export const DetailsProduct = ({
-    product,
-    category,
-    photos,
-}: DetailsProductProps) => {
-    console.log(category);
-    console.log(photos);
+const DetailsProduct = ({ product, category, photos }: DetailsProductProps) => {
     return (
-        <MainLayout>
-            <AuthenticatedLayout>
-                <h1>{product.name}</h1>
-                <h1>{category.name}</h1>
-            </AuthenticatedLayout>
-        </MainLayout>
+        <>
+            <MainLayout>
+                <AuthenticatedLayout>
+                    <h1>{product.name}</h1>
+                    <h1>{category.name}</h1>
+                </AuthenticatedLayout>
+            </MainLayout>
+        </>
     );
 };
+
+export default DetailsProduct;
