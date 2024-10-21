@@ -3,19 +3,14 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import MainLayout from "@/Layouts/MainLayout";
 import { Head } from "@inertiajs/react";
-import { Product } from "../Product";
 import { CategoryClient } from "./client";
 import { CategoryColumn } from "./columns";
+import Category from "@/interfaces/Category";
+import Product from "@/interfaces/Product";
 
-interface Category {
-    id: string;
-    name: string;
-    slug: string;
-    description: string;
-    products: Product[];
-}
+type CategoryProps = Category & { products: Product[] };
 
-const CategoriesPage = ({ categories }: { categories: Category[] }) => {
+const CategoriesPage = ({ categories }: { categories: CategoryProps[] }) => {
     const formattedCategories: CategoryColumn[] = categories.map((item) => ({
         id: item.id,
         name: item.name,

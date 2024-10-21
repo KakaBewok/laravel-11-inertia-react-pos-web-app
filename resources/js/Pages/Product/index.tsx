@@ -3,28 +3,14 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import MainLayout from "@/Layouts/MainLayout";
 import { Head } from "@inertiajs/react";
-import { ProductClient } from "./client";
-import { ProductColumn } from "./columns";
+import { ProductClient } from "./components/client";
+import { ProductColumn } from "@/Pages/Product/components/columns";
+import Category from "@/interfaces/Category";
+import Product from "@/interfaces/Product";
 
-interface Category {
-    id: number;
-    name: string;
-    description: string;
-}
+type ProductProps = Product & { category: Category };
 
-export interface Product {
-    id: string;
-    name: string;
-    slug: string;
-    description: string;
-    price: string;
-    unit: string;
-    stock_quantity: string;
-    category_id: string;
-    category: Category;
-}
-
-const ProductsPage = ({ products }: { products: Product[] }) => {
+const ProductPage = ({ products }: { products: ProductProps[] }) => {
     const formattedProducts: ProductColumn[] = products.map((item) => ({
         id: item.id,
         name: item.name,
@@ -46,4 +32,4 @@ const ProductsPage = ({ products }: { products: Product[] }) => {
     );
 };
 
-export default ProductsPage;
+export default ProductPage;

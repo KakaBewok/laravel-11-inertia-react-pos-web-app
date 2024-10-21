@@ -27,7 +27,9 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as z from "zod";
-import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "../../config";
+import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "../../../config";
+import Product from "@/interfaces/Product";
+import Category from "@/interfaces/Category";
 
 const formSchema = z.object({
     name: z
@@ -61,23 +63,6 @@ const formSchema = z.object({
         )
         .optional(),
 });
-
-interface Product {
-    id: string;
-    name: string;
-    slug: string;
-    description: string;
-    price: number;
-    unit: string;
-    stock_quantity: number;
-    category_id: string;
-}
-
-export interface Category {
-    id: string;
-    name: string;
-    description: string;
-}
 
 type ProductFormValues = z.infer<typeof formSchema>;
 
@@ -268,7 +253,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                 </FormItem>
                             )}
                         />
-
                         {/* price */}
                         <FormField
                             control={form.control}
@@ -296,7 +280,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                 </FormItem>
                             )}
                         />
-
                         {/* category */}
                         <FormField
                             control={form.control}
@@ -341,7 +324,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                 </FormItem>
                             )}
                         />
-
                         {/* unit */}
                         <FormField
                             control={form.control}
@@ -391,7 +373,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                 </FormItem>
                             )}
                         />
-
                         {/* stock_quantity */}
                         <FormField
                             control={form.control}
@@ -419,7 +400,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                 </FormItem>
                             )}
                         />
-
                         {/* description */}
                         <FormField
                             control={form.control}
