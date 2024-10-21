@@ -1,25 +1,22 @@
-import { CarouselPhoto } from "@/Components/CarouselPhoto";
 import { Button } from "@/Components/ui/button";
 import { Heading } from "@/Components/ui/heading";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import Category from "@/interfaces/Category";
-import Photo from "@/interfaces/Photo";
 import Product from "@/interfaces/Product";
 import { router } from "@inertiajs/react";
 
-interface ProductDetailsProps {
-    product: Product;
+interface CategoryDetailsProps {
+    products: Product[];
     category: Category;
-    photos: Photo[];
 }
 
-const ProductDetails = ({ product, category, photos }: ProductDetailsProps) => {
+const CategoryDetails = ({ products, category }: CategoryDetailsProps) => {
     const { loading, setLoading } = useGlobalContext();
 
-    const handleEditProduct = () => {
+    const handleEditCategory = () => {
         setLoading(true);
         router.get(
-            route("admin.product.edit", product.id),
+            route("admin.category.edit", category.id),
             {},
             {
                 onFinish: () => setLoading(false),
@@ -31,15 +28,15 @@ const ProductDetails = ({ product, category, photos }: ProductDetailsProps) => {
         <>
             <div className="flex items-center justify-between pb-16">
                 <Heading
-                    title="Details product"
-                    description="All about your product"
+                    title="Details category"
+                    description="All about your category"
                 />
                 <div className="flex items-center gap-3">
                     <Button
                         disabled={loading}
                         variant="ghost"
                         className="h-8 p-0 w-9 bg-amber-400 hover:bg-amber-500"
-                        onClick={handleEditProduct}
+                        onClick={handleEditCategory}
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -66,33 +63,17 @@ const ProductDetails = ({ product, category, photos }: ProductDetailsProps) => {
                 </div>
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div className="mx-auto">
-                    <CarouselPhoto photos={photos} />
-                </div>
                 <div className="w-full max-w-lg">
                     <div className="space-y-6 p-6 md:p-10 rounded-md bg-slate-50 dark:bg-slate-600">
-                        <div>
-                            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 dark:text-gray-50">
-                                {product.name}
-                            </h1>
-                            <h2 className="text-xl font-semibold text-gray-400">
-                                {category.name}
-                            </h2>
-                        </div>
+                        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 dark:text-gray-50">
+                            {category.name}
+                        </h1>
                         <div>
                             <h3 className="font-semibold text-gray-800 dark:text-gray-50">
-                                Price:{" "}
+                                Total products:{" "}
                             </h3>
                             <p className="text-sm text-gray-500 dark:text-gray-300">
-                                Rp. {product.price}/{product.unit}
-                            </p>
-                        </div>
-                        <div>
-                            <h3 className="font-semibold text-gray-800 dark:text-gray-50">
-                                Stock:{" "}
-                            </h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-300">
-                                {product.stock_quantity} {product.unit}
+                                {products.length}
                             </p>
                         </div>
                         <div className="text-gray-800 dark:text-gray-200 ">
@@ -100,8 +81,8 @@ const ProductDetails = ({ product, category, photos }: ProductDetailsProps) => {
                                 Description:{" "}
                             </h3>
                             <p className="text-sm leading-normal md:leading-relaxed lg:leading-loose text-justify text-gray-500 dark:text-gray-300">
-                                {product.description ? (
-                                    product.description
+                                {category.description ? (
+                                    category.description
                                 ) : (
                                     <span className="text-slate-400">
                                         No description.
@@ -111,9 +92,14 @@ const ProductDetails = ({ product, category, photos }: ProductDetailsProps) => {
                         </div>
                     </div>
                 </div>
+                <div className="mx-auto">
+                    <h1>List of products</h1>
+                </div>
             </div>
         </>
     );
 };
 
-export default ProductDetails;
+export default CategoryDetails;
+
+//TODO: add table list of products

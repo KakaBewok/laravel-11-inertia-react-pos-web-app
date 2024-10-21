@@ -43,6 +43,17 @@ export const CategoryClient: React.FC<CategoryClientProps> = ({ data }) => {
         setModalOpen(true);
     };
 
+    const handleCreateCategory = () => {
+        setLoading(true);
+        router.get(
+            route("admin.category.create"),
+            {},
+            {
+                onFinish: () => setLoading(false),
+            }
+        );
+    };
+
     return (
         <>
             <div className="flex items-center justify-between">
@@ -50,8 +61,12 @@ export const CategoryClient: React.FC<CategoryClientProps> = ({ data }) => {
                     title={`Categories (${data.length})`}
                     description="Manage categories for your store"
                 />
-                <Button>
-                    <Plus className="w-4 h-4" />
+                <Button
+                    onClick={handleCreateCategory}
+                    variant="outline"
+                    className="dark:bg-slate-200"
+                >
+                    <Plus className="w-4 h-4 dark:text-slate-900" />
                 </Button>
             </div>
             <AlertModal
