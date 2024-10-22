@@ -23,7 +23,7 @@ class ExpenseController extends Controller
     public function index()
     {
         $expenses = $this->expenseService->getAllExpenses();
-        Inertia::render('Expense/index', [
+        return Inertia::render('Expense/index', [
             'expenses' => $expenses
         ]);
     }
@@ -33,7 +33,7 @@ class ExpenseController extends Controller
      */
     public function create()
     {
-        //
+       return Inertia::render('Expense/create');
     }
 
     /**
@@ -71,8 +71,20 @@ class ExpenseController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Expense $expense)
+    public function destroy(int $id)
     {
-        //
+         $this->expenseService->delete($id);
+    }
+
+    /**
+     * Remove many resource from storage.
+     */
+    public function destroy_bulk(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'string',
+        ]);
+        $this->expenseService->multipleDelete($validated['ids']);
     }
 }

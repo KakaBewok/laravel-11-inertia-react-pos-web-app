@@ -3,14 +3,13 @@
 import { Button } from "@/Components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
-// import { CellAction } from "./cell-action";
+import { CellAction } from "./cell-action";
 
 export type ExpenseColumn = {
     id: string;
     name: string;
     amount: number;
-    description: string;
-    expense_date: Date;
+    expense_date: string;
 };
 
 export const columns: ColumnDef<ExpenseColumn>[] = [
@@ -77,23 +76,6 @@ export const columns: ColumnDef<ExpenseColumn>[] = [
         },
     },
     {
-        accessorKey: "description",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="font-bold text-slate-800 dark:text-slate-50"
-                >
-                    Description
-                    <ArrowUpDown className="w-4 h-4 ml-2" />
-                </Button>
-            );
-        },
-    },
-    {
         accessorKey: "expense_date",
         header: ({ column }) => {
             return (
@@ -110,15 +92,15 @@ export const columns: ColumnDef<ExpenseColumn>[] = [
             );
         },
     },
-    // {
-    //     id: "actions",
-    //     header: () => {
-    //         return (
-    //             <span className="font-bold text-slate-800 dark:text-slate-50">
-    //                 Actions
-    //             </span>
-    //         );
-    //     },
-    //     cell: ({ row }) => <CellAction data={row.original} />,
-    // },
+    {
+        id: "actions",
+        header: () => {
+            return (
+                <span className="font-bold text-slate-800 dark:text-slate-50">
+                    Actions
+                </span>
+            );
+        },
+        cell: ({ row }) => <CellAction data={row.original} />,
+    },
 ];

@@ -11,9 +11,8 @@ const ExpensePage = ({ expenses }: { expenses: Expense[] }) => {
     const formattedExpenses: ExpenseColumn[] = expenses.map((item) => ({
         id: item.id,
         name: item.name,
-        description: item.description,
         amount: item.amount,
-        expense_date: item.expense_date,
+        expense_date: new Date(item.expense_date).toISOString().split("T")[0],
     }));
     return (
         <MainLayout>
