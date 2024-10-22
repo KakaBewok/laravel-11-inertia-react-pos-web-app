@@ -4,15 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Models\Expense;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use App\Services\ExpenseService;
 
 class ExpenseController extends Controller
 {
+    protected $expenseService;
+
+    // Constructor injection
+    public function __construct(ExpenseService $expenseService)
+    {
+        $this->expenseService = $expenseService;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $expenses = $this->expenseService->getAllExpenses();
+        Inertia::render('Expense/index', [
+            'expenses' => $expenses
+        ]);
     }
 
     /**

@@ -28,9 +28,7 @@ class ExpenseRepo implements CrudRepository
         $oldData = Expense::find($id);
         if ($oldData) {
             $oldData->update($data);
-            return $oldData;
         }
-        return null;
     }
 
     public function delete(int $id)
