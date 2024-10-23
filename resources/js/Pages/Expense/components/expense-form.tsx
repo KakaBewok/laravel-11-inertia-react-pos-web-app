@@ -71,9 +71,7 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData }) => {
             name: initialData?.name || "",
             amount: initialData?.amount || 0,
             description: initialData?.description || "",
-            expense_date: initialData?.expense_date
-                ? initialData.expense_date
-                : new Date(),
+            expense_date: initialData?.expense_date || new Date(),
         },
     });
 

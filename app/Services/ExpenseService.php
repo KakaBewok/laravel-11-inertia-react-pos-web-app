@@ -18,14 +18,16 @@ class ExpenseService
 
     public function store(array $validatedData)
     {
-        // try {
-        //     $this->categoryRepository->store([
-        //         'name' => $validatedData['name'],
-        //         'description' => $validatedData['description'] ?? "",
-        //     ]);
-        // } catch (\Exception $e) {
-        //     Log::error('Error when creating category: ' . $e->getMessage());
-        // }
+        try {
+            $this->expenseRepository->store([
+                'name' => $validatedData['name'],
+                'amount' => $validatedData['amount'],
+                'description' => $validatedData['description'] ?? "",
+                'expense_date' => $validatedData['expense_date'],
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error when creating expense: ' . $e->getMessage());
+        }
     }
 
     public function getAllExpenses()
@@ -35,16 +37,17 @@ class ExpenseService
 
     public function update(Expense $expense, array $data)
     {
-        // try {
-        //     // Update existing category fields
-        //     $updatedCategory = [
-        //         'name' => $data['name'],
-        //         'description' => $data['description'] ?? ''
-        //     ];
-        //     $this->categoryRepository->update($category->id, $updatedCategory);
-        // } catch (\Exception $e) {
-        //     Log::error('Error when updating category: ' . $e->getMessage());
-        // }
+        try {
+            $updatedExpense = [
+                'name' => $data['name'],
+                'amount' => $data['amount'],
+                'description' => $data['description'] ?? "",
+                'expense_date' => $data['expense_date'],
+            ];
+            $this->expenseRepository->update($expense->id, $updatedExpense);
+        } catch (\Exception $e) {
+            Log::error('Error when updating expense: ' . $e->getMessage());
+        }
     }
 
     public function delete(int $id)

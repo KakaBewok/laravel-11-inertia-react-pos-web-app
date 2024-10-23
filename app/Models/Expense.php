@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Expense extends Model
 {
@@ -22,6 +23,6 @@ class Expense extends Model
 
     public function getExpenseDateAttribute($value)
     {
-        return \Carbon\Carbon::parse($value)->format('Y-m-d');
+        return Carbon::parse($value)->format('Y-m-d');
     }
 }

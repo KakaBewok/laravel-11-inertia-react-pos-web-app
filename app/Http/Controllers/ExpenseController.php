@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreExpenseRequest;
+use App\Http\Requests\UpdateExpenseRequest;
 use App\Models\Expense;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -39,9 +41,10 @@ class ExpenseController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreExpenseRequest $request)
     {
-        //
+        $validatedData = $request->validated();
+        $this->expenseService->store($validatedData);
     }
 
     /**
@@ -65,9 +68,10 @@ class ExpenseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Expense $expense)
+    public function update(UpdateExpenseRequest $request, Expense $expense)
     {
-        //
+        $validatedData = $request->validated();
+        $this->expenseService->update($expense, $validatedData);
     }
 
     /**
