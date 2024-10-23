@@ -33,7 +33,7 @@ const formSchema = z.object({
     name: z
         .string()
         .min(3, { message: "Category must contain at least 3 character(s)" }),
-    amount: z.number().min(0, { message: "Minimal amount is 0" }),
+    amount: z.coerce.number().min(0, { message: "Minimal amount is 0" }),
     description: z.string().optional(),
     expense_date: z.date().refine(
         (inputDate) => {
@@ -159,7 +159,7 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData }) => {
                                         <Input
                                             className="dark:bg-slate-700"
                                             disabled={loading}
-                                            placeholder="Strong coffee"
+                                            placeholder="Paying taxes"
                                             {...field}
                                         />
                                     </FormControl>
@@ -215,7 +215,7 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData }) => {
                                         <Textarea
                                             className="w-full h-32 max-w-lg max-h-40 dark:bg-slate-700"
                                             disabled={loading}
-                                            placeholder="Describe about strong coffee."
+                                            placeholder="Describe about paying taxes."
                                             {...field}
                                         />
                                     </FormControl>
