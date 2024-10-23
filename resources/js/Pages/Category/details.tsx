@@ -1,28 +1,22 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import MainLayout from "@/Layouts/MainLayout";
 import Category from "@/interfaces/Category";
-import Photo from "@/interfaces/Photo";
 import Product from "@/interfaces/Product";
 import { Head } from "@inertiajs/react";
-import ProductDetails from "./components/product-details";
+import CategoryDetails from "./components/category-details";
 
 interface DetailsPageProps {
-    product: Product;
+    products: Product[];
     category: Category;
-    photos: Photo[];
 }
 
-const DetailsPage = ({ product, category, photos }: DetailsPageProps) => {
+const DetailsPage = ({ products, category }: DetailsPageProps) => {
     return (
         <>
             <MainLayout>
                 <AuthenticatedLayout>
-                    <Head title="Details product" />
-                    <ProductDetails
-                        product={product}
-                        category={category}
-                        photos={photos}
-                    />
+                    <Head title="Details category" />
+                    <CategoryDetails products={products} category={category} />
                 </AuthenticatedLayout>
             </MainLayout>
         </>

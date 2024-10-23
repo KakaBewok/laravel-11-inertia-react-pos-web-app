@@ -1,18 +1,18 @@
-import { Button } from "@/Components/ui/button";
-import { CategoryColumn } from "./columns";
-import { useGlobalContext } from "@/hooks/useGlobalContext";
-import { useState } from "react";
 import { AlertModal } from "@/Components/AlertModal";
+import { Button } from "@/Components/ui/button";
+import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { router } from "@inertiajs/react";
+import { useState } from "react";
 import { toast } from "react-toastify";
+import { ExpenseColumn } from "./columns";
 
-export const CellAction = ({ data }: { data: CategoryColumn }) => {
+export const CellAction = ({ data }: { data: ExpenseColumn }) => {
     const { loading, setLoading } = useGlobalContext();
     const [modalOpen, setModalOpen] = useState<boolean>(false);
 
     const handleDeleteId = () => {
         setLoading(true);
-        router.delete(route("admin.category.destroy", data.id), {
+        router.delete(route("admin.expense.destroy", data.id), {
             onSuccess: () => {
                 toast.success("Data deleted.", {
                     position: "top-center",
@@ -24,6 +24,28 @@ export const CellAction = ({ data }: { data: CategoryColumn }) => {
         });
     };
 
+    const handleEditExpense = () => {
+        setLoading(true);
+        router.get(
+            route("admin.expense.edit", data.id),
+            {},
+            {
+                onFinish: () => setLoading(false),
+            }
+        );
+    };
+
+    const handleShowDetailsExpense = () => {
+        setLoading(true);
+        router.get(
+            route("admin.expense.show", data.id),
+            {},
+            {
+                onFinish: () => setLoading(false),
+            }
+        );
+    };
+
     return (
         <div>
             <AlertModal
@@ -31,10 +53,10 @@ export const CellAction = ({ data }: { data: CategoryColumn }) => {
                 onClose={() => setModalOpen(false)}
                 onConfirm={handleDeleteId}
                 loading={loading}
-                description="All products under this category will also be deleted."
             />
             <div className="flex items-center gap-2">
                 <Button
+                    disabled={loading}
                     variant="destructive"
                     onClick={() => setModalOpen(true)}
                     className="h-8 p-0 bg-red-500 w-9 hover:bg-red-600"
@@ -55,8 +77,10 @@ export const CellAction = ({ data }: { data: CategoryColumn }) => {
                     </svg>
                 </Button>
                 <Button
+                    disabled={loading}
                     variant="ghost"
                     className="h-8 p-0 w-9 bg-amber-400 hover:bg-amber-500"
+                    onClick={handleEditExpense}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -74,8 +98,10 @@ export const CellAction = ({ data }: { data: CategoryColumn }) => {
                     </svg>
                 </Button>
                 <Button
+                    disabled={loading}
                     variant="ghost"
                     className="h-8 p-0 w-9 bg-sky-500 hover:bg-sky-600"
+                    onClick={handleShowDetailsExpense}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

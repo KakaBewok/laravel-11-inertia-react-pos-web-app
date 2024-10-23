@@ -1,12 +1,12 @@
 "use client";
 
+import Category from "@/interfaces/Category";
+import Product from "@/interfaces/Product";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import MainLayout from "@/Layouts/MainLayout";
 import { Head } from "@inertiajs/react";
-import { CategoryClient } from "./client";
-import { CategoryColumn } from "./columns";
-import Category from "@/interfaces/Category";
-import Product from "@/interfaces/Product";
+import { CategoryClient } from "./components/client";
+import { CategoryColumn } from "./components/columns";
 
 type CategoryProps = Category & { products: Product[] };
 

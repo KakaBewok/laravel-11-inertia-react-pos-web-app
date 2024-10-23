@@ -29,7 +29,7 @@ const ProductDetails = ({ product, category, photos }: ProductDetailsProps) => {
 
     return (
         <>
-            <div className="flex items-center justify-between py-16">
+            <div className="flex items-center justify-between pt-6 pb-10">
                 <Heading
                     title="Details product"
                     description="All about your product"
@@ -65,14 +65,12 @@ const ProductDetails = ({ product, category, photos }: ProductDetailsProps) => {
                     </Button>
                 </div>
             </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div className="mx-auto">
-                    <CarouselPhoto photos={photos} />
-                </div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 justify-items-center">
+                <CarouselPhoto photos={photos} />
                 <div className="w-full max-w-lg">
-                    <div className="space-y-6 p-6 md:p-10 rounded-md bg-slate-50 dark:bg-slate-600">
+                    <div className="p-6 space-y-6 rounded-md md:p-10 bg-slate-50 dark:bg-slate-600">
                         <div>
-                            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 dark:text-gray-50">
+                            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-50">
                                 {product.name}
                             </h1>
                             <h2 className="text-xl font-semibold text-gray-400">
@@ -99,7 +97,7 @@ const ProductDetails = ({ product, category, photos }: ProductDetailsProps) => {
                             <h3 className="font-semibold text-gray-800 dark:text-gray-50">
                                 Description:{" "}
                             </h3>
-                            <p className="text-sm leading-normal md:leading-relaxed lg:leading-loose text-justify text-gray-500 dark:text-gray-300">
+                            <p className="text-sm leading-normal text-justify text-gray-500 md:leading-relaxed lg:leading-loose dark:text-gray-300">
                                 {product.description ? (
                                     product.description
                                 ) : (
