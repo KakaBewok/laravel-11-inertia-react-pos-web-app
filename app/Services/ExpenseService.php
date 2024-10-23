@@ -18,7 +18,7 @@ class ExpenseService
     }
 
     public function store(array $validatedData)
-    {  
+    {
         try {
             $this->expenseRepository->store([
                 'name' => $validatedData['name'],
@@ -75,4 +75,3 @@ class ExpenseService
         }
     }
 }
-

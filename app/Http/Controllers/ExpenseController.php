@@ -35,7 +35,7 @@ class ExpenseController extends Controller
      */
     public function create()
     {
-       return Inertia::render('Expense/create');
+        return Inertia::render('Expense/create');
     }
 
     /**
@@ -79,7 +79,7 @@ class ExpenseController extends Controller
      */
     public function destroy(int $id)
     {
-         $this->expenseService->delete($id);
+        $this->expenseService->delete($id);
     }
 
     /**

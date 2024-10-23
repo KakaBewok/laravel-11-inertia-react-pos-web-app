@@ -100,11 +100,15 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData }) => {
 
         const handleFinish = () => setLoading(false);
 
+        const expenseDateFormatted =
+            data.expense_date.toLocaleDateString("en-CA");
+
         initialData
             ? router.post(
                   route("admin.expense.update", initialData?.id),
                   {
                       ...data,
+                      expense_date: expenseDateFormatted,
                       _method: "PATCH",
                   },
                   {
@@ -113,11 +117,18 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData }) => {
                       onFinish: handleFinish,
                   }
               )
-            : router.post(route("admin.expense.store"), data, {
-                  onSuccess: handleSuccess,
-                  onError: handleError,
-                  onFinish: handleFinish,
-              });
+            : router.post(
+                  route("admin.expense.store"),
+                  {
+                      ...data,
+                      expense_date: expenseDateFormatted,
+                  },
+                  {
+                      onSuccess: handleSuccess,
+                      onError: handleError,
+                      onFinish: handleFinish,
+                  }
+              );
     };
 
     return (
