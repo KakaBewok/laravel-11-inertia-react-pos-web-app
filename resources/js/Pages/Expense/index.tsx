@@ -12,7 +12,7 @@ const ExpensePage = ({ expenses }: { expenses: Expense[] }) => {
         id: item.id,
         name: item.name,
         amount: item.amount,
-        expense_date: new Date(item.expense_date).toISOString().split("T")[0],
+        expense_date: item.expense_date,
     }));
     return (
         <MainLayout>

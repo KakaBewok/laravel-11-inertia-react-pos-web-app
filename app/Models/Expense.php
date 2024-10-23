@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Permission\Traits\HasRoles;
 
 class Expense extends Model
 {
@@ -20,4 +19,9 @@ class Expense extends Model
     protected $casts = [
         'expense_date' => 'date'
     ];
+
+    public function getExpenseDateAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('Y-m-d');
+    }
 }

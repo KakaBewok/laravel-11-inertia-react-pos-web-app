@@ -9,7 +9,7 @@ export type ExpenseColumn = {
     id: string;
     name: string;
     amount: number;
-    expense_date: string;
+    expense_date: Date;
 };
 
 export const columns: ColumnDef<ExpenseColumn>[] = [

@@ -25,7 +25,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "@inertiajs/react";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as z from "zod";
@@ -36,11 +35,9 @@ const formSchema = z.object({
         .min(3, { message: "Category must contain at least 3 character(s)" }),
     amount: z.number().min(0, { message: "Minimal amount is 0" }),
     description: z.string().optional(),
-    expense_date: z.string().refine(
-        (dateString) => {
-            const inputDate = new Date(dateString);
+    expense_date: z.date().refine(
+        (inputDate) => {
             const today = new Date();
-
             today.setHours(0, 0, 0, 0);
 
             const tomorrow = new Date(today);
@@ -62,7 +59,6 @@ interface ExpenseFormProps {
 
 export const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData }) => {
     const { loading, setLoading } = useGlobalContext();
-    const [date, setDate] = useState<Date>();
 
     const title = initialData ? "Edit expense" : "Create expense";
     const description = initialData ? "Edit an expense" : "Add a new expense";
@@ -76,8 +72,8 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData }) => {
             amount: initialData?.amount || 0,
             description: initialData?.description || "",
             expense_date: initialData?.expense_date
-                ? new Date(initialData.expense_date).toISOString().split("T")[0]
-                : new Date().toISOString().split("T")[0],
+                ? initialData.expense_date
+                : new Date(),
         },
     });
 
@@ -249,7 +245,7 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData }) => {
                                                 <Button
                                                     variant={"outline"}
                                                     className={cn(
-                                                        "w-full justify-start gap-3 p-5 text-left font-normal",
+                                                        "w-full justify-start gap-3 p-5 text-left font-normal dark:bg-slate-600 dark:hover:bg-slate-600",
                                                         !field.value &&
                                                             "text-muted-foreground"
                                                     )}
@@ -268,21 +264,8 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData }) => {
                                             <PopoverContent className="w-auto p-0">
                                                 <Calendar
                                                     mode="single"
-                                                    selected={
-                                                        new Date(field.value)
-                                                    }
-                                                    // onSelect={field.onChange}
-                                                    onSelect={(date) => {
-                                                        field.onChange(
-                                                            date
-                                                                ? date
-                                                                      .toISOString()
-                                                                      .split(
-                                                                          "T"
-                                                                      )[0]
-                                                                : null
-                                                        );
-                                                    }}
+                                                    selected={field.value}
+                                                    onSelect={field.onChange}
                                                     initialFocus
                                                 />
                                             </PopoverContent>
