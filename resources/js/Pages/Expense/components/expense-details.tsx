@@ -57,7 +57,7 @@ const ExpenseDetails = ({ expense }: { expense: Expense }) => {
                     </Button>
                 </div>
             </div>
-            <div className="w-full max-w-lg p-6 space-y-6 rounded-md md:p-7 bg-slate-50 dark:bg-slate-600">
+            <div className="max-w-lg p-6 space-y-6 rounded-md md:p-9 bg-slate-50 dark:bg-slate-600">
                 <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-50">
                     {expense.name}
                 </h1>
@@ -81,7 +81,7 @@ const ExpenseDetails = ({ expense }: { expense: Expense }) => {
                     <h3 className="font-semibold text-gray-800 dark:text-gray-50">
                         Description:{" "}
                     </h3>
-                    <p className="text-sm leading-normal text-justify text-gray-500 md:leading-relaxed lg:leading-loose dark:text-gray-300">
+                    <p className="text-sm leading-normal md:text-justify text-gray-500 md:leading-relaxed lg:leading-loose dark:text-gray-300">
                         {expense.description ? (
                             expense.description
                         ) : (

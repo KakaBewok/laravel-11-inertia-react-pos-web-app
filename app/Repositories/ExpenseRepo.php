@@ -15,7 +15,7 @@ class ExpenseRepo implements CrudRepository
 
     public function all(): Collection
     {
-        return Expense::all();
+        return Expense::orderBy('created_at', 'desc')->get();
     }
 
     public function store(array $data)

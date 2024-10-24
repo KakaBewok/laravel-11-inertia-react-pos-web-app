@@ -15,7 +15,7 @@ class PhotoRepo implements CrudRepository
 
     public function all(): Collection
     {
-        return Photo::with("product")->get();
+        return Photo::with("product")->orderBy('created_at', 'desc')->get();
     }
 
     public function store(array $data)

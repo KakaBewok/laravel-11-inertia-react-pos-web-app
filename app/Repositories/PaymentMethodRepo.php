@@ -15,7 +15,7 @@ class PaymentMethodRepo implements CrudRepository
 
     public function all(): Collection
     {
-        return PaymentMethod::with("orders")->get();
+        return PaymentMethod::with("orders")->orderBy('created_at', 'desc')->get();
     }
 
     public function store(array $data)
