@@ -52,7 +52,9 @@ class ExpenseController extends Controller
      */
     public function show(Expense $expense)
     {
-        //
+       return Inertia::render('Expense/details', [
+            'expense' => $expense,
+        ]);
     }
 
     /**
