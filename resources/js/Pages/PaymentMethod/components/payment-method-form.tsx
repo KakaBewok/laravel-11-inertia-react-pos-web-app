@@ -21,13 +21,13 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "../../../config";
-
-//  "name", "bank_name", "bank_logo", "qris_image", "status";
+import { router } from "@inertiajs/react";
+import { toast } from "react-toastify";
 
 interface FilesToProcessType {
     key: "bank_logo" | "qris_image";
     ref: React.RefObject<HTMLInputElement>;
-    setFile: (file: File) => void;
+    setFile: (file: File | undefined) => void;
 }
 
 const formSchema = z.object({
@@ -89,7 +89,7 @@ export const PaymentMethodForm = ({
     initialData?: PaymentMethod | null;
 }) => {
     const [bankLogoFile, setBankLogoFile] = useState<File | undefined>();
-    const [qrisImageFile, setQrisImageFile] = useState<File>();
+    const [qrisImageFile, setQrisImageFile] = useState<File | undefined>();
     const bankLogoInputRef = useRef<HTMLInputElement | null>(null);
     const qrisImageInputRef = useRef<HTMLInputElement | null>(null);
     const { loading, setLoading } = useGlobalContext();
@@ -148,7 +148,7 @@ export const PaymentMethodForm = ({
 
                         const dt = new DataTransfer();
                         dt.items.add(file);
-                        if (fileData.ref.current) {
+                        if (fileData.ref?.current) {
                             fileData.ref.current.files = dt.files;
                         }
                         form.setValue(fileData.key, file);
@@ -160,80 +160,97 @@ export const PaymentMethodForm = ({
         convertUrlsToFiles();
     }, [initialData, form]);
 
-    const handleBankLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = (
+        e: React.ChangeEvent<HTMLInputElement>,
+        key: string
+    ) => {
         if (e.target.files && e.target.files.length) {
             const file = e.target.files[0];
-            setBankLogoFile(file);
-            form.setValue("bank_logo", bankLogoFile);
+
+            if (key === "bank_logo") {
+                setBankLogoFile(file);
+                form.setValue("bank_logo", file);
+            } else if (key === "qris_image") {
+                setQrisImageFile(file);
+                form.setValue("qris_image", file);
+            }
         }
     };
 
-    const handleQrisImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files.length) {
-            const file = e.target.files[0];
-            setQrisImageFile(file);
-            form.setValue("qris_image", qrisImageFile);
+    const removePhotoFile = (key: string) => {
+        const filesToProcess: FilesToProcessType[] = [
+            {
+                key: "bank_logo",
+                ref: bankLogoInputRef,
+                setFile: setBankLogoFile,
+            },
+            {
+                key: "qris_image",
+                ref: qrisImageInputRef,
+                setFile: setQrisImageFile,
+            },
+        ];
+
+        const fileData = filesToProcess.find(
+            (fileData) => fileData.key === key
+        );
+        if (fileData && fileData?.ref.current) {
+            fileData.setFile(undefined);
+            fileData.ref.current.value = "";
+            form.setValue(fileData.key, undefined);
         }
     };
 
-    // const removePhotoFile = (index: number) => {
-    //     const updatedPhotoFiles = photoFiles.filter((_, i) => i !== index);
-    //     setPhotoFiles(updatedPhotoFiles);
+    const onSubmit = (data: PaymentMethodFormValues) => {
+        console.log(data);
 
-    //     const dt = new DataTransfer();
-    //     updatedPhotoFiles.forEach((file) => dt.items.add(file));
-    //     if (fileInputRef.current) {
-    //         fileInputRef.current.files = dt.files;
-    //     }
-    //     form.setValue("photos", updatedPhotoFiles);
-    // };
+        setLoading(true);
 
-    // const onSubmit = (data: ProductFormValues) => {
-    //     setLoading(true);
+        const clearForm = () => {
+            form.reset();
+            setBankLogoFile(undefined);
+            setQrisImageFile(undefined);
+            if (bankLogoInputRef.current && qrisImageInputRef.current) {
+                bankLogoInputRef.current.value = "";
+                qrisImageInputRef.current.value = "";
+            }
+        };
 
-    //     const clearForm = () => {
-    //         form.reset();
-    //         setPhotoFiles([]);
-    //         if (fileInputRef.current) {
-    //             fileInputRef.current.value = "";
-    //         }
-    //     };
+        const handleSuccess = () => {
+            clearForm();
+            router.visit(route("admin.payment_method.index"));
+            setTimeout(() => {
+                toast.success(toastMessage, {
+                    position: "top-center",
+                });
+            }, 1000);
+        };
 
-    //     const handleSuccess = () => {
-    //         clearForm();
-    //         router.visit(route("admin.product.index"));
-    //         setTimeout(() => {
-    //             toast.success(toastMessage, {
-    //                 position: "top-center",
-    //             });
-    //         }, 1000);
-    //     };
+        const handleError = (error: any) => {
+            console.log("An error occurred: ", error);
+        };
 
-    //     const handleError = (error: any) => {
-    //         console.log("An error occurred: ", error);
-    //     };
+        const handleFinish = () => setLoading(false);
 
-    //     const handleFinish = () => setLoading(false);
-
-    //     initialData
-    //         ? router.post(
-    //               route("admin.product.update", initialData?.id),
-    //               {
-    //                   ...data,
-    //                   _method: "PATCH",
-    //               },
-    //               {
-    //                   onSuccess: handleSuccess,
-    //                   onError: handleError,
-    //                   onFinish: handleFinish,
-    //               }
-    //           )
-    //         : router.post(route("admin.product.store"), data, {
-    //               onSuccess: handleSuccess,
-    //               onError: handleError,
-    //               onFinish: handleFinish,
-    //           });
-    // };
+        initialData
+            ? router.post(
+                  route("admin.payment_method.update", initialData?.id),
+                  {
+                      ...data,
+                      _method: "PATCH",
+                  },
+                  {
+                      onSuccess: handleSuccess,
+                      onError: handleError,
+                      onFinish: handleFinish,
+                  }
+              )
+            : router.post(route("admin.payment_method.store"), data, {
+                  onSuccess: handleSuccess,
+                  onError: handleError,
+                  onFinish: handleFinish,
+              });
+    };
 
     return (
         <>
@@ -249,7 +266,7 @@ export const PaymentMethodForm = ({
             </div>
             <Form {...form}>
                 <form
-                    // onSubmit={form.handleSubmit(onSubmit)}
+                    onSubmit={form.handleSubmit(onSubmit)}
                     className="w-full p-8 space-y-8 rounded-md bg-slate-50 dark:bg-gradient-to-tr md:dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-800"
                 >
                     <div className="grid grid-cols-1 gap-4 md:gap-8 md:grid-cols-2">
@@ -364,118 +381,136 @@ export const PaymentMethodForm = ({
                                 </FormItem>
                             )}
                         />
-                    </div>
 
-                    {/* bank_logo */}
-                    <div className="flex flex-col gap-8">
-                        <FormField
-                            control={form.control}
-                            name="bank_logo"
-                            render={({ fieldState }) => (
-                                <FormItem>
-                                    <FormLabel
-                                        className={
-                                            fieldState.error
-                                                ? "text-red-500"
-                                                : "dark:text-gray-300"
+                        {/* bank_logo */}
+                        <div className="flex flex-col gap-8">
+                            <FormField
+                                control={form.control}
+                                name="bank_logo"
+                                render={({ fieldState }) => (
+                                    <FormItem>
+                                        <FormLabel
+                                            className={
+                                                fieldState.error
+                                                    ? "text-red-500"
+                                                    : "dark:text-gray-300"
+                                            }
+                                        >
+                                            Bank Logo
+                                        </FormLabel>
+                                        <FormDescription>
+                                            Max. {MAX_FILE_SIZE}
+                                            KB (jpg, jpeg, png, webp only).
+                                        </FormDescription>
+                                        <FormControl>
+                                            <Input
+                                                className="w-full md:w-[48%] dark:bg-slate-700"
+                                                ref={bankLogoInputRef}
+                                                type="file"
+                                                accept="image/jpeg, image/png, image/jpg, image/webp"
+                                                onChange={(e) =>
+                                                    handleFileChange(
+                                                        e,
+                                                        "bank_logo"
+                                                    )
+                                                }
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="dark:text-red-500" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* Preview Images */}
+                            <div className="flex flex-wrap items-center justify-center gap-8 md:justify-start">
+                                <div className="relative overflow-hidden border rounded-md shadow-md dark:border-gray-200 border-slate-300 w-52 h-52">
+                                    {bankLogoFile && (
+                                        <img
+                                            src={URL.createObjectURL(
+                                                bankLogoFile
+                                            )}
+                                            alt="Uploaded"
+                                            className="object-cover w-full h-full"
+                                        />
+                                    )}
+                                    <button
+                                        className="absolute flex items-center justify-center w-6 h-6 text-white bg-red-500 rounded-full top-2 right-2"
+                                        type="button"
+                                        onClick={() =>
+                                            removePhotoFile("bank_logo")
                                         }
                                     >
-                                        Bank Logo
-                                    </FormLabel>
-                                    <FormDescription>
-                                        Upload image up to {MAX_FILE_SIZE}
-                                        KB (jpg, jpeg, png, webp only).
-                                    </FormDescription>
-                                    <FormControl>
-                                        <Input
-                                            className="w-full md:w-[48%] dark:bg-slate-700"
-                                            ref={bankLogoInputRef}
-                                            type="file"
-                                            accept="image/jpeg, image/png, image/jpg, image/webp"
-                                            onChange={handleBankLogoChange}
-                                        />
-                                    </FormControl>
-                                    <FormMessage className="dark:text-red-500" />
-                                </FormItem>
-                            )}
-                        />
-
-                        {/* Preview Images */}
-                        <div className="flex flex-wrap items-center justify-center gap-8 md:justify-start">
-                            <div className="relative overflow-hidden border rounded-md shadow-md dark:border-gray-200 border-slate-300 w-52 h-52">
-                                {bankLogoFile && (
-                                    <img
-                                        src={URL.createObjectURL(bankLogoFile)}
-                                        alt="Uploaded"
-                                        className="object-cover w-full h-full"
-                                    />
-                                )}
-                                <button
-                                    className="absolute flex items-center justify-center w-6 h-6 text-white bg-red-500 rounded-full top-2 right-2"
-                                    type="button"
-                                    // onClick={() => removePhotoFile(index)}
-                                >
-                                    <span className="text-xs leading-none">
-                                        ✕
-                                    </span>
-                                </button>
+                                        <span className="text-xs leading-none">
+                                            ✕
+                                        </span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* qris_image */}
-                    <div className="flex flex-col gap-8">
-                        <FormField
-                            control={form.control}
-                            name="qris_image"
-                            render={({ fieldState }) => (
-                                <FormItem>
-                                    <FormLabel
-                                        className={
-                                            fieldState.error
-                                                ? "text-red-500"
-                                                : "dark:text-gray-300"
+                        {/* qris_image */}
+                        <div className="flex flex-col gap-8">
+                            <FormField
+                                control={form.control}
+                                name="qris_image"
+                                render={({ fieldState }) => (
+                                    <FormItem>
+                                        <FormLabel
+                                            className={
+                                                fieldState.error
+                                                    ? "text-red-500"
+                                                    : "dark:text-gray-300"
+                                            }
+                                        >
+                                            QRIS image
+                                        </FormLabel>
+                                        <FormDescription>
+                                            Max. {MAX_FILE_SIZE}
+                                            KB (jpg, jpeg, png, webp only).
+                                        </FormDescription>
+                                        <FormControl>
+                                            <Input
+                                                className="w-full md:w-[48%] dark:bg-slate-700"
+                                                ref={qrisImageInputRef}
+                                                type="file"
+                                                accept="image/jpeg, image/png, image/jpg, image/webp"
+                                                onChange={(e) =>
+                                                    handleFileChange(
+                                                        e,
+                                                        "qris_image"
+                                                    )
+                                                }
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="dark:text-red-500" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* Preview Images */}
+                            <div className="flex flex-wrap items-center justify-center gap-8 md:justify-start">
+                                <div className="relative overflow-hidden border rounded-md shadow-md dark:border-gray-200 border-slate-300 w-52 h-52">
+                                    {qrisImageFile && (
+                                        <img
+                                            src={URL.createObjectURL(
+                                                qrisImageFile
+                                            )}
+                                            alt="Uploaded"
+                                            className="object-cover w-full h-full"
+                                        />
+                                    )}
+                                    <button
+                                        className="absolute flex items-center justify-center w-6 h-6 text-white bg-red-500 rounded-full top-2 right-2"
+                                        type="button"
+                                        onClick={() =>
+                                            removePhotoFile("qris_image")
                                         }
                                     >
-                                        QRIS image
-                                    </FormLabel>
-                                    <FormDescription>
-                                        Upload image up to {MAX_FILE_SIZE}
-                                        KB (jpg, jpeg, png, webp only).
-                                    </FormDescription>
-                                    <FormControl>
-                                        <Input
-                                            className="w-full md:w-[48%] dark:bg-slate-700"
-                                            ref={qrisImageInputRef}
-                                            type="file"
-                                            accept="image/jpeg, image/png, image/jpg, image/webp"
-                                            onChange={handleQrisImageChange}
-                                        />
-                                    </FormControl>
-                                    <FormMessage className="dark:text-red-500" />
-                                </FormItem>
-                            )}
-                        />
-
-                        {/* Preview Images */}
-                        <div className="flex flex-wrap items-center justify-center gap-8 md:justify-start">
-                            <div className="relative overflow-hidden border rounded-md shadow-md dark:border-gray-200 border-slate-300 w-52 h-52">
-                                {qrisImageFile && (
-                                    <img
-                                        src={URL.createObjectURL(qrisImageFile)}
-                                        alt="Uploaded"
-                                        className="object-cover w-full h-full"
-                                    />
-                                )}
-                                <button
-                                    className="absolute flex items-center justify-center w-6 h-6 text-white bg-red-500 rounded-full top-2 right-2"
-                                    type="button"
-                                    // onClick={() => removePhotoFile(index)}
-                                >
-                                    <span className="text-xs leading-none">
-                                        ✕
-                                    </span>
-                                </button>
+                                        <span className="text-xs leading-none">
+                                            ✕
+                                        </span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
