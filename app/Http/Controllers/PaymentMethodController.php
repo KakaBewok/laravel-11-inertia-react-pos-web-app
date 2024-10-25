@@ -4,15 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
+use App\Services\PaymentMethodService;
+use Inertia\Inertia;
 
 class PaymentMethodController extends Controller
 {
+    protected $paymentMethodService;
+
+    // Constructor injection
+    public function __construct(PaymentMethodService $paymentMethodService)
+    {
+        $this->paymentMethodService = $paymentMethodService;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        return Inertia::render('PaymentMethod/index', [
+            'paymentMethods' => $this->paymentMethodService->getAllPaymentMethods()
+        ]);
     }
 
     /**
