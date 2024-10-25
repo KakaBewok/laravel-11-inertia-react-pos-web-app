@@ -55,7 +55,7 @@ class PaymentMethodController extends Controller
      */
     public function edit(PaymentMethod $paymentMethod)
     {
-        //
+        return Inertia::render('PaymentMethod/edit', ['paymentMethod' => $paymentMethod]);
     }
 
     /**

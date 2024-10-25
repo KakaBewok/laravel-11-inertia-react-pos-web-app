@@ -93,7 +93,7 @@ export const columns: ColumnDef<PaymentMethodColumn>[] = [
             ) : (
                 <Badge
                     variant="destructive"
-                    className="dark:bg-red-500 pointer-events-none"
+                    className="pointer-events-none dark:bg-red-500"
                 >
                     Non-Active
                 </Badge>

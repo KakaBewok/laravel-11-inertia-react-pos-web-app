@@ -202,8 +202,6 @@ export const PaymentMethodForm = ({
     };
 
     const onSubmit = (data: PaymentMethodFormValues) => {
-        console.log(data);
-
         setLoading(true);
 
         const clearForm = () => {
@@ -422,17 +420,13 @@ export const PaymentMethodForm = ({
                             />
 
                             {/* Preview Images */}
-                            <div className="flex flex-wrap items-center justify-center gap-8 md:justify-start">
+                            {bankLogoFile && (
                                 <div className="relative overflow-hidden border rounded-md shadow-md dark:border-gray-200 border-slate-300 w-52 h-52">
-                                    {bankLogoFile && (
-                                        <img
-                                            src={URL.createObjectURL(
-                                                bankLogoFile
-                                            )}
-                                            alt="Uploaded"
-                                            className="object-cover w-full h-full"
-                                        />
-                                    )}
+                                    <img
+                                        src={URL.createObjectURL(bankLogoFile)}
+                                        alt="Bank logo uploaded"
+                                        className="object-cover w-full h-full"
+                                    />
                                     <button
                                         className="absolute flex items-center justify-center w-6 h-6 text-white bg-red-500 rounded-full top-2 right-2"
                                         type="button"
@@ -445,7 +439,7 @@ export const PaymentMethodForm = ({
                                         </span>
                                     </button>
                                 </div>
-                            </div>
+                            )}
                         </div>
 
                         {/* qris_image */}
@@ -488,17 +482,13 @@ export const PaymentMethodForm = ({
                             />
 
                             {/* Preview Images */}
-                            <div className="flex flex-wrap items-center justify-center gap-8 md:justify-start">
+                            {qrisImageFile && (
                                 <div className="relative overflow-hidden border rounded-md shadow-md dark:border-gray-200 border-slate-300 w-52 h-52">
-                                    {qrisImageFile && (
-                                        <img
-                                            src={URL.createObjectURL(
-                                                qrisImageFile
-                                            )}
-                                            alt="Uploaded"
-                                            className="object-cover w-full h-full"
-                                        />
-                                    )}
+                                    <img
+                                        src={URL.createObjectURL(qrisImageFile)}
+                                        alt="QRIS image uploaded"
+                                        className="object-cover w-full h-full"
+                                    />
                                     <button
                                         className="absolute flex items-center justify-center w-6 h-6 text-white bg-red-500 rounded-full top-2 right-2"
                                         type="button"
@@ -511,7 +501,7 @@ export const PaymentMethodForm = ({
                                         </span>
                                     </button>
                                 </div>
-                            </div>
+                            )}
                         </div>
                     </div>
 

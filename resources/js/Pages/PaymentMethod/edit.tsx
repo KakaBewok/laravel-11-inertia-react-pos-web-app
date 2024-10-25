@@ -1,32 +1,17 @@
-import Category from "@/interfaces/Category";
-import Photo from "@/interfaces/Photo";
-import Product from "@/interfaces/Product";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import MainLayout from "@/Layouts/MainLayout";
 import { Head } from "@inertiajs/react";
-import { ProductForm } from "./components/payment-method-form";
+import { PaymentMethodForm } from "./components/payment-method-form";
+import PaymentMethod from "@/interfaces/PaymentMethod";
 
-interface EditPageProps {
-    product: Product;
-    photos: Photo[];
-    categories: Category[];
-}
-
-const EditPage: React.FC<EditPageProps> = ({ product, photos, categories }) => {
-    const initialData: Product & { photos: string[] } = {
-        ...product,
-        photos: photos.map((photo: Photo) => photo.photo),
-    };
+const EditPage = ({ paymentMethod }: { paymentMethod: PaymentMethod }) => {
     return (
         <MainLayout>
             <AuthenticatedLayout>
-                <Head title="Edit product" />
+                <Head title="Edit payment method" />
                 <div className="flex-col">
                     <div className="flex-1 p-4 pt-5 space-y-4 md:p-8">
-                        <ProductForm
-                            initialData={initialData}
-                            categories={categories}
-                        />
+                        <PaymentMethodForm initialData={paymentMethod} />
                     </div>
                 </div>
             </AuthenticatedLayout>
