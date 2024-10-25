@@ -21,7 +21,8 @@ class PaymentMethodFactory extends Factory
             'bank_name' => $this->faker->company,
             'bank_logo' => $this->faker->imageUrl,
             'qris_image' => $this->faker->imageUrl,
-            'status' => $this->faker->randomElement(['active', 'non-active'])
+            'status' => $this->faker->boolean,
+            'description' => $this->faker->sentence(15, true),
         ];
     }
 }

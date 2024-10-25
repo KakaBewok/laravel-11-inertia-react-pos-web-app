@@ -1,10 +1,10 @@
+import Category from "@/interfaces/Category";
+import Photo from "@/interfaces/Photo";
+import Product from "@/interfaces/Product";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import MainLayout from "@/Layouts/MainLayout";
 import { Head } from "@inertiajs/react";
-import { ProductForm } from "./components/product-form";
-import Product from "@/interfaces/Product";
-import Category from "@/interfaces/Category";
-import Photo from "@/interfaces/Photo";
+import { ProductForm } from "./components/payment-method-form";
 
 interface EditPageProps {
     product: Product;

@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
@@ -9,7 +10,7 @@ export type PaymentMethodColumn = {
     id: string;
     name: string;
     bank_name: string;
-    status: string;
+    status: boolean;
 };
 
 export const columns: ColumnDef<PaymentMethodColumn>[] = [
@@ -79,6 +80,23 @@ export const columns: ColumnDef<PaymentMethodColumn>[] = [
                     Status
                     <ArrowUpDown className="w-4 h-4 ml-2" />
                 </Button>
+            );
+        },
+        cell: ({ row }) => {
+            return row.getValue("status") ? (
+                <Badge
+                    variant="default"
+                    className="bg-green-500 dark:text-white hover:bg-green-500 hover:text-white"
+                >
+                    Active
+                </Badge>
+            ) : (
+                <Badge
+                    variant="destructive"
+                    className="dark:bg-red-500 pointer-events-none"
+                >
+                    Non-Active
+                </Badge>
             );
         },
     },

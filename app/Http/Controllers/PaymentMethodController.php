@@ -31,7 +31,7 @@ class PaymentMethodController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('PaymentMethod/create');
     }
 
     /**

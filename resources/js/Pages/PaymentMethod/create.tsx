@@ -1,17 +1,16 @@
-import MainLayout from "@/Layouts/MainLayout";
-import { ProductForm } from "./components/product-form";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import MainLayout from "@/Layouts/MainLayout";
 import { Head } from "@inertiajs/react";
-import Category from "@/interfaces/Category";
+import { PaymentMethodForm } from "./components/payment-method-form";
 
-const CreatePage = ({ categories }: { categories: Category[] }) => {
+const CreatePage = () => {
     return (
         <MainLayout>
             <AuthenticatedLayout>
-                <Head title="Create product" />
+                <Head title="Create payment method" />
                 <div className="flex-col">
                     <div className="flex-1 p-4 pt-5 space-y-4 md:p-8">
-                        <ProductForm categories={categories} />
+                        <PaymentMethodForm />
                     </div>
                 </div>
             </AuthenticatedLayout>

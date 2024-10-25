@@ -15,7 +15,8 @@ class PaymentMethod extends Model
         'bank_name',
         'bank_logo',
         'qris_image',
-        'status'
+        'status',
+        'description',
     ];
 
     public function orders(): HasMany
