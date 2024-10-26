@@ -30,6 +30,7 @@ import * as z from "zod";
 import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "../../../config";
 import Product from "@/interfaces/Product";
 import Category from "@/interfaces/Category";
+import urlToFile from "@/lib/file-utils";
 
 const formSchema = z.object({
     name: z
@@ -74,16 +75,6 @@ interface ProductFormProps {
         | null;
     categories: Category[];
 }
-
-const urlToFile = async (
-    url: string,
-    fileName: string,
-    mimeType: string
-): Promise<File> => {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    return new File([blob], fileName, { type: mimeType });
-};
 
 export const ProductForm: React.FC<ProductFormProps> = ({
     initialData,

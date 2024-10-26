@@ -23,6 +23,7 @@ import * as z from "zod";
 import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "../../../config";
 import { router } from "@inertiajs/react";
 import { toast } from "react-toastify";
+import urlToFile from "@/lib/file-utils";
 
 interface FilesToProcessType {
     key: "bank_logo" | "qris_image";
@@ -72,16 +73,6 @@ const formSchema = z.object({
 });
 
 type PaymentMethodFormValues = z.infer<typeof formSchema>;
-
-const urlToFile = async (
-    url: string,
-    fileName: string,
-    mimeType: string
-): Promise<File> => {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    return new File([blob], fileName, { type: mimeType });
-};
 
 export const PaymentMethodForm = ({
     initialData,
