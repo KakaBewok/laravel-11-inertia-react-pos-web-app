@@ -7,6 +7,7 @@ use App\Http\Requests\UpdatePaymentRequest;
 use App\Models\PaymentMethod;
 use App\Services\PaymentMethodService;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
 
 class PaymentMethodController extends Controller
 {
@@ -74,6 +75,18 @@ class PaymentMethodController extends Controller
      */
     public function destroy(PaymentMethod $paymentMethod)
     {
-        //
+        $this->paymentMethodService->delete($paymentMethod->id);
+    }
+
+    /**
+     * Remove many resource from storage.
+     */
+    public function destroy_bulk(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'string',
+        ]);
+        $this->paymentMethodService->multipleDelete($validated['ids']);
     }
 }

@@ -127,20 +127,20 @@ class PaymentMethodService
         return $imagePaths;
     }
 
-    // private function deleteExistingPhotos(Product $product): void
-    // {
-    //     $existingPhotos = $product->photos()->pluck('photo')->toArray();
-    //     if (!empty($existingPhotos)) {
-    //         foreach ($existingPhotos as $oldPhoto) {
-    //             if (Storage::disk('public')->exists($oldPhoto)) {
-    //                 Storage::disk('public')->delete($oldPhoto); // Delete the old photo file
-    //             }
-    //         }
+    private function deleteExistingPhotos(PaymentMethod $paymentMethod): void
+    {
+        $existingPhotos = $paymentMethod->;
+        if (!empty($existingPhotos)) {
+            foreach ($existingPhotos as $oldPhoto) {
+                if (Storage::disk('public')->exists($oldPhoto)) {
+                    Storage::disk('public')->delete($oldPhoto); // Delete the old photo file
+                }
+            }
 
-    //         // Delete from the database
-    //         $product->photos()->delete();
-    //     }
-    // }
+            // Delete from the database
+            $paymentMethod->photos()->delete();
+        }
+    }
 
     // private function syncPhotos(Product $product, array $photoPaths): void
     // {
