@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Repositories\PaymentMethodRepo;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\UploadedFile;
-use App\Models\Product;
+use App\Models\PaymentMethod;
 use Illuminate\Support\Facades\Storage;
 
 class PaymentMethodService
@@ -20,39 +20,38 @@ class PaymentMethodService
 
     public function store(array $validatedData)
     {
-        // try {
-        //     $photoPaths = [];
-        //     if (!empty($validatedData['photos'])) {
-        //         foreach ($validatedData['photos'] as $photo) {
-        //             if ($photo instanceof UploadedFile) {
-        //                 // store image to storage/public/images
-        //                 $photoPath = $photo->store('images', 'public');
-        //                 $photoPaths[] = $photoPath;
-        //             } else {
-        //                 $photoPaths[] = $photo;
-        //             }
-        //         }
-        //     }
+        try {
+            $imagePaths = [
+                'bank_logo' => null,
+                'qris_image' => null,
+            ];
+            $imagesUpload = [
+                'bank_logo' => $validatedData['bank_logo'],
+                'qris_image' => $validatedData['qris_image'],
+            ];
 
-        //     $product = $this->productRepository->store([
-        //         'name' => $validatedData['name'],
-        //         'price' => $validatedData['price'],
-        //         'category_id' => $validatedData['category_id'],
-        //         'description' => $validatedData['description'] ?? "",
-        //         'unit' => $validatedData['unit'],
-        //         'stock_quantity' => $validatedData['stock_quantity'],
-        //     ]);
+            if (!empty($imagesUpload['bank_logo']) || !empty($imagesUpload['qris_image'])) {
+                foreach ($imagesUpload as $key => $value) {
+                    if ($value instanceof UploadedFile) {
+                        $imagePath = $value->store('images', 'public');
+                        $imagePaths[$key] = $imagePath;
+                    } else {
+                        $imagePaths[$key] = $value;
+                    }
+                }
+            }
 
-        //     if (!empty($photoPaths)) {
-        //         $product->photos()->createMany(
-        //             array_map(function ($path) {
-        //                 return ['photo' => $path];
-        //             }, $photoPaths)
-        //         );
-        //     }
-        // } catch (\Exception $e) {
-        //     Log::error('Error when creating product: ' . $e->getMessage());
-        // }
+            $this->paymentMethodRepository->store([
+                'name' => $validatedData['name'],
+                'bank_name' => $validatedData['bank_name'],
+                'status' => $validatedData['status'],
+                'description' => $validatedData['description'] ?? "",
+                'bank_logo' => $imagePaths['bank_logo'] ?? "",
+                'qris_image' => $imagePaths['qris_image'] ?? "",
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error when creating payment method: ' . $e->getMessage());
+        }
     }
 
     public function getAllPaymentMethods()
@@ -60,27 +59,25 @@ class PaymentMethodService
         return $this->paymentMethodRepository->all();
     }
 
-    public function update(Product $product, array $data)
+    public function update(PaymentMethod $paymentMethod, array $data)
     {
-        // try {
-        //     $updatedProduct = [
-        //         'name' => $data['name'],
-        //         'price' => $data['price'],
-        //         'category_id' => $data['category_id'],
-        //         'description' => $data['description'] ?? '',
-        //         'unit' => $data['unit'],
-        //         'stock_quantity' => $data['stock_quantity'],
-        //     ];
-        //     $this->productRepository->update($product->id, $updatedProduct);
+        try {
+            $updatedPaymentMethod = [
+                'name' => $data['name'],
+                'bank_name' => $data['bank_name'],
+                'description' => $data['description'] ?? '',
+                'status' => $data['status']
+            ];
+            $this->paymentMethodRepository->update($paymentMethod->id, $updatedPaymentMethod);
 
-        //     // Handle photos
-        //     $photoPaths = $this->handlePhotos($data['photos'] ?? [], $product);
+            // Handle photos
+            $photoPaths = $this->handlePhotos($data['bank_logo'], $data['qris_image'], $paymentMethod);
 
-        //     // Sync photos: remove old ones and add new ones
-        //     $this->syncPhotos($product, $photoPaths);
-        // } catch (\Exception $e) {
-        //     Log::error('Error when updating product: ' . $e->getMessage());
-        // }
+            // Sync photos: remove old ones and add new ones
+            $this->syncPhotos($product, $photoPaths);
+        } catch (\Exception $e) {
+            Log::error('Error when updating product: ' . $e->getMessage());
+        }
     }
 
     public function delete(int $id)
@@ -108,73 +105,77 @@ class PaymentMethodService
     }
 
     // update methods
-    private function handlePhotos(array $photos, Product $product): array
+    private function handlePhotos($bank_logo_input, $qris_image_input, PaymentMethod $paymentMethod)
     {
-        $photoPaths = [];
+        $imagePaths = [
+            'bank_logo' => null,
+            'qris_image' => null,
+        ];
+        $imagesUpload = [
+            'bank_logo' => $bank_logo_input,
+            'qris_image' => $qris_image_input,
+        ];
 
-        if (!empty($photos)) {
-            foreach ($photos as $photo) {
-                $photoPaths[] = $photo instanceof UploadedFile
-                    ? $photo->store('images', 'public') // Store new photo
-                    : $photo; // Keep existing photo path
+        if (!empty($imagesUpload['bank_logo']) || !empty($imagesUpload['qris_image'])) {
+            foreach ($imagesUpload as $key => $value) {
+                $imagePaths[$key] = $value instanceof UploadedFile ? $value->store('images', 'public') : $value;
             }
         } else {
-            // No photos uploaded, delete existing photos
-            $this->deleteExistingPhotos($product);
+            $this->deleteExistingPhotos($paymentMethod);
         }
 
-        return $photoPaths;
+        return $imagePaths;
     }
 
-    private function deleteExistingPhotos(Product $product): void
-    {
-        $existingPhotos = $product->photos()->pluck('photo')->toArray();
-        if (!empty($existingPhotos)) {
-            foreach ($existingPhotos as $oldPhoto) {
-                if (Storage::disk('public')->exists($oldPhoto)) {
-                    Storage::disk('public')->delete($oldPhoto); // Delete the old photo file
-                }
-            }
+    // private function deleteExistingPhotos(Product $product): void
+    // {
+    //     $existingPhotos = $product->photos()->pluck('photo')->toArray();
+    //     if (!empty($existingPhotos)) {
+    //         foreach ($existingPhotos as $oldPhoto) {
+    //             if (Storage::disk('public')->exists($oldPhoto)) {
+    //                 Storage::disk('public')->delete($oldPhoto); // Delete the old photo file
+    //             }
+    //         }
 
-            // Delete from the database
-            $product->photos()->delete();
-        }
-    }
+    //         // Delete from the database
+    //         $product->photos()->delete();
+    //     }
+    // }
 
-    private function syncPhotos(Product $product, array $photoPaths): void
-    {
-        $existingPhotos = $product->photos()->pluck('photo')->toArray();
+    // private function syncPhotos(Product $product, array $photoPaths): void
+    // {
+    //     $existingPhotos = $product->photos()->pluck('photo')->toArray();
 
-        // Find photos to delete
-        $photosToDelete = array_diff($existingPhotos, $photoPaths);
+    //     // Find photos to delete
+    //     $photosToDelete = array_diff($existingPhotos, $photoPaths);
 
-        if (!empty($photosToDelete)) {
-            // Delete old photos
-            $this->deletePhotos($product, $photosToDelete);
-        }
+    //     if (!empty($photosToDelete)) {
+    //         // Delete old photos
+    //         $this->deletePhotos($product, $photosToDelete);
+    //     }
 
-        // Add new photos that are not yet in the database
-        $this->addNewPhotos($product, $photoPaths, $existingPhotos);
-    }
+    //     // Add new photos that are not yet in the database
+    //     $this->addNewPhotos($product, $photoPaths, $existingPhotos);
+    // }
 
-    private function deletePhotos(Product $product, array $photosToDelete): void
-    {
-        foreach ($photosToDelete as $oldPhoto) {
-            if (Storage::disk('public')->exists($oldPhoto)) {
-                Storage::disk('public')->delete($oldPhoto); // Delete the old photo file
-            }
-        }
+    // private function deletePhotos(Product $product, array $photosToDelete): void
+    // {
+    //     foreach ($photosToDelete as $oldPhoto) {
+    //         if (Storage::disk('public')->exists($oldPhoto)) {
+    //             Storage::disk('public')->delete($oldPhoto); // Delete the old photo file
+    //         }
+    //     }
 
-        // Delete from the database
-        $product->photos()->whereIn('photo', $photosToDelete)->delete();
-    }
+    //     // Delete from the database
+    //     $product->photos()->whereIn('photo', $photosToDelete)->delete();
+    // }
 
-    private function addNewPhotos(Product $product, array $photoPaths, array $existingPhotos): void
-    {
-        foreach ($photoPaths as $path) {
-            if (!in_array($path, $existingPhotos)) {
-                $product->photos()->create(['photo' => $path]); // Create new photo entry
-            }
-        }
-    }
+    // private function addNewPhotos(Product $product, array $photoPaths, array $existingPhotos): void
+    // {
+    //     foreach ($photoPaths as $path) {
+    //         if (!in_array($path, $existingPhotos)) {
+    //             $product->photos()->create(['photo' => $path]); // Create new photo entry
+    //         }
+    //     }
+    // }
 }

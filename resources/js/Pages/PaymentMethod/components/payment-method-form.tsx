@@ -195,6 +195,8 @@ export const PaymentMethodForm = ({
     const onSubmit = (data: PaymentMethodFormValues) => {
         setLoading(true);
 
+        console.log(data);
+
         const clearForm = () => {
             form.reset();
             setBankLogoFile(undefined);
@@ -359,12 +361,14 @@ export const PaymentMethodForm = ({
                                         Active
                                     </FormLabel>
                                     <FormControl>
-                                        <Switch
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
-                                            disabled={loading}
-                                            aria-readonly
-                                        />
+                                        <div>
+                                            <Switch
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                                disabled={loading}
+                                                aria-readonly
+                                            />
+                                        </div>
                                     </FormControl>
                                     <FormMessage className="dark:text-red-500" />
                                 </FormItem>

@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePaymentRequest;
+use App\Http\Requests\UpdatePaymentRequest;
 use App\Models\PaymentMethod;
-use Illuminate\Http\Request;
 use App\Services\PaymentMethodService;
 use Inertia\Inertia;
 
@@ -37,9 +38,10 @@ class PaymentMethodController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePaymentRequest $request)
     {
-        //
+        $validatedData = $request->validated();
+        $this->paymentMethodService->store($validatedData);
     }
 
     /**
@@ -61,9 +63,10 @@ class PaymentMethodController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PaymentMethod $paymentMethod)
+    public function update(UpdatePaymentRequest $request, PaymentMethod $paymentMethod)
     {
-        //
+        $validatedData = $request->validated();
+        $this->paymentMethodService->update($paymentMethod, $validatedData);
     }
 
     /**
