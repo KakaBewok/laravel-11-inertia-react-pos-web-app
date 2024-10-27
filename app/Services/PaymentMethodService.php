@@ -118,6 +118,7 @@ class PaymentMethodService
 
         if (!empty($imagesUpload['bank_logo']) || !empty($imagesUpload['qris_image'])) {
             foreach ($imagesUpload as $key => $value) {
+                //$this->deleteExistingPhotos($paymentMethod); pindahin kesini
                 $imagePaths[$key] = $value instanceof UploadedFile ? $value->store('images', 'public') : $value;
             }
         } else {
