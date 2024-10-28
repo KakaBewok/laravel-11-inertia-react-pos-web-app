@@ -1,28 +1,16 @@
+import PaymentMethod from "@/interfaces/PaymentMethod";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import MainLayout from "@/Layouts/MainLayout";
-import Category from "@/interfaces/Category";
-import Photo from "@/interfaces/Photo";
-import Product from "@/interfaces/Product";
 import { Head } from "@inertiajs/react";
-import ProductDetails from "./components/product-details";
+import PaymentMethodDetails from "./components/payment-method-details";
 
-interface DetailsPageProps {
-    product: Product;
-    category: Category;
-    photos: Photo[];
-}
-
-const DetailsPage = ({ product, category, photos }: DetailsPageProps) => {
+const DetailsPage = ({ paymentMethod }: { paymentMethod: PaymentMethod }) => {
     return (
         <>
             <MainLayout>
                 <AuthenticatedLayout>
-                    <Head title="Details product" />
-                    <ProductDetails
-                        product={product}
-                        category={category}
-                        photos={photos}
-                    />
+                    <Head title="Details payment method" />
+                    <PaymentMethodDetails paymentMethod={paymentMethod} />
                 </AuthenticatedLayout>
             </MainLayout>
         </>

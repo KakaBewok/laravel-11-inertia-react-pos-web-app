@@ -1,14 +1,12 @@
-import Product from "@/interfaces/Product";
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
-    TableFooter,
     TableHead,
     TableHeader,
     TableRow,
 } from "@/Components/ui/table";
+import Product from "@/interfaces/Product";
 
 const ProductTable = ({ products }: { products: Product[] }) => {
     return (

@@ -110,23 +110,21 @@ class PaymentMethodService
         foreach ($imagesUpload as $key => $value) {
             if (!empty($value)) {
                 $newImagePath = $value instanceof UploadedFile ? $value->store('images', 'public') : $value;
-                $this->deleteExistingImages([$key], $paymentMethod);
+                $this->deleteExistingImages($key, $paymentMethod);
                 $paymentMethod->{$key} = $newImagePath;
             } else {
-                $this->deleteExistingImages([$key], $paymentMethod);
+                $this->deleteExistingImages($key, $paymentMethod);
                 $paymentMethod->{$key} = "";
             }
         }
         $paymentMethod->save();
     }
 
-   private function deleteExistingImages(array $keys, PaymentMethod $paymentMethod): void
+   private function deleteExistingImages($key, PaymentMethod $paymentMethod): void
     {
-        foreach ($keys as $key) {
-            $existingImage = $paymentMethod->{$key};
-            if (!empty($existingImage) && Storage::disk('public')->exists($existingImage)) {
+        $existingImage = $paymentMethod->{$key};
+        if (!empty($existingImage) && Storage::disk('public')->exists($existingImage)) {
                 Storage::disk('public')->delete($existingImage);
-            }
-        }
+        } 
     }
 }

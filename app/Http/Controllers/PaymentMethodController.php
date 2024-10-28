@@ -50,7 +50,7 @@ class PaymentMethodController extends Controller
      */
     public function show(PaymentMethod $paymentMethod)
     {
-        //
+        return Inertia::render('PaymentMethod/details', ['paymentMethod' => $paymentMethod]);
     }
 
     /**
