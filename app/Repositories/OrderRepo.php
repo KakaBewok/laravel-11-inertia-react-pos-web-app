@@ -15,7 +15,7 @@ class OrderRepo implements CrudRepository
 
     public function all(): Collection
     {
-        return Order::with(["paymentMethod", "orderProducts"])->get();
+        return Order::with(["paymentMethod", "orderProducts"])->orderBy('created_at', 'desc')->get();
     }
 
     public function store(array $data)

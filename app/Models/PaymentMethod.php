@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Observers\PaymentMethodObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 
+#[ObservedBy([PaymentMethodObserver::class])]
 class PaymentMethod extends Model
 {
     use HasFactory;
@@ -15,7 +18,8 @@ class PaymentMethod extends Model
         'bank_name',
         'bank_logo',
         'qris_image',
-        'status'
+        'status',
+        'description',
     ];
 
     public function orders(): HasMany
