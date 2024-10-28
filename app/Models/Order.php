@@ -16,6 +16,8 @@ class Order extends Model
         'customer_name',
         'order_date',
         'total_amount',
+        'total_paid',
+        'changes',
         'status'
     ];
 
