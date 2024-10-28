@@ -4,6 +4,7 @@ import { Heading } from "@/Components/ui/heading";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import PaymentMethod from "@/interfaces/PaymentMethod";
 import { router } from "@inertiajs/react";
+import ImageNotFound from "../../../../../public/images/image-not-found.jpg";
 
 const PaymentMethodDetails = ({
     paymentMethod,
@@ -116,26 +117,42 @@ const PaymentMethodDetails = ({
                     {/* Bank Logo */}
                     <div className="flex flex-col items-center space-y-4 w-full h-full">
                         <div className="relative w-full h-full overflow-hidden border rounded-md shadow-md dark:border-gray-500 border-gray-300">
-                            <img
-                                src={`${import.meta.env.VITE_APP_URL}/storage/${
-                                    paymentMethod.bank_logo
-                                }`}
-                                alt="Bank Logo"
-                                className="object-cover w-full h-full transition-transform duration-200 transform hover:scale-105"
-                            />
+                            {paymentMethod.bank_logo ? (
+                                <img
+                                    src={`${
+                                        import.meta.env.VITE_APP_URL
+                                    }/storage/${paymentMethod.bank_logo}`}
+                                    alt="Bank Logo"
+                                    className="object-cover w-full h-full transition-transform duration-200 transform hover:scale-105"
+                                />
+                            ) : (
+                                <img
+                                    src={ImageNotFound}
+                                    alt="Bank Logo"
+                                    className="object-cover w-full h-full transition-transform duration-200 transform hover:scale-105"
+                                />
+                            )}
                         </div>
                     </div>
 
                     {/* QRIS Image */}
                     <div className="flex flex-col items-center space-y-4 w-full h-full">
                         <div className="relative w-full h-full overflow-hidden border rounded-md shadow-md dark:border-gray-500 border-gray-300">
-                            <img
-                                src={`${import.meta.env.VITE_APP_URL}/storage/${
-                                    paymentMethod.qris_image
-                                }`}
-                                alt="QRIS Image"
-                                className="object-cover w-full h-full transition-transform duration-200 transform hover:scale-105"
-                            />
+                            {paymentMethod.qris_image ? (
+                                <img
+                                    src={`${
+                                        import.meta.env.VITE_APP_URL
+                                    }/storage/${paymentMethod.qris_image}`}
+                                    alt="Qris image"
+                                    className="object-cover w-full h-full transition-transform duration-200 transform hover:scale-105"
+                                />
+                            ) : (
+                                <img
+                                    src={ImageNotFound}
+                                    alt="Qris image"
+                                    className="object-cover w-full h-full transition-transform duration-200 transform hover:scale-105"
+                                />
+                            )}
                         </div>
                     </div>
                 </div>
