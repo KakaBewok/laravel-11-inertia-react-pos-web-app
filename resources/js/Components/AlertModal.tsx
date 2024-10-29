@@ -6,8 +6,8 @@ import { Button } from "./ui/button";
 
 interface AlertModalProps {
     isOpen: boolean;
-    onClose: () => void;
-    onConfirm: () => void;
+    onClose: (e?: React.MouseEvent<HTMLButtonElement>) => void;
+    onConfirm: (e?: React.MouseEvent<HTMLButtonElement>) => void;
     loading: boolean;
     description?: string;
 }
