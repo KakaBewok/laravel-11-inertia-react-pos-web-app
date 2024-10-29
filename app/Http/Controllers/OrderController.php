@@ -4,15 +4,25 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
+use App\Services\OrderService;
+use Inertia\Inertia;
 
 class OrderController extends Controller
 {
+    protected $orderService;
+
+    public function __construct(OrderService $orderService){
+        $this->orderService = $orderService;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $orders = $this->orderService->getAllOrders();
+        return Inertia::render('Order/index', [
+            'orders' => $orders,
+        ]);
     }
 
     /**
@@ -35,8 +45,11 @@ class OrderController extends Controller
      * Display the specified resource.
      */
     public function show(Order $order)
-    {
-        //
+    { 
+       return Inertia::render('Order/details', [
+            'order' => $order,
+            'paymentMethod' => $order->paymentMethod,
+        ]);
     }
 
     /**
