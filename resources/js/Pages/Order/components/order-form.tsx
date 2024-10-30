@@ -156,8 +156,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
               });
     };
 
-    console.log(products);
-
     // TODO: 1. buat tampilan product yang dibeli 2. buat tampilan cards product yang akan dibeli 3. buat dalam 2 column di MD
 
     return (
