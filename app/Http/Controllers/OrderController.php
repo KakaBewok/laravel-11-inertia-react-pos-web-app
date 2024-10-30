@@ -46,9 +46,11 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     { 
+       $productsOrdered = $this->orderService->mappingProductsOrdered($order);
        return Inertia::render('Order/details', [
             'order' => $order,
             'paymentMethod' => $order->paymentMethod,
+            'productsOrdered' => $productsOrdered,
         ]);
     }
 

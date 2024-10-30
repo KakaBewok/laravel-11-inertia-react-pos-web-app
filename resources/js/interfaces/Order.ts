@@ -7,4 +7,6 @@ export default interface Order {
     total_paid: number;
     changes: number;
     status: "pending" | "cancelled" | "completed";
+    notes: string;
+    transaction_id: string;
 }

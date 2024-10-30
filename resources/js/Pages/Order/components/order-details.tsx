@@ -4,16 +4,21 @@ import { Heading } from "@/Components/ui/heading";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import Order from "@/interfaces/Order";
 import PaymentMethod from "@/interfaces/PaymentMethod";
+import { ProductOrdered } from "@/interfaces/ProductsOrdered";
 import { router } from "@inertiajs/react";
 import { format } from "date-fns";
+
+interface OrderDetailsProps {
+    order: Order;
+    paymentMethod: PaymentMethod;
+    productsOrdered: ProductOrdered[];
+}
 
 const OrderDetails = ({
     order,
     paymentMethod,
-}: {
-    order: Order;
-    paymentMethod: PaymentMethod;
-}) => {
+    productsOrdered,
+}: OrderDetailsProps) => {
     const { loading, setLoading } = useGlobalContext();
 
     const handleEditOrder = () => {
@@ -35,6 +40,8 @@ const OrderDetails = ({
     // total_paid: number; ---0
     // changes: number; ----0
     // status: "pending" | "cancelled" | "completed";
+    //notes
+    //trx id ---- ok
 
     return (
         <>
@@ -75,7 +82,7 @@ const OrderDetails = ({
                 </div>
             </div>
             <div className="rounded-lg flex flex-col md:flex-row justify-between bg-slate-50 dark:bg-slate-600">
-                <div className="flex-1 p-6 space-y-6 md:p-7">
+                <div className="flex-1 p-6 space-y-6 md:p-12">
                     <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-50">
                         {order.customer_name}
                     </h1>
@@ -92,7 +99,7 @@ const OrderDetails = ({
                             Total amount:{" "}
                         </h3>
                         <p className="text-sm text-gray-500 dark:text-gray-300">
-                            {order.total_amount}
+                            Rp. {order.total_amount}
                         </p>
                     </div>
                     <div>
@@ -100,7 +107,7 @@ const OrderDetails = ({
                             Total paid:{" "}
                         </h3>
                         <p className="text-sm text-gray-500 dark:text-gray-300">
-                            {order.total_paid}
+                            Rp. {order.total_paid}
                         </p>
                     </div>
                     <div>
@@ -108,7 +115,7 @@ const OrderDetails = ({
                             changes:{" "}
                         </h3>
                         <p className="text-sm text-gray-500 dark:text-gray-300">
-                            {order.changes}
+                            Rp. {order.changes}
                         </p>
                     </div>
                     <div>
@@ -124,10 +131,9 @@ const OrderDetails = ({
                             Transaction id:{" "}
                         </h3>
                         <p className="text-sm text-gray-500 dark:text-gray-300">
-                            {order.id}
+                            {order.transaction_id}
                         </p>
                     </div>
-
                     <div>
                         <h3 className="font-semibold text-gray-800 dark:text-gray-50 mb-1">
                             Status:{" "}
@@ -147,42 +153,40 @@ const OrderDetails = ({
                             </Badge>
                         </div>
                     </div>
+                    <div>
+                        <h3 className="font-semibold text-gray-800 dark:text-gray-50">
+                            Notes:{" "}
+                        </h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-300 w-full md:w-1/2">
+                            {order.notes ? (
+                                order.notes
+                            ) : (
+                                <span className="text-slate-400">
+                                    No notes.
+                                </span>
+                            )}
+                        </p>
+                    </div>
                 </div>
-                {/* <div className="flex-1 flex flex-col gap-5 items-center justify-center w-full p-5 md:flex-row">
-                    <div className="w-full h-full overflow-hidden border rounded-sm shadow-sm dark:border-gray-400 border-gray-200">
-                        {paymentMethod.bank_logo ? (
-                            <img
-                                src={`${import.meta.env.VITE_APP_URL}/storage/${
-                                    paymentMethod.bank_logo
-                                }`}
-                                alt="Bank Logo"
-                                className="object-cover w-full h-full transition-transform duration-200 transform hover:scale-105"
-                            />
-                        ) : (
-                            <img
-                                src={ImageNotFound}
-                                alt="No image uploaded"
-                                className="object-cover w-full h-full transition-transform duration-200 transform hover:scale-105"
-                            />
-                        )}
+                {/* {productsOrdered.map((item) => (
+                    <div className="w-full -ml-10 mt-10">
+                        <p>{item.product_name}</p>
+                        <p>{item.quantity}</p>
+                        <p>{item.total_price}</p>
                     </div>
-                    <div className="w-full h-full overflow-hidden border rounded-sm shadow-sm dark:border-gray-400 border-gray-200">
-                        {paymentMethod.qris_image ? (
-                            <img
-                                src={`${import.meta.env.VITE_APP_URL}/storage/${
-                                    paymentMethod.qris_image
-                                }`}
-                                alt="QRIS image"
-                                className="object-cover w-full h-full transition-transform duration-200 transform hover:scale-105"
-                            />
-                        ) : (
-                            <img
-                                src={ImageNotFound}
-                                alt="No image uploaded"
-                                className="object-cover w-full h-full transition-transform duration-200 transform hover:scale-105"
-                            />
-                        )}
-                    </div>
+                ))} */}
+
+                {/* <div className="w-full max-w-lg p-6 mx-auto rounded-md md:p-7 bg-slate-50 dark:bg-slate-600">
+                    <h1 className="pb-5 font-bold text-md text-slate-700 dark:text-white">
+                        List of products
+                    </h1>
+                    {products != null && products.length > 0 ? (
+                        <ProductTable products={products} />
+                    ) : (
+                        <p className="font-normal text-center text-muted-foreground text-md">
+                            No result.
+                        </p>
+                    )}
                 </div> */}
             </div>
         </>
