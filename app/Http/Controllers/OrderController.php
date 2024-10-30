@@ -5,14 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Services\OrderService;
+use App\Services\ProductService;
+use App\Services\PaymentMethodService;
 use Inertia\Inertia;
 
 class OrderController extends Controller
 {
     protected $orderService;
+    protected $productService;
+    protected $paymentMethodService;
 
-    public function __construct(OrderService $orderService){
+    public function __construct(OrderService $orderService, ProductService $productService, PaymentMethodService $paymentMethodService){
         $this->orderService = $orderService;
+        $this->productService = $productService;
+        $this->paymentMethodService = $paymentMethodService;
     }
     /**
      * Display a listing of the resource.
@@ -30,7 +36,12 @@ class OrderController extends Controller
      */
     public function create()
     {
-        //
+        $paymentMethods = $this->paymentMethodService->getAllPaymentMethods();
+        $products = $this->productService->getAllProducts();
+        return Inertia::render('Order/create', [
+            'paymentMethods' => $paymentMethods,
+            'products' => $products,
+        ]);
     }
 
     /**
