@@ -4,9 +4,9 @@ import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { router } from "@inertiajs/react";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { CategoryColumn } from "./columns";
+import { OrderColumn } from "./columns";
 
-export const CellAction = ({ data }: { data: CategoryColumn }) => {
+export const CellAction = ({ data }: { data: OrderColumn }) => {
     const { loading, setLoading } = useGlobalContext();
     const [modalOpen, setModalOpen] = useState<boolean>(false);
 
@@ -14,7 +14,7 @@ export const CellAction = ({ data }: { data: CategoryColumn }) => {
         e?.stopPropagation();
 
         setLoading(true);
-        router.delete(route("admin.category.destroy", data.id), {
+        router.delete(route("admin.order.destroy", data.id), {
             onSuccess: () => {
                 toast.success("Data deleted.", {
                     position: "top-center",
@@ -26,12 +26,12 @@ export const CellAction = ({ data }: { data: CategoryColumn }) => {
         });
     };
 
-    const handleEditProduct = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleEditOrder = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
 
         setLoading(true);
         router.get(
-            route("admin.category.edit", data.id),
+            route("admin.order.edit", data.id),
             {},
             {
                 onFinish: () => setLoading(false),
@@ -39,14 +39,12 @@ export const CellAction = ({ data }: { data: CategoryColumn }) => {
         );
     };
 
-    const handleShowDetailsCategory = (
-        e: React.MouseEvent<HTMLButtonElement>
-    ) => {
+    const handleShowDetailsOrder = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
 
         setLoading(true);
         router.get(
-            route("admin.category.show", data.id),
+            route("admin.order.show", data.id),
             {},
             {
                 onFinish: () => setLoading(false),
@@ -69,7 +67,6 @@ export const CellAction = ({ data }: { data: CategoryColumn }) => {
                 }}
                 onConfirm={(e) => handleDeleteId(e)}
                 loading={loading}
-                description="All products under this category will also be deleted."
             />
             <div className="flex items-center gap-2">
                 <Button
@@ -97,7 +94,7 @@ export const CellAction = ({ data }: { data: CategoryColumn }) => {
                     disabled={loading}
                     variant="ghost"
                     className="h-8 p-0 w-9 bg-amber-400 hover:bg-amber-500"
-                    onClick={(e) => handleEditProduct(e)}
+                    onClick={(e) => handleEditOrder(e)}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -118,7 +115,7 @@ export const CellAction = ({ data }: { data: CategoryColumn }) => {
                     disabled={loading}
                     variant="ghost"
                     className="h-8 p-0 w-9 bg-sky-500 hover:bg-sky-600"
-                    onClick={(e) => handleShowDetailsCategory(e)}
+                    onClick={(e) => handleShowDetailsOrder(e)}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

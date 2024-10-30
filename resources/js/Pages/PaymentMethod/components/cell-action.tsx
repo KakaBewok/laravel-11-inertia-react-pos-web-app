@@ -10,7 +10,9 @@ export const CellAction = ({ data }: { data: PaymentMethodColumn }) => {
     const { loading, setLoading } = useGlobalContext();
     const [modalOpen, setModalOpen] = useState<boolean>(false);
 
-    const handleDeleteId = () => {
+    const handleDeleteId = (e?: React.MouseEvent<HTMLButtonElement>) => {
+        e?.stopPropagation();
+
         setLoading(true);
         router.delete(route("admin.payment_method.destroy", data.id), {
             onSuccess: () => {
@@ -24,7 +26,11 @@ export const CellAction = ({ data }: { data: PaymentMethodColumn }) => {
         });
     };
 
-    const handleEditPaymentMethod = () => {
+    const handleEditPaymentMethod = (
+        e: React.MouseEvent<HTMLButtonElement>
+    ) => {
+        e.stopPropagation();
+
         setLoading(true);
         router.get(
             route("admin.payment_method.edit", data.id),
@@ -35,7 +41,11 @@ export const CellAction = ({ data }: { data: PaymentMethodColumn }) => {
         );
     };
 
-    const handleShowDetailsPaymentMethod = () => {
+    const handleShowDetailsPaymentMethod = (
+        e: React.MouseEvent<HTMLButtonElement>
+    ) => {
+        e.stopPropagation();
+
         setLoading(true);
         router.get(
             route("admin.payment_method.show", data.id),
@@ -46,12 +56,20 @@ export const CellAction = ({ data }: { data: PaymentMethodColumn }) => {
         );
     };
 
+    const handleModalDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        setModalOpen(true);
+    };
+
     return (
         <div>
             <AlertModal
                 isOpen={modalOpen}
-                onClose={() => setModalOpen(false)}
-                onConfirm={handleDeleteId}
+                onClose={(e) => {
+                    e?.stopPropagation();
+                    setModalOpen(false);
+                }}
+                onConfirm={(e) => handleDeleteId(e)}
                 loading={loading}
                 description="All orders under this payment method will also be deleted."
             />
@@ -59,7 +77,7 @@ export const CellAction = ({ data }: { data: PaymentMethodColumn }) => {
                 <Button
                     disabled={loading}
                     variant="destructive"
-                    onClick={() => setModalOpen(true)}
+                    onClick={(e) => handleModalDelete(e)}
                     className="h-8 p-0 bg-red-500 w-9 hover:bg-red-600"
                 >
                     <svg
@@ -81,7 +99,7 @@ export const CellAction = ({ data }: { data: PaymentMethodColumn }) => {
                     disabled={loading}
                     variant="ghost"
                     className="h-8 p-0 w-9 bg-amber-400 hover:bg-amber-500"
-                    onClick={handleEditPaymentMethod}
+                    onClick={(e) => handleEditPaymentMethod(e)}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -102,7 +120,7 @@ export const CellAction = ({ data }: { data: PaymentMethodColumn }) => {
                     disabled={loading}
                     variant="ghost"
                     className="h-8 p-0 w-9 bg-sky-500 hover:bg-sky-600"
-                    onClick={handleShowDetailsPaymentMethod}
+                    onClick={(e) => handleShowDetailsPaymentMethod(e)}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

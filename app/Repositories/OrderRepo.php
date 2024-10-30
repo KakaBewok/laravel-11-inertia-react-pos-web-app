@@ -28,9 +28,7 @@ class OrderRepo implements CrudRepository
         $oldData = Order::find($id);
         if ($oldData) {
             $oldData->update($data);
-            return $oldData;
         }
-        return null;
     }
 
     public function delete(int $id)

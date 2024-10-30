@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-
+use App\Observers\OrderObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+ 
+#[ObservedBy([OrderObserver::class])]
 class Order extends Model
 {
     use HasFactory;
@@ -18,7 +21,9 @@ class Order extends Model
         'total_amount',
         'total_paid',
         'changes',
-        'status'
+        'status',
+        'notes',
+        'transaction_id'
     ];
 
     protected $casts = [

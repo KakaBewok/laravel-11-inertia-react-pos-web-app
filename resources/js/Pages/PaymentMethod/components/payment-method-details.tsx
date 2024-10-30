@@ -54,6 +54,7 @@ const PaymentMethodDetails = ({
                         </svg>
                     </Button>
                     <Button
+                        disabled={loading}
                         variant="outline"
                         onClick={() => window.history.back()}
                         className="dark:bg-slate-200 dark:text-slate-900"
@@ -62,8 +63,8 @@ const PaymentMethodDetails = ({
                     </Button>
                 </div>
             </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 bg-slate-50 dark:bg-slate-600">
-                <div className=" w-full max-w-lg p-6 space-y-6 rounded-md md:p-7">
+            <div className="rounded-lg flex flex-col md:flex-row justify-between bg-slate-50 dark:bg-slate-600">
+                <div className="flex-1 p-6 space-y-6 md:p-7">
                     <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-50">
                         {paymentMethod.name}
                     </h1>
@@ -76,10 +77,10 @@ const PaymentMethodDetails = ({
                         </p>
                     </div>
                     <div>
-                        <h3 className="font-semibold text-gray-800 dark:text-gray-50">
+                        <h3 className="font-semibold text-gray-800 dark:text-gray-50 mb-1">
                             Status:{" "}
                         </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-300">
+                        <div className="text-sm text-gray-500 dark:text-gray-300">
                             {paymentMethod.status ? (
                                 <Badge
                                     variant="default"
@@ -95,7 +96,7 @@ const PaymentMethodDetails = ({
                                     Non-Active
                                 </Badge>
                             )}
-                        </p>
+                        </div>
                     </div>
                     <div className="text-gray-800 dark:text-gray-200 ">
                         <h3 className="font-semibold text-gray-800 dark:text-gray-50">
@@ -112,48 +113,40 @@ const PaymentMethodDetails = ({
                         </p>
                     </div>
                 </div>
-                {/* Image Card */}
-                <div className="flex flex-col gap-6 items-center justify-around max-w-lg p-6 mx-auto rounded-lg md:flex-row md:space-y-0 md:space-x-6 md:p-8">
-                    {/* Bank Logo */}
-                    <div className="flex flex-col items-center space-y-4 w-full h-full">
-                        <div className="relative w-full h-full overflow-hidden border rounded-md shadow-md dark:border-gray-500 border-gray-300">
-                            {paymentMethod.bank_logo ? (
-                                <img
-                                    src={`${
-                                        import.meta.env.VITE_APP_URL
-                                    }/storage/${paymentMethod.bank_logo}`}
-                                    alt="Bank Logo"
-                                    className="object-cover w-full h-full transition-transform duration-200 transform hover:scale-105"
-                                />
-                            ) : (
-                                <img
-                                    src={ImageNotFound}
-                                    alt="Bank Logo"
-                                    className="object-cover w-full h-full transition-transform duration-200 transform hover:scale-105"
-                                />
-                            )}
-                        </div>
+                <div className="flex-1 flex flex-col gap-5 items-center justify-center w-full p-5 md:flex-row">
+                    <div className="w-full h-full overflow-hidden border rounded-sm shadow-sm dark:border-gray-400 border-gray-200">
+                        {paymentMethod.bank_logo ? (
+                            <img
+                                src={`${import.meta.env.VITE_APP_URL}/storage/${
+                                    paymentMethod.bank_logo
+                                }`}
+                                alt="Bank Logo"
+                                className="object-cover w-full h-full transition-transform duration-200 transform hover:scale-105"
+                            />
+                        ) : (
+                            <img
+                                src={ImageNotFound}
+                                alt="No image uploaded"
+                                className="object-cover w-full h-full transition-transform duration-200 transform hover:scale-105"
+                            />
+                        )}
                     </div>
-
-                    {/* QRIS Image */}
-                    <div className="flex flex-col items-center space-y-4 w-full h-full">
-                        <div className="relative w-full h-full overflow-hidden border rounded-md shadow-md dark:border-gray-500 border-gray-300">
-                            {paymentMethod.qris_image ? (
-                                <img
-                                    src={`${
-                                        import.meta.env.VITE_APP_URL
-                                    }/storage/${paymentMethod.qris_image}`}
-                                    alt="Qris image"
-                                    className="object-cover w-full h-full transition-transform duration-200 transform hover:scale-105"
-                                />
-                            ) : (
-                                <img
-                                    src={ImageNotFound}
-                                    alt="Qris image"
-                                    className="object-cover w-full h-full transition-transform duration-200 transform hover:scale-105"
-                                />
-                            )}
-                        </div>
+                    <div className="w-full h-full overflow-hidden border rounded-sm shadow-sm dark:border-gray-400 border-gray-200">
+                        {paymentMethod.qris_image ? (
+                            <img
+                                src={`${import.meta.env.VITE_APP_URL}/storage/${
+                                    paymentMethod.qris_image
+                                }`}
+                                alt="QRIS image"
+                                className="object-cover w-full h-full transition-transform duration-200 transform hover:scale-105"
+                            />
+                        ) : (
+                            <img
+                                src={ImageNotFound}
+                                alt="No image uploaded"
+                                className="object-cover w-full h-full transition-transform duration-200 transform hover:scale-105"
+                            />
+                        )}
                     </div>
                 </div>
             </div>

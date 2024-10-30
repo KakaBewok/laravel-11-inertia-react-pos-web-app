@@ -10,7 +10,9 @@ export const CellAction = ({ data }: { data: ProductColumn }) => {
     const { loading, setLoading } = useGlobalContext();
     const [modalOpen, setModalOpen] = useState<boolean>(false);
 
-    const handleDeleteId = () => {
+    const handleDeleteId = (e?: React.MouseEvent<HTMLButtonElement>) => {
+        e?.stopPropagation();
+
         setLoading(true);
         router.delete(route("admin.product.destroy", data.id), {
             onSuccess: () => {
@@ -24,7 +26,9 @@ export const CellAction = ({ data }: { data: ProductColumn }) => {
         });
     };
 
-    const handleEditProduct = () => {
+    const handleEditProduct = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+
         setLoading(true);
         router.get(
             route("admin.product.edit", data.id),
@@ -35,7 +39,11 @@ export const CellAction = ({ data }: { data: ProductColumn }) => {
         );
     };
 
-    const handleShowDetailsProduct = () => {
+    const handleShowDetailsProduct = (
+        e: React.MouseEvent<HTMLButtonElement>
+    ) => {
+        e.stopPropagation();
+
         setLoading(true);
         router.get(
             route("admin.product.show", data.id),
@@ -46,19 +54,27 @@ export const CellAction = ({ data }: { data: ProductColumn }) => {
         );
     };
 
+    const handleModalDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        setModalOpen(true);
+    };
+
     return (
         <div>
             <AlertModal
                 isOpen={modalOpen}
-                onClose={() => setModalOpen(false)}
-                onConfirm={handleDeleteId}
+                onClose={(e) => {
+                    e?.stopPropagation();
+                    setModalOpen(false);
+                }}
+                onConfirm={(e) => handleDeleteId(e)}
                 loading={loading}
             />
             <div className="flex items-center gap-2">
                 <Button
                     disabled={loading}
                     variant="destructive"
-                    onClick={() => setModalOpen(true)}
+                    onClick={(e) => handleModalDelete(e)}
                     className="h-8 p-0 bg-red-500 w-9 hover:bg-red-600"
                 >
                     <svg
@@ -80,7 +96,7 @@ export const CellAction = ({ data }: { data: ProductColumn }) => {
                     disabled={loading}
                     variant="ghost"
                     className="h-8 p-0 w-9 bg-amber-400 hover:bg-amber-500"
-                    onClick={handleEditProduct}
+                    onClick={(e) => handleEditProduct(e)}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -101,7 +117,7 @@ export const CellAction = ({ data }: { data: ProductColumn }) => {
                     disabled={loading}
                     variant="ghost"
                     className="h-8 p-0 w-9 bg-sky-500 hover:bg-sky-600"
-                    onClick={handleShowDetailsProduct}
+                    onClick={(e) => handleShowDetailsProduct(e)}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
