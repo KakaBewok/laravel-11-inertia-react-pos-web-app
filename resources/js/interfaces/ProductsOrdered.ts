@@ -1,4 +1,5 @@
-export interface ProductOrdered {
+export default interface ProductOrdered {
+    id: string;
     product_name: string;
     price: number;
     unit: string;

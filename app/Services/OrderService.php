@@ -21,6 +21,7 @@ class OrderService {
         foreach ($order->orderProducts as $orderProduct) {
             $product = $orderProduct->product;
             $productsOrdered[] = [
+                'id' => $orderProduct->id,
                 'product_name' => $product->name,
                 'price' => $product->price,
                 'unit' => $product->unit,

@@ -4,9 +4,10 @@ import { Heading } from "@/Components/ui/heading";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import Order from "@/interfaces/Order";
 import PaymentMethod from "@/interfaces/PaymentMethod";
-import { ProductOrdered } from "@/interfaces/ProductsOrdered";
+import ProductOrdered from "@/interfaces/ProductsOrdered";
 import { router } from "@inertiajs/react";
 import { format } from "date-fns";
+import ProductOrderTable from "./product-order-table";
 
 interface OrderDetailsProps {
     order: Order;
@@ -31,17 +32,6 @@ const OrderDetails = ({
             }
         );
     };
-
-    // id: string; --- 0
-    // customer_name: string; ----0
-    // payment_method_id: string; -----0
-    // order_date: Date; --- 0
-    // total_amount: number; ---0
-    // total_paid: number; ---0
-    // changes: number; ----0
-    // status: "pending" | "cancelled" | "completed";
-    //notes
-    //trx id ---- ok
 
     return (
         <>
@@ -81,7 +71,7 @@ const OrderDetails = ({
                     </Button>
                 </div>
             </div>
-            <div className="rounded-lg flex flex-col md:flex-row justify-between bg-slate-50 dark:bg-slate-600">
+            <div className="rounded-lg flex flex-col lg:flex-row justify-between bg-slate-50 dark:bg-slate-600">
                 <div className="flex-1 p-6 space-y-6 md:p-12">
                     <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-50">
                         {order.customer_name}
@@ -157,7 +147,7 @@ const OrderDetails = ({
                         <h3 className="font-semibold text-gray-800 dark:text-gray-50">
                             Notes:{" "}
                         </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-300 w-full md:w-1/2">
+                        <p className="text-sm text-gray-500 dark:text-gray-300 w-full lg:w-2/3">
                             {order.notes ? (
                                 order.notes
                             ) : (
@@ -168,26 +158,19 @@ const OrderDetails = ({
                         </p>
                     </div>
                 </div>
-                {/* {productsOrdered.map((item) => (
-                    <div className="w-full -ml-10 mt-10">
-                        <p>{item.product_name}</p>
-                        <p>{item.quantity}</p>
-                        <p>{item.total_price}</p>
-                    </div>
-                ))} */}
 
-                {/* <div className="w-full max-w-lg p-6 mx-auto rounded-md md:p-7 bg-slate-50 dark:bg-slate-600">
+                <div className="flex-1 p-6 md:p-12 bg-slate-200 dark:bg-slate-700">
                     <h1 className="pb-5 font-bold text-md text-slate-700 dark:text-white">
-                        List of products
+                        List of products ordered
                     </h1>
-                    {products != null && products.length > 0 ? (
-                        <ProductTable products={products} />
+                    {productsOrdered != null && productsOrdered.length > 0 ? (
+                        <ProductOrderTable productsOrdered={productsOrdered} />
                     ) : (
                         <p className="font-normal text-center text-muted-foreground text-md">
                             No result.
                         </p>
                     )}
-                </div> */}
+                </div>
             </div>
         </>
     );
