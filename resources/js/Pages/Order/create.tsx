@@ -1,13 +1,18 @@
 import PaymentMethod from "@/interfaces/PaymentMethod";
+import Photo from "@/interfaces/Photo";
 import Product from "@/interfaces/Product";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import MainLayout from "@/Layouts/MainLayout";
 import { Head } from "@inertiajs/react";
 import { OrderForm } from "./components/order-form";
 
+type AllProduct = Product & {
+    photos: Photo[];
+};
+
 interface CreatePageProps {
     paymentMethods: PaymentMethod[];
-    products: Product[];
+    products: AllProduct[];
 }
 
 const CreatePage = ({ paymentMethods, products }: CreatePageProps) => {

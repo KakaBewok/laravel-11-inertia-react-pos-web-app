@@ -28,15 +28,18 @@ import { Textarea } from "@/Components/ui/textarea";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import Order from "@/interfaces/Order";
 import PaymentMethod from "@/interfaces/PaymentMethod";
+import Photo from "@/interfaces/Photo";
 import Product from "@/interfaces/Product";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "@inertiajs/react";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as z from "zod";
+import ImageNotFound from "../../../../../public/images/image-not-found.jpg";
 
 const formSchema = z.object({
     customer_name: z
@@ -77,6 +80,9 @@ const formSchema = z.object({
 
 type OrderFormValues = z.infer<typeof formSchema>;
 
+type AllProduct = Product & {
+    photos: Photo[];
+};
 interface OrderFormProps {
     initialData?:
         | (Order & {
@@ -84,7 +90,7 @@ interface OrderFormProps {
           })
         | null;
     paymentMethods: PaymentMethod[];
-    products: Product[];
+    products: AllProduct[];
 }
 
 export const OrderForm: React.FC<OrderFormProps> = ({
@@ -93,6 +99,12 @@ export const OrderForm: React.FC<OrderFormProps> = ({
     products,
 }) => {
     const { loading, setLoading } = useGlobalContext();
+
+    const [searchTerm, setSearchTerm] = useState("");
+    const filteredProducts = products.filter((product) =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     const title = initialData ? "Edit order" : "Create order";
     const description = initialData ? "Edit an order" : "Add a new order";
     const toastMessage = initialData ? "Order updated." : "Order created.";
@@ -156,7 +168,10 @@ export const OrderForm: React.FC<OrderFormProps> = ({
               });
     };
 
-    // TODO: 1. buat tampilan product yang dibeli 2. buat tampilan cards product yang akan dibeli 3. buat dalam 2 column di MD
+    // TODO:
+    // 1. buat tampilan product yang dibeli --- ok
+    // 2. buat tampilan cards product yang akan dibeli
+    // 3. buat dalam 2 column di MD
 
     return (
         <>
@@ -169,6 +184,65 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                 >
                     Back
                 </Button>
+            </div>
+            <div className="bg-slate-100 dark:bg-slate-950 p-3 md:p-6 rounded-md">
+                <div className="px-3 md:px-6 py-4">
+                    <input
+                        type="text"
+                        placeholder="Search by product name"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full rounded-md border-gray-300 p-2 dark:bg-slate-200 dark:text-slate-800"
+                    />
+                </div>
+                {filteredProducts.length === 0 && (
+                    <div className="text-center text-sm text-gray-700 dark:text-slate-400 mt-4">
+                        No products found.
+                    </div>
+                )}
+                <div className="p-3 md:p-6 grid max-h-72 grid-cols-1 gap-x-6 gap-y-10 overflow-y-scroll sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8 scrollbar-hidden">
+                    {filteredProducts.map((product) => (
+                        <div
+                            key={product.id}
+                            className="group relative bg-gray-100 shadow-md p-3 rounded-md dark:bg-gray-700"
+                        >
+                            <div className="aspect-h-1 aspect-w-1 w-full h-40 overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-85">
+                                {product.photos.length === 0 ? (
+                                    <img
+                                        alt="Image not found"
+                                        src={ImageNotFound}
+                                        className="h-full w-full object-cover object-center"
+                                    />
+                                ) : (
+                                    <img
+                                        alt="Product image"
+                                        src={`${
+                                            import.meta.env.VITE_APP_URL
+                                        }/storage/${product.photos[0].photo}`}
+                                        className="h-full w-full object-cover object-center"
+                                    />
+                                )}
+                            </div>
+                            <div className="mt-4 flex justify-between items-start">
+                                <div>
+                                    <h3 className="font-semibold text-sm text-gray-700 dark:text-slate-50">
+                                        <span
+                                            aria-hidden="true"
+                                            className="absolute inset-0"
+                                        />
+                                        {product.name}
+                                    </h3>
+                                    <p className="text-sm text-gray-500 dark:text-slate-400">
+                                        Rp. {product.price}
+                                    </p>
+                                </div>
+                                <p className="text-sm text-gray-500 dark:text-slate-400">
+                                    {product.stock_quantity}
+                                </p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
             <Form {...form}>
                 <form
@@ -478,3 +552,78 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         </>
     );
 };
+
+//  const [products, setProducts] = useState([]);
+//     const [searchTerm, setSearchTerm] = useState('');
+//     const [selectedItems, setSelectedItems] = useState([]);
+
+//     useEffect(() => {
+//         fetchProducts();
+//     }, [searchTerm]);
+
+//     const fetchProducts = async () => {
+//         const response = await axios.get(`/products?name=${searchTerm}`);
+//         setProducts(response.data.products);
+//     };
+
+//     const addProduct = (product) => {
+//         const existingItem = selectedItems.find(item => item.id === product.id);
+//         if (existingItem) {
+//             setSelectedItems(selectedItems.map(item =>
+//                 item.id === product.id
+//                     ? { ...item, quantity: item.quantity + 1 }
+//                     : item
+//             ));
+//         } else {
+//             setSelectedItems([...selectedItems, { ...product, quantity: 1 }]);
+//         }
+//     };
+
+//     const adjustQuantity = (productId, amount) => {
+//         setSelectedItems(selectedItems.map(item =>
+//             item.id === productId
+//                 ? { ...item, quantity: Math.max(item.quantity + amount, 0) }
+//                 : item
+//         ));
+//     };
+
+//     const handleSubmitOrder = async () => {
+//         const response = await axios.post('/order', { items: selectedItems });
+//         console.log("Order saved:", response.data.order_id);
+//     };
+
+//     return (
+//         <div>
+//             <input
+//                 type="text"
+//                 placeholder="Cari produk..."
+//                 value={searchTerm}
+//                 onChange={(e) => setSearchTerm(e.target.value)}
+//             />
+//             <div className="product-list">
+//                 {products.map(product => (
+//                     <div key={product.id} className="product-card">
+//                         <h3>{product.name}</h3>
+//                         <p>Price: {product.price}</p>
+//                         <button onClick={() => addProduct(product)}>Add</button>
+//                     </div>
+//                 ))}
+//             </div>
+//             <div className="order-summary">
+//                 <h3>Order Summary</h3>
+//                 {selectedItems.map(item => (
+//                     <div key={item.id} className="selected-item">
+//                         <span>{item.name}</span>
+//                         <button onClick={() => adjustQuantity(item.id, -1)}>-</button>
+//                         <span>{item.quantity}</span>
+//                         <button onClick={() => adjustQuantity(item.id, 1)}>+</button>
+//                         <span>{item.price * item.quantity}</span>
+//                     </div>
+//                 ))}
+//                 <button onClick={handleSubmitOrder}>Submit Order</button>
+//             </div>
+//         </div>
+//     );
+// };
+
+// export default OrderForm;
