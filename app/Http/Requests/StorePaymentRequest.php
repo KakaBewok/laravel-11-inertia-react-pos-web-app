@@ -26,6 +26,7 @@ class StorePaymentRequest extends FormRequest
             'bank_name' => 'required|string|min:3',
             'description' => 'nullable|string',
             'status' => 'required|boolean',
+            'is_cash' => 'required|boolean',
             'bank_logo' => 'nullable|file|mimes:' . implode(',', config('constants.ACCEPTED_IMAGE_TYPES')) . '|max:' . (config('constants.MAX_FILE_SIZE') * 1024),
             'qris_image' => 'nullable|file|mimes:' . implode(',', config('constants.ACCEPTED_IMAGE_TYPES')) . '|max:' . (config('constants.MAX_FILE_SIZE') * 1024),
         ];
@@ -43,6 +44,8 @@ class StorePaymentRequest extends FormRequest
             'description.string' => 'The description must be a string.',
             'status.required' => 'The status is required.',
             'status.boolean' => 'The status must be a boolean (true/false).',
+            'is_cash.required' => 'The is_cash is required.',
+            'is_cash.boolean' => 'The is_cash must be a boolean (true/false).',
             'bank_logo.file' => 'The bank logo must be a file.',
             'bank_logo.mimes' => 'The bank logo must be a file of type: ' . implode(', ', config('constants.ACCEPTED_IMAGE_TYPES')) . '.',
             'bank_logo.max' => 'The bank logo must not exceed ' . config('constants.MAX_FILE_SIZE') . ' KB.',

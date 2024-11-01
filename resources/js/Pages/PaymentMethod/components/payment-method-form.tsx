@@ -16,14 +16,14 @@ import { Switch } from "@/Components/ui/switch";
 import { Textarea } from "@/Components/ui/textarea";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import PaymentMethod from "@/interfaces/PaymentMethod";
+import urlToFile from "@/lib/file-utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { router } from "@inertiajs/react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import * as z from "zod";
 import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "../../../config";
-import { router } from "@inertiajs/react";
-import { toast } from "react-toastify";
-import urlToFile from "@/lib/file-utils";
 
 interface FilesToProcessType {
     key: "bank_logo" | "qris_image";
@@ -41,6 +41,10 @@ const formSchema = z.object({
     status: z.boolean({
         required_error: "Status is required",
         invalid_type_error: "Status must be a boolean",
+    }),
+    is_cash: z.boolean({
+        required_error: "Is cash is required",
+        invalid_type_error: "Is cash must be a boolean",
     }),
     description: z.string().optional(),
     bank_logo: z
@@ -101,6 +105,7 @@ export const PaymentMethodForm = ({
             bank_name: initialData?.bank_name || "",
             description: initialData?.description || "",
             status: initialData?.status || false,
+            is_cash: initialData?.is_cash || false,
             bank_logo: initialData?.bank_logo,
             qris_image: initialData?.qris_image,
         },
@@ -261,120 +266,6 @@ export const PaymentMethodForm = ({
                     className="w-full p-8 space-y-8 rounded-md bg-slate-50 dark:bg-gradient-to-tr md:dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-800"
                 >
                     <div className="grid grid-cols-1 gap-4 md:gap-8 md:grid-cols-2">
-                        {/* name */}
-                        <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field, fieldState }) => (
-                                <FormItem>
-                                    <FormLabel
-                                        className={
-                                            fieldState.error
-                                                ? "text-red-500"
-                                                : "dark:text-gray-300"
-                                        }
-                                    >
-                                        Name
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="dark:bg-slate-700"
-                                            disabled={loading}
-                                            placeholder="Bank transfer"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage className="dark:text-red-500" />
-                                </FormItem>
-                            )}
-                        />
-
-                        {/* bank name */}
-                        <FormField
-                            control={form.control}
-                            name="bank_name"
-                            render={({ field, fieldState }) => (
-                                <FormItem>
-                                    <FormLabel
-                                        className={
-                                            fieldState.error
-                                                ? "text-red-500"
-                                                : "dark:text-gray-300"
-                                        }
-                                    >
-                                        Bank Name
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="dark:bg-slate-700"
-                                            disabled={loading}
-                                            placeholder="Bank Central Asia (BCA)"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage className="dark:text-red-500" />
-                                </FormItem>
-                            )}
-                        />
-
-                        {/* description */}
-                        <FormField
-                            control={form.control}
-                            name="description"
-                            render={({ field, fieldState }) => (
-                                <FormItem>
-                                    <FormLabel
-                                        className={
-                                            fieldState.error
-                                                ? "text-red-500"
-                                                : "dark:text-gray-300"
-                                        }
-                                    >
-                                        Description
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            className="w-full h-32 max-w-lg max-h-40 dark:bg-slate-700"
-                                            disabled={loading}
-                                            placeholder="Account number: 0894387263"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage className="dark:text-red-500" />
-                                </FormItem>
-                            )}
-                        />
-
-                        {/* status */}
-                        <FormField
-                            control={form.control}
-                            name="status"
-                            render={({ field, fieldState }) => (
-                                <FormItem>
-                                    <FormLabel
-                                        className={
-                                            fieldState.error
-                                                ? "text-red-500"
-                                                : "dark:text-gray-300"
-                                        }
-                                    >
-                                        Active
-                                    </FormLabel>
-                                    <FormControl>
-                                        <div>
-                                            <Switch
-                                                checked={field.value}
-                                                onCheckedChange={field.onChange}
-                                                disabled={loading}
-                                                aria-readonly
-                                            />
-                                        </div>
-                                    </FormControl>
-                                    <FormMessage className="dark:text-red-500" />
-                                </FormItem>
-                            )}
-                        />
-
                         {/* bank_logo */}
                         <div className="flex flex-col gap-8">
                             <FormField
@@ -498,6 +389,150 @@ export const PaymentMethodForm = ({
                                 </div>
                             )}
                         </div>
+
+                        {/* name */}
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field, fieldState }) => (
+                                <FormItem>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Name
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            className="dark:bg-slate-700"
+                                            disabled={loading}
+                                            placeholder="Bank transfer"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage className="dark:text-red-500" />
+                                </FormItem>
+                            )}
+                        />
+
+                        {/* bank name */}
+                        <FormField
+                            control={form.control}
+                            name="bank_name"
+                            render={({ field, fieldState }) => (
+                                <FormItem>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Bank Name
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            className="dark:bg-slate-700"
+                                            disabled={loading}
+                                            placeholder="Bank Central Asia (BCA)"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage className="dark:text-red-500" />
+                                </FormItem>
+                            )}
+                        />
+
+                        {/* is_cash */}
+                        <FormField
+                            control={form.control}
+                            name="is_cash"
+                            render={({ field, fieldState }) => (
+                                <FormItem>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Is cash?
+                                    </FormLabel>
+                                    <FormControl>
+                                        <div>
+                                            <Switch
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                                disabled={loading}
+                                                aria-readonly
+                                            />
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage className="dark:text-red-500" />
+                                </FormItem>
+                            )}
+                        />
+
+                        {/* status */}
+                        <FormField
+                            control={form.control}
+                            name="status"
+                            render={({ field, fieldState }) => (
+                                <FormItem>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Active
+                                    </FormLabel>
+                                    <FormControl>
+                                        <div>
+                                            <Switch
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                                disabled={loading}
+                                                aria-readonly
+                                            />
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage className="dark:text-red-500" />
+                                </FormItem>
+                            )}
+                        />
+
+                        {/* description */}
+                        <FormField
+                            control={form.control}
+                            name="description"
+                            render={({ field, fieldState }) => (
+                                <FormItem>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Description
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Textarea
+                                            className="w-full h-32 max-w-lg max-h-40 dark:bg-slate-700"
+                                            disabled={loading}
+                                            placeholder="Account number: 0894387263"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage className="dark:text-red-500" />
+                                </FormItem>
+                            )}
+                        />
                     </div>
 
                     <Button

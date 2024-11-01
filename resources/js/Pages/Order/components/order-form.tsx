@@ -24,6 +24,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select";
+import { Separator } from "@/Components/ui/separator";
 import { Textarea } from "@/Components/ui/textarea";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import Order from "@/interfaces/Order";
@@ -99,8 +100,9 @@ export const OrderForm: React.FC<OrderFormProps> = ({
     products,
 }) => {
     const { loading, setLoading } = useGlobalContext();
-
-    const [searchTerm, setSearchTerm] = useState("");
+    const [isCash, setIsCash] = useState<boolean>(false);
+    const [selectedItems, setSelectedItems] = useState<Product[]>([]);
+    const [searchTerm, setSearchTerm] = useState<string>("");
     const filteredProducts = products.filter((product) =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -168,6 +170,45 @@ export const OrderForm: React.FC<OrderFormProps> = ({
               });
     };
 
+    const handlePaymentMethodChange = (value: string) => {
+        const selectedPaymentMethod = paymentMethods.find(
+            (method) => method.id.toString() === value
+        );
+        setIsCash(selectedPaymentMethod?.is_cash || false);
+        form.setValue("payment_method_id", value);
+    };
+    //
+    // const handleQuantityUpdate = (productId: string, newQuantity: number) => {
+    //     setSelectedItems(
+    //         selectedItems.map((item) =>
+    //             item.id === productId
+    //                 ? { ...item, quantity: newQuantity }
+    //                 : item
+    //         )
+    //     );
+    // };
+
+    const addProduct = (product: Product) => {
+        const existingItem = selectedItems.find(
+            (item: Product) => item.id === product.id
+        );
+        if (existingItem) {
+            setSelectedItems(
+                selectedItems.map((item) =>
+                    item.id === product.id
+                        ? { ...item, stock_quantity: item.stock_quantity + 1 }
+                        : item
+                )
+            );
+        } else {
+            setSelectedItems([
+                ...selectedItems,
+                { ...product, stock_quantity: 1 },
+            ]);
+        }
+    };
+    //
+
     // TODO:
     // 1. buat tampilan product yang dibeli --- ok
     // 2. buat tampilan cards product yang akan dibeli
@@ -203,6 +244,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                 <div className="p-3 md:p-6 grid max-h-72 grid-cols-1 gap-x-6 gap-y-10 overflow-y-scroll sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8 scrollbar-hidden">
                     {filteredProducts.map((product) => (
                         <div
+                            onClick={() => addProduct(product)}
                             key={product.id}
                             className="group relative bg-gray-100 shadow-md p-3 rounded-md dark:bg-gray-700"
                         >
@@ -249,304 +291,392 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="w-full p-8 space-y-8 rounded-md bg-slate-50 dark:bg-gradient-to-tr md:dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-800"
                 >
-                    <div className="grid grid-cols-1 gap-4 md:gap-8 md:grid-cols-2">
-                        {/* customer name */}
-                        <FormField
-                            control={form.control}
-                            name="customer_name"
-                            render={({ field, fieldState }) => (
-                                <FormItem>
-                                    <FormLabel
-                                        className={
-                                            fieldState.error
-                                                ? "text-red-500"
-                                                : "dark:text-gray-300"
-                                        }
-                                    >
-                                        Customer name
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="dark:bg-slate-700"
-                                            disabled={loading}
-                                            placeholder="Panjul"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage className="dark:text-red-500" />
-                                </FormItem>
-                            )}
-                        />
+                    <div className="w-full grid grid-cols-1 gap-4 md:gap-8 md:grid-cols-2">
+                        <div className="w-full ">
+                            <div className="order-summary">
+                                <div className="mb-4">
+                                    <h1 className="font-bold text-lg mb-2">
+                                        Order Summary
+                                    </h1>
+                                    <Separator className="dark:bg-slate-700 bg-slate-300" />
+                                </div>
 
-                        {/* total amount */}
-                        <FormField
-                            control={form.control}
-                            name="total_amount"
-                            render={({ field, fieldState }) => (
-                                <FormItem>
-                                    <FormLabel
-                                        className={
-                                            fieldState.error
-                                                ? "text-red-500"
-                                                : "dark:text-gray-300"
-                                        }
-                                    >
-                                        Total amount
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="dark:bg-slate-700"
-                                            type="number"
-                                            disabled={loading}
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage className="dark:text-red-500" />
-                                </FormItem>
-                            )}
-                        />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-10 py-5">
+                                    {selectedItems.map((item) => (
+                                        <div className="w-full">
+                                            <div className="mb-2">
+                                                <h3 className="font-medium text-sm mb-1">
+                                                    {item.name}
+                                                </h3>
+                                                <p className="font-light text-sm text-slate-500">
+                                                    Rp.{" "}
+                                                    {item.price *
+                                                        item.stock_quantity}
+                                                </p>
+                                            </div>
 
-                        {/* total paid */}
-                        <FormField
-                            control={form.control}
-                            name="total_paid"
-                            render={({ field, fieldState }) => (
-                                <FormItem>
-                                    <FormLabel
-                                        className={
-                                            fieldState.error
-                                                ? "text-red-500"
-                                                : "dark:text-gray-300"
-                                        }
-                                    >
-                                        Total paid
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="dark:bg-slate-700"
-                                            type="number"
-                                            disabled={loading}
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage className="dark:text-red-500" />
-                                </FormItem>
-                            )}
-                        />
-
-                        {/* changes */}
-                        <FormField
-                            control={form.control}
-                            name="changes"
-                            render={({ field, fieldState }) => (
-                                <FormItem>
-                                    <FormLabel
-                                        className={
-                                            fieldState.error
-                                                ? "text-red-500"
-                                                : "dark:text-gray-300"
-                                        }
-                                    >
-                                        Changes
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="dark:bg-slate-700"
-                                            type="number"
-                                            disabled={loading}
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage className="dark:text-red-500" />
-                                </FormItem>
-                            )}
-                        />
-
-                        {/* order_date */}
-                        <FormField
-                            control={form.control}
-                            name="order_date"
-                            render={({ field, fieldState }) => (
-                                <FormItem>
-                                    <FormLabel
-                                        className={
-                                            fieldState.error
-                                                ? "text-red-500"
-                                                : "dark:text-gray-300"
-                                        }
-                                    >
-                                        Order date
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Popover>
-                                            <PopoverTrigger asChild>
+                                            <div
+                                                key={item.id}
+                                                className="w-full rounded-md bg-slate-200 flex justify-between items-center text-slate-700"
+                                            >
                                                 <Button
-                                                    variant={"outline"}
-                                                    className={cn(
-                                                        "w-full justify-start gap-3 p-5 text-left font-normal dark:bg-slate-600 dark:hover:bg-slate-600",
-                                                        !field.value &&
-                                                            "text-muted-foreground"
-                                                    )}
+                                                    className="bg-slate-500"
+                                                    // onClick={() =>
+                                                    //     adjustQuantity(item.id, -1)
+                                                    // }
                                                 >
-                                                    <CalendarIcon />
-                                                    {field.value ? (
-                                                        format(
-                                                            field.value,
-                                                            "PPP"
-                                                        )
-                                                    ) : (
-                                                        <span>Pick a date</span>
-                                                    )}
+                                                    -
                                                 </Button>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-0">
-                                                <Calendar
-                                                    mode="single"
-                                                    selected={field.value}
-                                                    onSelect={field.onChange}
-                                                    initialFocus
-                                                />
-                                            </PopoverContent>
-                                        </Popover>
-                                    </FormControl>
-                                    <FormMessage className="dark:text-red-500" />
-                                </FormItem>
-                            )}
-                        />
+                                                <span className="font-medium">
+                                                    {item.stock_quantity}
+                                                </span>
+                                                {/* <input
+                                                    type="number"
+                                                    value={item.stock_quantity}
+                                                    min="1"
+                                                    onChange={(e) =>
+                                                        handleQuantityUpdate(
+                                                            item.id,
+                                                            Number(
+                                                                e.target.value
+                                                            )
+                                                        )
+                                                    }
+                                                /> */}
+                                                <Button
+                                                    className="bg-slate-500"
+                                                    // onClick={() =>
+                                                    //     adjustQuantity(item.id, 1)
+                                                    // }
+                                                >
+                                                    +
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                {/* <button onClick={handleSubmitOrder}>
+                                    Submit Order
+                                </button> */}
+                            </div>
+                        </div>
+                        <div className="w-full flex flex-col gap-4">
+                            <div className="mb-4">
+                                <h1 className="font-bold text-lg mb-2">
+                                    Form Checkout
+                                </h1>
+                                <Separator className="dark:bg-slate-700 bg-slate-300" />
+                            </div>
 
-                        {/* payment method */}
-                        <FormField
-                            control={form.control}
-                            name="payment_method_id"
-                            render={({ field, fieldState }) => (
-                                <FormItem>
-                                    <FormLabel
-                                        className={
-                                            fieldState.error
-                                                ? "text-red-500"
-                                                : "dark:text-gray-300"
-                                        }
-                                    >
-                                        Payment method
-                                    </FormLabel>
-                                    <Select
-                                        disabled={loading}
-                                        onValueChange={field.onChange}
-                                        value={field.value.toString()}
-                                        defaultValue={field.value.toString()}
-                                    >
-                                        <FormControl className="dark:bg-slate-700">
-                                            <SelectTrigger className="w-full">
-                                                <SelectValue
-                                                    defaultValue={field.value.toString()}
-                                                    placeholder="Select a payment method"
-                                                />
-                                            </SelectTrigger>
+                            {/* customer name */}
+                            <FormField
+                                control={form.control}
+                                name="customer_name"
+                                render={({ field, fieldState }) => (
+                                    <FormItem>
+                                        <FormLabel
+                                            className={
+                                                fieldState.error
+                                                    ? "text-red-500"
+                                                    : "dark:text-gray-300"
+                                            }
+                                        >
+                                            Customer name
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                className="dark:bg-slate-700"
+                                                disabled={loading}
+                                                placeholder="Panjul"
+                                                {...field}
+                                            />
                                         </FormControl>
-                                        <SelectContent>
-                                            {paymentMethods.map(
-                                                (paymentMethod) => (
-                                                    <SelectItem
-                                                        key={paymentMethod.id.toString()}
-                                                        value={paymentMethod.id.toString()}
-                                                    >
-                                                        {paymentMethod.name}
-                                                    </SelectItem>
-                                                )
-                                            )}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage className="dark:text-red-500" />
-                                </FormItem>
-                            )}
-                        />
+                                        <FormMessage className="dark:text-red-500" />
+                                    </FormItem>
+                                )}
+                            />
 
-                        {/* status */}
-                        <FormField
-                            control={form.control}
-                            name="status"
-                            render={({ field, fieldState }) => (
-                                <FormItem>
-                                    <FormLabel
-                                        className={
-                                            fieldState.error
-                                                ? "text-red-500"
-                                                : "dark:text-gray-300"
-                                        }
-                                    >
-                                        Status
-                                    </FormLabel>
-                                    <FormControl>
+                            {/* notes */}
+                            <FormField
+                                control={form.control}
+                                name="notes"
+                                render={({ field, fieldState }) => (
+                                    <FormItem>
+                                        <FormLabel
+                                            className={
+                                                fieldState.error
+                                                    ? "text-red-500"
+                                                    : "dark:text-gray-300"
+                                            }
+                                        >
+                                            Notes
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                className="w-full h-32 max-w-lg max-h-40 dark:bg-slate-700"
+                                                disabled={loading}
+                                                placeholder="....."
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="dark:text-red-500" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* order_date */}
+                            <FormField
+                                control={form.control}
+                                name="order_date"
+                                render={({ field, fieldState }) => (
+                                    <FormItem>
+                                        <FormLabel
+                                            className={
+                                                fieldState.error
+                                                    ? "text-red-500"
+                                                    : "dark:text-gray-300"
+                                            }
+                                        >
+                                            Order date
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <Button
+                                                        variant={"outline"}
+                                                        className={cn(
+                                                            "w-full justify-start gap-3 p-5 text-left font-normal dark:bg-slate-600 dark:hover:bg-slate-600",
+                                                            !field.value &&
+                                                                "text-muted-foreground"
+                                                        )}
+                                                    >
+                                                        <CalendarIcon />
+                                                        {field.value ? (
+                                                            format(
+                                                                field.value,
+                                                                "PPP"
+                                                            )
+                                                        ) : (
+                                                            <span>
+                                                                Pick a date
+                                                            </span>
+                                                        )}
+                                                    </Button>
+                                                </PopoverTrigger>
+                                                <PopoverContent className="w-auto p-0">
+                                                    <Calendar
+                                                        mode="single"
+                                                        selected={field.value}
+                                                        onSelect={
+                                                            field.onChange
+                                                        }
+                                                        initialFocus
+                                                    />
+                                                </PopoverContent>
+                                            </Popover>
+                                        </FormControl>
+                                        <FormMessage className="dark:text-red-500" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* payment method */}
+                            <FormField
+                                control={form.control}
+                                name="payment_method_id"
+                                render={({ field, fieldState }) => (
+                                    <FormItem>
+                                        <FormLabel
+                                            className={
+                                                fieldState.error
+                                                    ? "text-red-500"
+                                                    : "dark:text-gray-300"
+                                            }
+                                        >
+                                            Payment method
+                                        </FormLabel>
                                         <Select
                                             disabled={loading}
-                                            onValueChange={field.onChange}
-                                            value={field.value}
-                                            defaultValue={field.value}
+                                            onValueChange={(value) => {
+                                                field.onChange(value);
+                                                handlePaymentMethodChange(
+                                                    value
+                                                );
+                                            }}
+                                            value={field.value.toString()}
+                                            defaultValue={field.value.toString()}
                                         >
                                             <FormControl className="dark:bg-slate-700">
                                                 <SelectTrigger className="w-full">
                                                     <SelectValue
-                                                        defaultValue={
-                                                            field.value
-                                                        }
-                                                        placeholder="Select a status"
+                                                        defaultValue={field.value.toString()}
+                                                        placeholder="Select a payment method"
                                                     />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value="Completed">
-                                                    Completed
-                                                </SelectItem>
-                                                <SelectItem value="Pending">
-                                                    Pending
-                                                </SelectItem>
-                                                <SelectItem value="Cancelled">
-                                                    Cancelled
-                                                </SelectItem>
+                                                {paymentMethods.map(
+                                                    (paymentMethod) => (
+                                                        <SelectItem
+                                                            key={paymentMethod.id.toString()}
+                                                            value={paymentMethod.id.toString()}
+                                                        >
+                                                            {paymentMethod.name}
+                                                        </SelectItem>
+                                                    )
+                                                )}
                                             </SelectContent>
                                         </Select>
-                                    </FormControl>
-                                    <FormMessage className="dark:text-red-500" />
-                                </FormItem>
-                            )}
-                        />
+                                        <FormMessage className="dark:text-red-500" />
+                                    </FormItem>
+                                )}
+                            />
 
-                        {/* notes */}
-                        <FormField
-                            control={form.control}
-                            name="notes"
-                            render={({ field, fieldState }) => (
-                                <FormItem>
-                                    <FormLabel
-                                        className={
-                                            fieldState.error
-                                                ? "text-red-500"
-                                                : "dark:text-gray-300"
-                                        }
-                                    >
-                                        Notes
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            className="w-full h-32 max-w-lg max-h-40 dark:bg-slate-700"
-                                            disabled={loading}
-                                            placeholder="....."
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage className="dark:text-red-500" />
-                                </FormItem>
+                            {/* total amount */}
+                            <FormField
+                                control={form.control}
+                                name="total_amount"
+                                render={({ field, fieldState }) => (
+                                    <FormItem>
+                                        <FormLabel
+                                            className={
+                                                fieldState.error
+                                                    ? "text-red-500"
+                                                    : "dark:text-gray-300"
+                                            }
+                                        >
+                                            Total amount
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                className="dark:bg-slate-700"
+                                                type="number"
+                                                disabled={loading}
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="dark:text-red-500" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* total paid */}
+                            <FormField
+                                control={form.control}
+                                name="total_paid"
+                                render={({ field, fieldState }) => (
+                                    <FormItem>
+                                        <FormLabel
+                                            className={
+                                                fieldState.error
+                                                    ? "text-red-500"
+                                                    : "dark:text-gray-300"
+                                            }
+                                        >
+                                            Total paid
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                className="dark:bg-slate-700"
+                                                type="number"
+                                                disabled={loading}
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="dark:text-red-500" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* changes */}
+                            {isCash && (
+                                <FormField
+                                    control={form.control}
+                                    name="changes"
+                                    render={({ field, fieldState }) => (
+                                        <FormItem>
+                                            <FormLabel
+                                                className={
+                                                    fieldState.error
+                                                        ? "text-red-500"
+                                                        : "dark:text-gray-300"
+                                                }
+                                            >
+                                                Changes
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    className="dark:bg-slate-700"
+                                                    type="number"
+                                                    disabled={loading}
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage className="dark:text-red-500" />
+                                        </FormItem>
+                                    )}
+                                />
                             )}
-                        />
+
+                            {/* status */}
+                            <FormField
+                                control={form.control}
+                                name="status"
+                                render={({ field, fieldState }) => (
+                                    <FormItem>
+                                        <FormLabel
+                                            className={
+                                                fieldState.error
+                                                    ? "text-red-500"
+                                                    : "dark:text-gray-300"
+                                            }
+                                        >
+                                            Status
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Select
+                                                disabled={loading}
+                                                onValueChange={field.onChange}
+                                                value={field.value}
+                                                defaultValue={field.value}
+                                            >
+                                                <FormControl className="dark:bg-slate-700">
+                                                    <SelectTrigger className="w-full">
+                                                        <SelectValue
+                                                            defaultValue={
+                                                                field.value
+                                                            }
+                                                            placeholder="Select a status"
+                                                        />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="Completed">
+                                                        Completed
+                                                    </SelectItem>
+                                                    <SelectItem value="Pending">
+                                                        Pending
+                                                    </SelectItem>
+                                                    <SelectItem value="Cancelled">
+                                                        Cancelled
+                                                    </SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormMessage className="dark:text-red-500" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <Button
+                                disabled={loading}
+                                className="w-full mt-10"
+                                type="submit"
+                            >
+                                {action}
+                            </Button>
+                        </div>
                     </div>
-
-                    <Button
-                        disabled={loading}
-                        className="w-full lg:w-1/2"
-                        type="submit"
-                    >
-                        {action}
-                    </Button>
                 </form>
             </Form>
         </>
@@ -566,6 +696,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 //         setProducts(response.data.products);
 //     };
 
+//      UDAH
 //     const addProduct = (product) => {
 //         const existingItem = selectedItems.find(item => item.id === product.id);
 //         if (existingItem) {
@@ -627,3 +758,37 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 // };
 
 // export default OrderForm;
+
+///////////
+
+// store order
+
+// public function store(Request $request)
+// {
+//     $items = $request->items;
+
+//     \DB::transaction(function () use ($items) {
+//         $order = Order::create();
+
+//         foreach ($items as $item) {
+//             $product = Product::find($item['id']);
+
+//             // Cek stok produk
+//             if ($product->stock < $item['quantity']) {
+//                 throw new \Exception("Stok tidak mencukupi untuk produk {$product->name}");
+//             }
+
+//             // Kurangi stok produk
+//             $product->reduceStock($item['quantity']);
+
+//             // Simpan item order
+//             $order->items()->create([
+//                 'product_id' => $product->id,
+//                 'quantity' => $item['quantity'],
+//                 'price' => $product->price
+//             ]);
+//         }
+//     });
+
+//     return response()->json(['status' => 'success', 'order_id' => $order->id]);
+// }
