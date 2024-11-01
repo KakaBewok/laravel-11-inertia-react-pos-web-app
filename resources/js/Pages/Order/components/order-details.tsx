@@ -71,9 +71,9 @@ const OrderDetails = ({
                     </Button>
                 </div>
             </div>
-            <div className="rounded-lg flex flex-col lg:flex-row justify-between bg-slate-50 dark:bg-slate-600">
+            <div className="flex flex-col justify-between rounded-lg lg:flex-row bg-slate-50 dark:bg-slate-600">
                 <div className="flex-1 p-6 space-y-6 md:p-12">
-                    <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-50">
+                    <h1 className="text-2xl font-bold text-gray-800 md:text-3xl dark:text-gray-50">
                         {order.customer_name}
                     </h1>
                     <div>
@@ -125,7 +125,7 @@ const OrderDetails = ({
                         </p>
                     </div>
                     <div>
-                        <h3 className="font-semibold text-gray-800 dark:text-gray-50 mb-1">
+                        <h3 className="mb-1 font-semibold text-gray-800 dark:text-gray-50">
                             Status:{" "}
                         </h3>
                         <div className="text-sm text-gray-500 dark:text-gray-300">
@@ -147,7 +147,7 @@ const OrderDetails = ({
                         <h3 className="font-semibold text-gray-800 dark:text-gray-50">
                             Notes:{" "}
                         </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-300 w-full lg:w-2/3">
+                        <p className="w-full text-sm text-gray-500 dark:text-gray-300 lg:w-2/3">
                             {order.notes ? (
                                 order.notes
                             ) : (
@@ -159,7 +159,7 @@ const OrderDetails = ({
                     </div>
                 </div>
 
-                <div className="flex-1 p-6 md:p-12 bg-slate-200 dark:bg-slate-700">
+                <div className="flex-1 p-6 md:p-12 bg-slate-100 dark:bg-slate-700">
                     <h1 className="pb-5 font-bold text-md text-slate-700 dark:text-white">
                         List of products ordered
                     </h1>

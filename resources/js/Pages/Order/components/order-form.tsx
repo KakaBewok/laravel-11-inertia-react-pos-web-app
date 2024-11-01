@@ -1,10 +1,10 @@
 "use client";
 
 import { Button } from "@/Components/ui/button";
+import { Calendar } from "@/Components/ui/calendar";
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -12,6 +12,11 @@ import {
 } from "@/Components/ui/form";
 import { Heading } from "@/Components/ui/heading";
 import { Input } from "@/Components/ui/input";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/Components/ui/popover";
 import {
     Select,
     SelectContent,
@@ -21,151 +26,115 @@ import {
 } from "@/Components/ui/select";
 import { Textarea } from "@/Components/ui/textarea";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
-import Category from "@/interfaces/Category";
+import Order from "@/interfaces/Order";
+import PaymentMethod from "@/interfaces/PaymentMethod";
+import Photo from "@/interfaces/Photo";
 import Product from "@/interfaces/Product";
-import urlToFile from "@/lib/file-utils";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "@inertiajs/react";
-import { useEffect, useRef, useState } from "react";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as z from "zod";
-import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "../../../config";
+import ImageNotFound from "../../../../../public/images/image-not-found.jpg";
 
 const formSchema = z.object({
-    name: z
+    customer_name: z
         .string()
         .min(3, { message: "Name must contain at least 3 character(s)" }),
-    price: z.coerce
+    order_date: z.date().refine(
+        (inputDate) => {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+
+            return inputDate < tomorrow;
+        },
+        {
+            message: "Order date cannot be tomorrow or in the future.",
+        }
+    ),
+    total_amount: z.coerce
         .number()
-        .min(0, { message: "Price must be greater than or equal to 0" }),
-    category_id: z.string().min(1, { message: "Category is required" }),
-    description: z.string().optional(),
-    unit: z.string().min(1, { message: "Unit is required" }),
-    stock_quantity: z.coerce
+        .min(0, { message: "Total amount must be greater than or equal to 0" }),
+    total_paid: z.coerce
         .number()
-        .min(0, { message: "Stock must be greater than or equal to 0" }),
-    photos: z
-        .array(
-            z.union([
-                z
-                    .instanceof(File)
-                    .refine(
-                        (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
-                        {
-                            message: " must be jpg, jpeg, png or webp formats",
-                        }
-                    )
-                    .refine((file) => file.size <= MAX_FILE_SIZE * 1024, {
-                        message: ` is more than ${MAX_FILE_SIZE}KB`,
-                    }),
-                z.string(),
-            ])
-        )
-        .optional(),
+        .min(0, { message: "Total paid must be greater than or equal to 0" }),
+    changes: z.coerce
+        .number()
+        .min(0, { message: "Changes must be greater than or equal to 0" }),
+    status: z
+        .string()
+        .min(3, { message: "Status must contain at least 3 character(s)" }),
+    notes: z.string().optional(),
+    payment_method_id: z
+        .string()
+        .min(1, { message: "Payment method is required" }),
+    products: z.array(z.string().min(2)),
 });
 
-type ProductFormValues = z.infer<typeof formSchema>;
+type OrderFormValues = z.infer<typeof formSchema>;
 
-interface ProductFormProps {
+type AllProduct = Product & {
+    photos: Photo[];
+};
+interface OrderFormProps {
     initialData?:
-        | (Product & {
-              photos: string[];
+        | (Order & {
+              products: string[];
           })
         | null;
-    categories: Category[];
+    paymentMethods: PaymentMethod[];
+    products: AllProduct[];
 }
 
-export const OrderForm: React.FC<ProductFormProps> = ({
+export const OrderForm: React.FC<OrderFormProps> = ({
     initialData,
-    categories,
+    paymentMethods,
+    products,
 }) => {
-    const [photoFiles, setPhotoFiles] = useState<File[]>([]);
-    const fileInputRef = useRef<HTMLInputElement | null>(null);
     const { loading, setLoading } = useGlobalContext();
 
-    const title = initialData ? "Edit product" : "Create product";
-    const description = initialData ? "Edit a product" : "Add a new product";
-    const toastMessage = initialData ? "Product updated." : "Product created.";
+    const [searchTerm, setSearchTerm] = useState("");
+    const filteredProducts = products.filter((product) =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const title = initialData ? "Edit order" : "Create order";
+    const description = initialData ? "Edit an order" : "Add a new order";
+    const toastMessage = initialData ? "Order updated." : "Order created.";
     const action = initialData ? "Save changes" : "Create";
 
-    const form = useForm<ProductFormValues>({
+    const form = useForm<OrderFormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: initialData?.name || "",
-            price: initialData?.price || 0,
-            category_id: initialData?.category_id || "",
-            description: initialData?.description || "",
-            unit: initialData?.unit || "",
-            stock_quantity: initialData?.stock_quantity || 0,
-            photos: initialData?.photos,
+            customer_name: initialData?.customer_name || "",
+            order_date: initialData?.order_date || new Date(),
+            total_amount: initialData?.total_amount || 0,
+            total_paid: initialData?.total_paid || 0,
+            changes: initialData?.changes || 0,
+            status: initialData?.status || "",
+            notes: initialData?.notes || "",
+            payment_method_id: initialData?.payment_method_id || "",
+            products: initialData?.products,
         },
     });
 
-    useEffect(() => {
-        const convertUrlsToFiles = async () => {
-            if (initialData && initialData.photos.length > 0) {
-                const files = await Promise.all(
-                    initialData.photos.map((photoUrl, index) => {
-                        const filePath = `${
-                            import.meta.env.VITE_APP_URL
-                        }/storage/${photoUrl}`;
-                        return urlToFile(
-                            filePath,
-                            `product-image-${index}.jpg`,
-                            "image/jpeg"
-                        );
-                    })
-                );
-
-                setPhotoFiles(files);
-
-                const dt = new DataTransfer();
-                files.forEach((file) => dt.items.add(file));
-                if (fileInputRef.current) {
-                    fileInputRef.current.files = dt.files;
-                }
-                form.setValue("photos", files);
-            }
-        };
-
-        convertUrlsToFiles();
-    }, [initialData, form]);
-
-    const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            const files = Array.from(e.target.files);
-            setPhotoFiles([...photoFiles, ...files]);
-            form.setValue("photos", [...photoFiles, ...files]);
-        }
-    };
-
-    const removePhotoFile = (index: number) => {
-        const updatedPhotoFiles = photoFiles.filter((_, i) => i !== index);
-        setPhotoFiles(updatedPhotoFiles);
-
-        const dt = new DataTransfer();
-        updatedPhotoFiles.forEach((file) => dt.items.add(file));
-        if (fileInputRef.current) {
-            fileInputRef.current.files = dt.files;
-        }
-        form.setValue("photos", updatedPhotoFiles);
-    };
-
-    const onSubmit = (data: ProductFormValues) => {
+    const onSubmit = (data: OrderFormValues) => {
         setLoading(true);
 
         const clearForm = () => {
             form.reset();
-            setPhotoFiles([]);
-            if (fileInputRef.current) {
-                fileInputRef.current.value = "";
-            }
         };
 
         const handleSuccess = () => {
             clearForm();
-            router.visit(route("admin.product.index"));
+            router.visit(route("admin.order.index"));
             setTimeout(() => {
                 toast.success(toastMessage, {
                     position: "top-center",
@@ -181,7 +150,7 @@ export const OrderForm: React.FC<ProductFormProps> = ({
 
         initialData
             ? router.post(
-                  route("admin.product.update", initialData?.id),
+                  route("admin.order.update", initialData?.id),
                   {
                       ...data,
                       _method: "PATCH",
@@ -192,12 +161,17 @@ export const OrderForm: React.FC<ProductFormProps> = ({
                       onFinish: handleFinish,
                   }
               )
-            : router.post(route("admin.product.store"), data, {
+            : router.post(route("admin.order.store"), data, {
                   onSuccess: handleSuccess,
                   onError: handleError,
                   onFinish: handleFinish,
               });
     };
+
+    // TODO:
+    // 1. buat tampilan product yang dibeli --- ok
+    // 2. buat tampilan cards product yang akan dibeli
+    // 3. buat dalam 2 column di MD
 
     return (
         <>
@@ -211,16 +185,75 @@ export const OrderForm: React.FC<ProductFormProps> = ({
                     Back
                 </Button>
             </div>
+            <div className="bg-slate-100 dark:bg-slate-950 p-3 md:p-6 rounded-md">
+                <div className="px-3 md:px-6 py-4">
+                    <input
+                        type="text"
+                        placeholder="Search by product name"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full rounded-md border-gray-300 p-2 dark:bg-slate-200 dark:text-slate-800"
+                    />
+                </div>
+                {filteredProducts.length === 0 && (
+                    <div className="text-center text-sm text-gray-700 dark:text-slate-400 mt-4">
+                        No products found.
+                    </div>
+                )}
+                <div className="p-3 md:p-6 grid max-h-72 grid-cols-1 gap-x-6 gap-y-10 overflow-y-scroll sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8 scrollbar-hidden">
+                    {filteredProducts.map((product) => (
+                        <div
+                            key={product.id}
+                            className="group relative bg-gray-100 shadow-md p-3 rounded-md dark:bg-gray-700"
+                        >
+                            <div className="aspect-h-1 aspect-w-1 w-full h-40 overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-85">
+                                {product.photos.length === 0 ? (
+                                    <img
+                                        alt="Image not found"
+                                        src={ImageNotFound}
+                                        className="h-full w-full object-cover object-center"
+                                    />
+                                ) : (
+                                    <img
+                                        alt="Product image"
+                                        src={`${
+                                            import.meta.env.VITE_APP_URL
+                                        }/storage/${product.photos[0].photo}`}
+                                        className="h-full w-full object-cover object-center"
+                                    />
+                                )}
+                            </div>
+                            <div className="mt-4 flex justify-between items-start">
+                                <div>
+                                    <h3 className="font-semibold text-sm text-gray-700 dark:text-slate-50">
+                                        <span
+                                            aria-hidden="true"
+                                            className="absolute inset-0"
+                                        />
+                                        {product.name}
+                                    </h3>
+                                    <p className="text-sm text-gray-500 dark:text-slate-400">
+                                        Rp. {product.price}
+                                    </p>
+                                </div>
+                                <p className="text-sm text-gray-500 dark:text-slate-400">
+                                    {product.stock_quantity}
+                                </p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="w-full p-8 space-y-8 rounded-md bg-slate-50 dark:bg-gradient-to-tr md:dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-800"
                 >
                     <div className="grid grid-cols-1 gap-4 md:gap-8 md:grid-cols-2">
-                        {/* name */}
+                        {/* customer name */}
                         <FormField
                             control={form.control}
-                            name="name"
+                            name="customer_name"
                             render={({ field, fieldState }) => (
                                 <FormItem>
                                     <FormLabel
@@ -230,13 +263,13 @@ export const OrderForm: React.FC<ProductFormProps> = ({
                                                 : "dark:text-gray-300"
                                         }
                                     >
-                                        Name
+                                        Customer name
                                     </FormLabel>
                                     <FormControl>
                                         <Input
                                             className="dark:bg-slate-700"
                                             disabled={loading}
-                                            placeholder="Arabica coffe beans"
+                                            placeholder="Panjul"
                                             {...field}
                                         />
                                     </FormControl>
@@ -244,10 +277,11 @@ export const OrderForm: React.FC<ProductFormProps> = ({
                                 </FormItem>
                             )}
                         />
-                        {/* price */}
+
+                        {/* total amount */}
                         <FormField
                             control={form.control}
-                            name="price"
+                            name="total_amount"
                             render={({ field, fieldState }) => (
                                 <FormItem>
                                     <FormLabel
@@ -257,7 +291,7 @@ export const OrderForm: React.FC<ProductFormProps> = ({
                                                 : "dark:text-gray-300"
                                         }
                                     >
-                                        Price
+                                        Total amount
                                     </FormLabel>
                                     <FormControl>
                                         <Input
@@ -271,10 +305,11 @@ export const OrderForm: React.FC<ProductFormProps> = ({
                                 </FormItem>
                             )}
                         />
-                        {/* category */}
+
+                        {/* total paid */}
                         <FormField
                             control={form.control}
-                            name="category_id"
+                            name="total_paid"
                             render={({ field, fieldState }) => (
                                 <FormItem>
                                     <FormLabel
@@ -284,7 +319,115 @@ export const OrderForm: React.FC<ProductFormProps> = ({
                                                 : "dark:text-gray-300"
                                         }
                                     >
-                                        Category
+                                        Total paid
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            className="dark:bg-slate-700"
+                                            type="number"
+                                            disabled={loading}
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage className="dark:text-red-500" />
+                                </FormItem>
+                            )}
+                        />
+
+                        {/* changes */}
+                        <FormField
+                            control={form.control}
+                            name="changes"
+                            render={({ field, fieldState }) => (
+                                <FormItem>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Changes
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            className="dark:bg-slate-700"
+                                            type="number"
+                                            disabled={loading}
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage className="dark:text-red-500" />
+                                </FormItem>
+                            )}
+                        />
+
+                        {/* order_date */}
+                        <FormField
+                            control={form.control}
+                            name="order_date"
+                            render={({ field, fieldState }) => (
+                                <FormItem>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Order date
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <Button
+                                                    variant={"outline"}
+                                                    className={cn(
+                                                        "w-full justify-start gap-3 p-5 text-left font-normal dark:bg-slate-600 dark:hover:bg-slate-600",
+                                                        !field.value &&
+                                                            "text-muted-foreground"
+                                                    )}
+                                                >
+                                                    <CalendarIcon />
+                                                    {field.value ? (
+                                                        format(
+                                                            field.value,
+                                                            "PPP"
+                                                        )
+                                                    ) : (
+                                                        <span>Pick a date</span>
+                                                    )}
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={field.value}
+                                                    onSelect={field.onChange}
+                                                    initialFocus
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                    </FormControl>
+                                    <FormMessage className="dark:text-red-500" />
+                                </FormItem>
+                            )}
+                        />
+
+                        {/* payment method */}
+                        <FormField
+                            control={form.control}
+                            name="payment_method_id"
+                            render={({ field, fieldState }) => (
+                                <FormItem>
+                                    <FormLabel
+                                        className={
+                                            fieldState.error
+                                                ? "text-red-500"
+                                                : "dark:text-gray-300"
+                                        }
+                                    >
+                                        Payment method
                                     </FormLabel>
                                     <Select
                                         disabled={loading}
@@ -296,29 +439,32 @@ export const OrderForm: React.FC<ProductFormProps> = ({
                                             <SelectTrigger className="w-full">
                                                 <SelectValue
                                                     defaultValue={field.value.toString()}
-                                                    placeholder="Select a category"
+                                                    placeholder="Select a payment method"
                                                 />
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            {categories.map((category) => (
-                                                <SelectItem
-                                                    key={category.id.toString()}
-                                                    value={category.id.toString()}
-                                                >
-                                                    {category.name}
-                                                </SelectItem>
-                                            ))}
+                                            {paymentMethods.map(
+                                                (paymentMethod) => (
+                                                    <SelectItem
+                                                        key={paymentMethod.id.toString()}
+                                                        value={paymentMethod.id.toString()}
+                                                    >
+                                                        {paymentMethod.name}
+                                                    </SelectItem>
+                                                )
+                                            )}
                                         </SelectContent>
                                     </Select>
                                     <FormMessage className="dark:text-red-500" />
                                 </FormItem>
                             )}
                         />
-                        {/* unit */}
+
+                        {/* status */}
                         <FormField
                             control={form.control}
-                            name="unit"
+                            name="status"
                             render={({ field, fieldState }) => (
                                 <FormItem>
                                     <FormLabel
@@ -328,7 +474,7 @@ export const OrderForm: React.FC<ProductFormProps> = ({
                                                 : "dark:text-gray-300"
                                         }
                                     >
-                                        Unit
+                                        Status
                                     </FormLabel>
                                     <FormControl>
                                         <Select
@@ -343,19 +489,19 @@ export const OrderForm: React.FC<ProductFormProps> = ({
                                                         defaultValue={
                                                             field.value
                                                         }
-                                                        placeholder="Select a unit"
+                                                        placeholder="Select a status"
                                                     />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value="Gram">
-                                                    Gram
+                                                <SelectItem value="Completed">
+                                                    Completed
                                                 </SelectItem>
-                                                <SelectItem value="Kilogram">
-                                                    Kilogram
+                                                <SelectItem value="Pending">
+                                                    Pending
                                                 </SelectItem>
-                                                <SelectItem value="Pcs">
-                                                    Pcs
+                                                <SelectItem value="Cancelled">
+                                                    Cancelled
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
@@ -364,10 +510,11 @@ export const OrderForm: React.FC<ProductFormProps> = ({
                                 </FormItem>
                             )}
                         />
-                        {/* stock_quantity */}
+
+                        {/* notes */}
                         <FormField
                             control={form.control}
-                            name="stock_quantity"
+                            name="notes"
                             render={({ field, fieldState }) => (
                                 <FormItem>
                                     <FormLabel
@@ -377,40 +524,13 @@ export const OrderForm: React.FC<ProductFormProps> = ({
                                                 : "dark:text-gray-300"
                                         }
                                     >
-                                        Stock
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="dark:bg-slate-700"
-                                            type="number"
-                                            disabled={loading}
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage className="dark:text-red-500" />
-                                </FormItem>
-                            )}
-                        />
-                        {/* description */}
-                        <FormField
-                            control={form.control}
-                            name="description"
-                            render={({ field, fieldState }) => (
-                                <FormItem>
-                                    <FormLabel
-                                        className={
-                                            fieldState.error
-                                                ? "text-red-500"
-                                                : "dark:text-gray-300"
-                                        }
-                                    >
-                                        Description
+                                        Notes
                                     </FormLabel>
                                     <FormControl>
                                         <Textarea
                                             className="w-full h-32 max-w-lg max-h-40 dark:bg-slate-700"
                                             disabled={loading}
-                                            placeholder="Description of Arabica coffe beans like size, color etc."
+                                            placeholder="....."
                                             {...field}
                                         />
                                     </FormControl>
@@ -418,84 +538,6 @@ export const OrderForm: React.FC<ProductFormProps> = ({
                                 </FormItem>
                             )}
                         />
-                    </div>
-
-                    {/* images */}
-                    <div className="flex flex-col gap-8">
-                        <FormField
-                            control={form.control}
-                            name="photos"
-                            render={({ fieldState }) => (
-                                <FormItem>
-                                    <FormLabel
-                                        className={
-                                            fieldState.error
-                                                ? "text-red-500"
-                                                : "dark:text-gray-300"
-                                        }
-                                    >
-                                        Product Images
-                                    </FormLabel>
-                                    <FormDescription>
-                                        Upload each image up to {MAX_FILE_SIZE}
-                                        KB (jpg, jpeg, png, webp only).
-                                    </FormDescription>
-                                    <FormControl>
-                                        <Input
-                                            className="w-full md:w-[48%] dark:bg-slate-700"
-                                            ref={fileInputRef}
-                                            type="file"
-                                            multiple
-                                            accept="image/jpeg, image/png, image/jpg, image/webp"
-                                            onChange={handlePhotoChange}
-                                        />
-                                    </FormControl>
-                                    {fieldState.error && (
-                                        <ul className="flex flex-col gap-6 py-2 text-sm text-red-500 md:gap-3">
-                                            {(Array.isArray(fieldState.error)
-                                                ? fieldState.error
-                                                : [fieldState.error]
-                                            ).map((error, index) => (
-                                                <li key={index}>
-                                                    {`- Image number ${
-                                                        index + 1
-                                                    } ${
-                                                        error?.message ||
-                                                        "Unknown error"
-                                                    }`}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
-                                </FormItem>
-                            )}
-                        />
-
-                        {/* Preview Images */}
-                        <div className="flex flex-wrap items-center justify-center gap-8 md:justify-start">
-                            {photoFiles.map((file, index) => (
-                                <div
-                                    key={index}
-                                    className="relative overflow-hidden border rounded-md shadow-md dark:border-gray-200 border-slate-300 w-52 h-52"
-                                >
-                                    <img
-                                        key={index}
-                                        src={URL.createObjectURL(file)}
-                                        alt={`Uploaded ${index}`}
-                                        className="object-cover w-full h-full"
-                                    />
-                                    <button
-                                        className="absolute flex items-center justify-center w-6 h-6 text-white bg-red-500 rounded-full top-2 right-2"
-                                        type="button"
-                                        onClick={() => removePhotoFile(index)}
-                                    >
-                                        <span className="text-xs leading-none">
-                                            ✕
-                                        </span>
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
                     </div>
 
                     <Button
@@ -510,3 +552,78 @@ export const OrderForm: React.FC<ProductFormProps> = ({
         </>
     );
 };
+
+//  const [products, setProducts] = useState([]);
+//     const [searchTerm, setSearchTerm] = useState('');
+//     const [selectedItems, setSelectedItems] = useState([]);
+
+//     useEffect(() => {
+//         fetchProducts();
+//     }, [searchTerm]);
+
+//     const fetchProducts = async () => {
+//         const response = await axios.get(`/products?name=${searchTerm}`);
+//         setProducts(response.data.products);
+//     };
+
+//     const addProduct = (product) => {
+//         const existingItem = selectedItems.find(item => item.id === product.id);
+//         if (existingItem) {
+//             setSelectedItems(selectedItems.map(item =>
+//                 item.id === product.id
+//                     ? { ...item, quantity: item.quantity + 1 }
+//                     : item
+//             ));
+//         } else {
+//             setSelectedItems([...selectedItems, { ...product, quantity: 1 }]);
+//         }
+//     };
+
+//     const adjustQuantity = (productId, amount) => {
+//         setSelectedItems(selectedItems.map(item =>
+//             item.id === productId
+//                 ? { ...item, quantity: Math.max(item.quantity + amount, 0) }
+//                 : item
+//         ));
+//     };
+
+//     const handleSubmitOrder = async () => {
+//         const response = await axios.post('/order', { items: selectedItems });
+//         console.log("Order saved:", response.data.order_id);
+//     };
+
+//     return (
+//         <div>
+//             <input
+//                 type="text"
+//                 placeholder="Cari produk..."
+//                 value={searchTerm}
+//                 onChange={(e) => setSearchTerm(e.target.value)}
+//             />
+//             <div className="product-list">
+//                 {products.map(product => (
+//                     <div key={product.id} className="product-card">
+//                         <h3>{product.name}</h3>
+//                         <p>Price: {product.price}</p>
+//                         <button onClick={() => addProduct(product)}>Add</button>
+//                     </div>
+//                 ))}
+//             </div>
+//             <div className="order-summary">
+//                 <h3>Order Summary</h3>
+//                 {selectedItems.map(item => (
+//                     <div key={item.id} className="selected-item">
+//                         <span>{item.name}</span>
+//                         <button onClick={() => adjustQuantity(item.id, -1)}>-</button>
+//                         <span>{item.quantity}</span>
+//                         <button onClick={() => adjustQuantity(item.id, 1)}>+</button>
+//                         <span>{item.price * item.quantity}</span>
+//                     </div>
+//                 ))}
+//                 <button onClick={handleSubmitOrder}>Submit Order</button>
+//             </div>
+//         </div>
+//     );
+// };
+
+// export default OrderForm;
