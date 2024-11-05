@@ -106,7 +106,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
     const filteredProducts = products.filter((product) =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
     const title = initialData ? "Edit order" : "Create order";
     const description = initialData ? "Edit an order" : "Add a new order";
     const toastMessage = initialData ? "Order updated." : "Order created.";
@@ -177,16 +176,25 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         setIsCash(selectedPaymentMethod?.is_cash || false);
         form.setValue("payment_method_id", value);
     };
-    //
-    // const handleQuantityUpdate = (productId: string, newQuantity: number) => {
-    //     setSelectedItems(
-    //         selectedItems.map((item) =>
-    //             item.id === productId
-    //                 ? { ...item, quantity: newQuantity }
-    //                 : item
-    //         )
-    //     );
-    // };
+
+    const adjustQuantity = (product: Product, amount: number) => {
+        setSelectedItems(
+            selectedItems.map((item) => {
+                if (item.id === product.id) {
+                    const newQuantity = item.stock_quantity + amount;
+                    const maxQuantity = product.stock_quantity;
+                    return {
+                        ...item,
+                        stock_quantity: Math.max(
+                            0,
+                            Math.min(newQuantity, product.stock_quantity)
+                        ),
+                    };
+                }
+                return item;
+            })
+        );
+    };
 
     const addProduct = (product: Product) => {
         const existingItem = selectedItems.find(
@@ -196,7 +204,13 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             setSelectedItems(
                 selectedItems.map((item) =>
                     item.id === product.id
-                        ? { ...item, stock_quantity: item.stock_quantity + 1 }
+                        ? {
+                              ...item,
+                              stock_quantity: Math.min(
+                                  item.stock_quantity + 1,
+                                  product.stock_quantity
+                              ),
+                          }
                         : item
                 )
             );
@@ -226,34 +240,34 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                     Back
                 </Button>
             </div>
-            <div className="bg-slate-100 dark:bg-slate-950 p-3 md:p-6 rounded-md">
-                <div className="px-3 md:px-6 py-4">
+            <div className="p-3 rounded-md bg-slate-100 dark:bg-slate-950 md:p-6">
+                <div className="px-3 py-4 md:px-6">
                     <input
                         type="text"
                         placeholder="Search by product name"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full rounded-md border-gray-300 p-2 dark:bg-slate-200 dark:text-slate-800"
+                        className="w-full p-2 border-gray-300 rounded-md dark:bg-slate-200 dark:text-slate-800"
                     />
                 </div>
                 {filteredProducts.length === 0 && (
-                    <div className="text-center text-sm text-gray-700 dark:text-slate-400 mt-4">
+                    <div className="mt-4 text-sm text-center text-gray-700 dark:text-slate-400">
                         No products found.
                     </div>
                 )}
-                <div className="p-3 md:p-6 grid max-h-72 grid-cols-1 gap-x-6 gap-y-10 overflow-y-scroll sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8 scrollbar-hidden">
+                <div className="grid grid-cols-1 p-3 overflow-y-scroll md:p-6 max-h-72 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8 scrollbar-hidden">
                     {filteredProducts.map((product) => (
                         <div
                             onClick={() => addProduct(product)}
                             key={product.id}
-                            className="group relative bg-gray-100 shadow-md p-3 rounded-md dark:bg-gray-700"
+                            className="relative p-3 bg-gray-100 rounded-md shadow-md group dark:bg-gray-700"
                         >
-                            <div className="aspect-h-1 aspect-w-1 w-full h-40 overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-85">
+                            <div className="w-full h-40 overflow-hidden bg-gray-200 rounded-md aspect-h-1 aspect-w-1 lg:aspect-none group-hover:opacity-85">
                                 {product.photos.length === 0 ? (
                                     <img
                                         alt="Image not found"
                                         src={ImageNotFound}
-                                        className="h-full w-full object-cover object-center"
+                                        className="object-cover object-center w-full h-full"
                                     />
                                 ) : (
                                     <img
@@ -261,13 +275,13 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                         src={`${
                                             import.meta.env.VITE_APP_URL
                                         }/storage/${product.photos[0].photo}`}
-                                        className="h-full w-full object-cover object-center"
+                                        className="object-cover object-center w-full h-full"
                                     />
                                 )}
                             </div>
-                            <div className="mt-4 flex justify-between items-start">
+                            <div className="flex items-start justify-between mt-4">
                                 <div>
-                                    <h3 className="font-semibold text-sm text-gray-700 dark:text-slate-50">
+                                    <h3 className="text-sm font-semibold text-gray-700 dark:text-slate-50">
                                         <span
                                             aria-hidden="true"
                                             className="absolute inset-0"
@@ -291,24 +305,24 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="w-full p-8 space-y-8 rounded-md bg-slate-50 dark:bg-gradient-to-tr md:dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-800"
                 >
-                    <div className="w-full grid grid-cols-1 gap-4 md:gap-8 md:grid-cols-2">
+                    <div className="grid w-full grid-cols-1 gap-4 md:gap-8 md:grid-cols-2">
                         <div className="w-full ">
                             <div className="order-summary">
                                 <div className="mb-4">
-                                    <h1 className="font-bold text-lg mb-2">
+                                    <h1 className="mb-2 text-lg font-bold">
                                         Order Summary
                                     </h1>
                                     <Separator className="dark:bg-slate-700 bg-slate-300" />
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-10 py-5">
+                                <div className="grid grid-cols-1 py-5 md:grid-cols-2 gap-7 md:gap-10">
                                     {selectedItems.map((item) => (
                                         <div className="w-full">
                                             <div className="mb-2">
-                                                <h3 className="font-medium text-sm mb-1">
+                                                <h3 className="mb-1 text-sm font-medium">
                                                     {item.name}
                                                 </h3>
-                                                <p className="font-light text-sm text-slate-500">
+                                                <p className="text-sm font-light text-slate-500">
                                                     Rp.{" "}
                                                     {item.price *
                                                         item.stock_quantity}
@@ -317,37 +331,29 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 
                                             <div
                                                 key={item.id}
-                                                className="w-full rounded-md bg-slate-200 flex justify-between items-center text-slate-700"
+                                                className="flex items-center justify-between w-full rounded-md bg-slate-200 text-slate-700"
                                             >
                                                 <Button
                                                     className="bg-slate-500"
-                                                    // onClick={() =>
-                                                    //     adjustQuantity(item.id, -1)
-                                                    // }
+                                                    type="button"
+                                                    onClick={() =>
+                                                        adjustQuantity(item, -1)
+                                                    }
                                                 >
                                                     -
                                                 </Button>
                                                 <span className="font-medium">
                                                     {item.stock_quantity}
                                                 </span>
-                                                {/* <input
-                                                    type="number"
-                                                    value={item.stock_quantity}
-                                                    min="1"
-                                                    onChange={(e) =>
-                                                        handleQuantityUpdate(
-                                                            item.id,
-                                                            Number(
-                                                                e.target.value
-                                                            )
-                                                        )
-                                                    }
-                                                /> */}
                                                 <Button
                                                     className="bg-slate-500"
-                                                    // onClick={() =>
-                                                    //     adjustQuantity(item.id, 1)
-                                                    // }
+                                                    type="button"
+                                                    onClick={() =>
+                                                        adjustQuantity(
+                                                            item.id,
+                                                            1
+                                                        )
+                                                    }
                                                 >
                                                     +
                                                 </Button>
@@ -360,9 +366,9 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                 </button> */}
                             </div>
                         </div>
-                        <div className="w-full flex flex-col gap-4">
+                        <div className="flex flex-col w-full gap-4">
                             <div className="mb-4">
-                                <h1 className="font-bold text-lg mb-2">
+                                <h1 className="mb-2 text-lg font-bold">
                                     Form Checkout
                                 </h1>
                                 <Separator className="dark:bg-slate-700 bg-slate-300" />
