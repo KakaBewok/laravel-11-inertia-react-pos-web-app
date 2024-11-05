@@ -181,14 +181,15 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         setSelectedItems(
             selectedItems.map((item) => {
                 if (item.id === product.id) {
-                    const newQuantity = item.stock_quantity + amount;
-                    const maxQuantity = product.stock_quantity;
+                    let newQuantity = item.stock_quantity + amount;
+                    newQuantity = Math.min(newQuantity, product.stock_quantity);
+                    newQuantity = Math.max(newQuantity, 0);
+                    console.log(
+                        `Updating quantity for ${item.id}: ${newQuantity}`
+                    );
                     return {
                         ...item,
-                        stock_quantity: Math.max(
-                            0,
-                            Math.min(newQuantity, product.stock_quantity)
-                        ),
+                        stock_quantity: newQuantity,
                     };
                 }
                 return item;
@@ -240,7 +241,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                     Back
                 </Button>
             </div>
-            <div className="p-3 rounded-md bg-slate-100 dark:bg-slate-950 md:p-6">
+            <div className="p-3 rounded-md bg-slate-100 md:p-6 dark:bg-gradient-to-tr dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
                 <div className="px-3 py-4 md:px-6">
                     <input
                         type="text"
@@ -317,7 +318,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 
                                 <div className="grid grid-cols-1 py-5 md:grid-cols-2 gap-7 md:gap-10">
                                     {selectedItems.map((item) => (
-                                        <div className="w-full">
+                                        <div className="w-full" key={item.id}>
                                             <div className="mb-2">
                                                 <h3 className="mb-1 text-sm font-medium">
                                                     {item.name}
@@ -349,10 +350,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                                     className="bg-slate-500"
                                                     type="button"
                                                     onClick={() =>
-                                                        adjustQuantity(
-                                                            item.id,
-                                                            1
-                                                        )
+                                                        adjustQuantity(item, 1)
                                                     }
                                                 >
                                                     +
