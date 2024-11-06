@@ -36,7 +36,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "@inertiajs/react";
 import { format } from "date-fns";
 import { CalendarIcon, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as z from "zod";
@@ -236,6 +236,15 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         );
     };
 
+    useEffect(() => {
+        const total = selectedItems.reduce(
+            (acc, item) => acc + item.price * item.stock_quantity,
+            0
+        );
+
+        form.setValue("total_amount", total);
+    }, [selectedItems, form.setValue]);
+
     return (
         <>
             <div className="flex items-center justify-between">
@@ -324,10 +333,10 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                 </div>
 
                                 {selectedItems.length > 0 ? (
-                                    <div className="grid grid-cols-1 py-5 gap-7">
+                                    <div className="flex flex-col justify-start py-5 gap-7 h-80 md:h-[564px] bg-slate-200 overflow-y-scroll p-3 rounded-sm">
                                         {selectedItems.map((item) => (
                                             <div
-                                                className="dark:bg-slate-800 dark:shadow-none flex items-center justify-center gap-4 rounded-md shadow-md shadow-slate-300 p-3 w-full lg:w-2/3 "
+                                                className="dark:bg-slate-800 dark:shadow-none flex items-center justify-center gap-4 rounded-md shadow-md shadow-slate-300 p-3 w-full lg:w-2/3 bg-slate-50"
                                                 key={item.id}
                                             >
                                                 <div className="w-1/3 h-[87px] overflow-hidden bg-gray-200 rounded-md aspect-h-1 aspect-w-1 lg:aspect-none group-hover:opacity-85">
@@ -435,6 +444,28 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                         No order.
                                     </h1>
                                 )}
+                                <div className="flex flex-col justify-start items-start w-full gap-2 py-7 text-sm text-slate-500">
+                                    <div className="flex justify-between w-full font-semibold text-slate-800">
+                                        <p>Total items</p>
+                                        <p>543x</p>
+                                    </div>
+                                    <div className="flex justify-between w-full">
+                                        <p>Subtotal</p>
+                                        <p>Rp. 34.000</p>
+                                    </div>
+                                    <div className="flex justify-between w-full">
+                                        <p>Tax (11%)</p>
+                                        <p>Rp. 934.000</p>
+                                    </div>
+                                    <div className="flex justify-between w-full">
+                                        <p>Discount</p>
+                                        <p>- Rp. 34.000</p>
+                                    </div>
+                                    <div className="flex justify-between w-full font-semibold text-slate-800">
+                                        <p>Total</p>
+                                        <p>Rp. 344.000</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div className="flex flex-col w-full gap-4">
