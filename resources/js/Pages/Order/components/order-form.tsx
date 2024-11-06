@@ -35,7 +35,7 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "@inertiajs/react";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -82,7 +82,7 @@ const formSchema = z.object({
 type OrderFormValues = z.infer<typeof formSchema>;
 
 type AllProduct = Product & {
-    photos: Photo[];
+    photos?: Photo[];
 };
 interface OrderFormProps {
     initialData?:
@@ -101,7 +101,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 }) => {
     const { loading, setLoading } = useGlobalContext();
     const [isCash, setIsCash] = useState<boolean>(false);
-    const [selectedItems, setSelectedItems] = useState<Product[]>([]);
+    const [selectedItems, setSelectedItems] = useState<AllProduct[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>("");
     const filteredProducts = products.filter((product) =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -177,27 +177,34 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         form.setValue("payment_method_id", value);
     };
 
-    const adjustQuantity = (product: Product, amount: number) => {
-        setSelectedItems(
-            selectedItems.map((item) => {
-                if (item.id === product.id) {
-                    let newQuantity = item.stock_quantity + amount;
-                    newQuantity = Math.min(newQuantity, product.stock_quantity);
-                    newQuantity = Math.max(newQuantity, 0);
-                    console.log(
-                        `Updating quantity for ${item.id}: ${newQuantity}`
-                    );
-                    return {
-                        ...item,
-                        stock_quantity: newQuantity,
-                    };
-                }
-                return item;
-            })
+    const adjustQuantity = (itemClicked: Product, amount: number) => {
+        const product = products.find(
+            (product) => product.id == itemClicked.id
         );
+        if (product) {
+            setSelectedItems(
+                selectedItems
+                    .map((item) => {
+                        if (item.id === itemClicked.id) {
+                            let newQuantity = item.stock_quantity + amount;
+                            newQuantity = Math.min(
+                                newQuantity,
+                                product.stock_quantity
+                            );
+                            newQuantity = Math.max(newQuantity, 0);
+                            return {
+                                ...item,
+                                stock_quantity: newQuantity,
+                            };
+                        }
+                        return item;
+                    })
+                    .filter((item) => item.stock_quantity > 0)
+            );
+        }
     };
 
-    const addProduct = (product: Product) => {
+    const addItem = (product: Product) => {
         const existingItem = selectedItems.find(
             (item: Product) => item.id === product.id
         );
@@ -222,12 +229,12 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             ]);
         }
     };
-    //
 
-    // TODO:
-    // 1. buat tampilan product yang dibeli --- ok
-    // 2. buat tampilan cards product yang akan dibeli
-    // 3. buat dalam 2 column di MD
+    const removeItem = (itemClicked: Product) => {
+        setSelectedItems(
+            selectedItems.filter((item) => item.id !== itemClicked.id)
+        );
+    };
 
     return (
         <>
@@ -256,15 +263,15 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                         No products found.
                     </div>
                 )}
-                <div className="grid grid-cols-1 p-3 overflow-y-scroll md:p-6 max-h-72 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8 scrollbar-hidden">
+                <div className="grid grid-cols-1 p-3 overflow-y-scroll md:p-6 max-h-72 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8 scrollbar-hidden cursor-pointer">
                     {filteredProducts.map((product) => (
                         <div
-                            onClick={() => addProduct(product)}
+                            onClick={() => addItem(product)}
                             key={product.id}
                             className="relative p-3 bg-gray-100 rounded-md shadow-md group dark:bg-gray-700"
                         >
                             <div className="w-full h-40 overflow-hidden bg-gray-200 rounded-md aspect-h-1 aspect-w-1 lg:aspect-none group-hover:opacity-85">
-                                {product.photos.length === 0 ? (
+                                {product.photos?.length === 0 ? (
                                     <img
                                         alt="Image not found"
                                         src={ImageNotFound}
@@ -275,7 +282,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                         alt="Product image"
                                         src={`${
                                             import.meta.env.VITE_APP_URL
-                                        }/storage/${product.photos[0].photo}`}
+                                        }/storage/${product.photos?.[0].photo}`}
                                         className="object-cover object-center w-full h-full"
                                     />
                                 )}
@@ -306,7 +313,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="w-full p-8 space-y-8 rounded-md bg-slate-50 dark:bg-gradient-to-tr md:dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-800"
                 >
-                    <div className="grid w-full grid-cols-1 gap-4 md:gap-8 md:grid-cols-2">
+                    <div className="grid w-full grid-cols-1 gap-4 md:gap-20 md:grid-cols-2">
                         <div className="w-full ">
                             <div className="order-summary">
                                 <div className="mb-4">
@@ -316,52 +323,118 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                     <Separator className="dark:bg-slate-700 bg-slate-300" />
                                 </div>
 
-                                <div className="grid grid-cols-1 py-5 md:grid-cols-2 gap-7 md:gap-10">
-                                    {selectedItems.map((item) => (
-                                        <div className="w-full" key={item.id}>
-                                            <div className="mb-2">
-                                                <h3 className="mb-1 text-sm font-medium">
-                                                    {item.name}
-                                                </h3>
-                                                <p className="text-sm font-light text-slate-500">
-                                                    Rp.{" "}
-                                                    {item.price *
-                                                        item.stock_quantity}
-                                                </p>
-                                            </div>
-
+                                {selectedItems.length > 0 ? (
+                                    <div className="grid grid-cols-1 py-5 gap-7">
+                                        {selectedItems.map((item) => (
                                             <div
+                                                className="dark:bg-slate-800 dark:shadow-none flex items-center justify-center gap-4 rounded-md shadow-md shadow-slate-300 p-3 w-full lg:w-2/3 "
                                                 key={item.id}
-                                                className="flex items-center justify-between w-full rounded-md bg-slate-200 text-slate-700"
                                             >
-                                                <Button
-                                                    className="bg-slate-500"
-                                                    type="button"
-                                                    onClick={() =>
-                                                        adjustQuantity(item, -1)
-                                                    }
+                                                <div className="w-1/3 h-[87px] overflow-hidden bg-gray-200 rounded-md aspect-h-1 aspect-w-1 lg:aspect-none group-hover:opacity-85">
+                                                    {item.photos?.length ===
+                                                    0 ? (
+                                                        <img
+                                                            alt="Image not found"
+                                                            src={ImageNotFound}
+                                                            className="object-cover object-center w-full h-full"
+                                                        />
+                                                    ) : (
+                                                        <img
+                                                            alt="item image"
+                                                            src={`${
+                                                                import.meta.env
+                                                                    .VITE_APP_URL
+                                                            }/storage/${
+                                                                item.photos?.[0]
+                                                                    .photo
+                                                            }`}
+                                                            className="object-cover object-center w-full h-full"
+                                                        />
+                                                    )}
+                                                </div>
+                                                <div
+                                                    className="w-2/3 flex flex-col items-start justify-start gap-3"
+                                                    key={item.id}
                                                 >
-                                                    -
-                                                </Button>
-                                                <span className="font-medium">
-                                                    {item.stock_quantity}
-                                                </span>
-                                                <Button
-                                                    className="bg-slate-500"
-                                                    type="button"
-                                                    onClick={() =>
-                                                        adjustQuantity(item, 1)
-                                                    }
-                                                >
-                                                    +
-                                                </Button>
+                                                    <div>
+                                                        <h3 className="mb-1 text-md font-medium">
+                                                            {item.name}
+                                                        </h3>
+                                                        <p className="text-sm font-light text-slate-500">
+                                                            Rp.{" "}
+                                                            {(
+                                                                item.price *
+                                                                item.stock_quantity
+                                                            ).toLocaleString(
+                                                                "id-ID"
+                                                            )}
+                                                        </p>
+                                                    </div>
+
+                                                    <div
+                                                        key={item.id}
+                                                        className="flex items-center justify-start w-full gap-3 md:gap-3 lg:gap-5"
+                                                    >
+                                                        <div className="rounded-md w-full flex items-center justify-between bg-slate-200 text-slate-700">
+                                                            <Button
+                                                                variant={
+                                                                    "ghost"
+                                                                }
+                                                                type="button"
+                                                                className="bg-slate-200 hover:bg-slate-200 dark:hover:text-slate-600"
+                                                                onClick={() =>
+                                                                    adjustQuantity(
+                                                                        item,
+                                                                        -1
+                                                                    )
+                                                                }
+                                                            >
+                                                                -
+                                                            </Button>
+                                                            <span className="font-medium text-sm">
+                                                                {
+                                                                    item.stock_quantity
+                                                                }
+                                                            </span>
+                                                            <Button
+                                                                variant={
+                                                                    "ghost"
+                                                                }
+                                                                className="bg-slate-200 hover:bg-slate-200 dark:hover:text-slate-600"
+                                                                type="button"
+                                                                onClick={() =>
+                                                                    adjustQuantity(
+                                                                        item,
+                                                                        1
+                                                                    )
+                                                                }
+                                                            >
+                                                                +
+                                                            </Button>
+                                                        </div>
+                                                        <Button
+                                                            variant="destructive"
+                                                            className="px-2 py-1 bg-red-500 dark:bg-red-500"
+                                                            type="button"
+                                                            onClick={() =>
+                                                                removeItem(item)
+                                                            }
+                                                        >
+                                                            <Trash2
+                                                                width={18}
+                                                                height={18}
+                                                            />
+                                                        </Button>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
-                                </div>
-                                {/* <button onClick={handleSubmitOrder}>
-                                    Submit Order
-                                </button> */}
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <h1 className="text-center text-slate-500 py-6">
+                                        No order.
+                                    </h1>
+                                )}
                             </div>
                         </div>
                         <div className="flex flex-col w-full gap-4">
