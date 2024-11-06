@@ -258,6 +258,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                 </Button>
             </div>
             <div className="p-3 rounded-md bg-slate-100 md:p-6 dark:bg-gradient-to-tr dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
+                {/* SEARCH FIELD */}
                 <div className="px-3 py-4 md:px-6">
                     <input
                         type="text"
@@ -272,12 +273,13 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                         No products found.
                     </div>
                 )}
-                <div className="grid grid-cols-1 p-3 overflow-y-scroll md:p-6 max-h-72 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8 scrollbar-hidden cursor-pointer">
+                {/* PRODUCT CARDS */}
+                <div className="grid grid-cols-1 gap-5 p-3 overflow-y-scroll cursor-pointer md:p-6 max-h-72 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8 scrollbar-hidden">
                     {filteredProducts.map((product) => (
                         <div
                             onClick={() => addItem(product)}
                             key={product.id}
-                            className="relative p-3 bg-gray-100 rounded-md shadow-md group dark:bg-gray-700"
+                            className="relative p-3 bg-gray-100 rounded-md shadow-md group dark:bg-gray-800"
                         >
                             <div className="w-full h-40 overflow-hidden bg-gray-200 rounded-md aspect-h-1 aspect-w-1 lg:aspect-none group-hover:opacity-85">
                                 {product.photos?.length === 0 ? (
@@ -306,7 +308,8 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                         {product.name}
                                     </h3>
                                     <p className="text-sm text-gray-500 dark:text-slate-400">
-                                        Rp. {product.price}
+                                        Rp.{" "}
+                                        {product.price.toLocaleString("id-ID")}
                                     </p>
                                 </div>
                                 <p className="text-sm text-gray-500 dark:text-slate-400">
@@ -323,6 +326,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                     className="w-full p-8 space-y-8 rounded-md bg-slate-50 dark:bg-gradient-to-tr md:dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-800"
                 >
                     <div className="grid w-full grid-cols-1 gap-4 md:gap-20 md:grid-cols-2">
+                        {/* ORDER SUMMARY */}
                         <div className="w-full ">
                             <div className="order-summary">
                                 <div className="mb-4">
@@ -333,141 +337,162 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                 </div>
 
                                 {selectedItems.length > 0 ? (
-                                    <div className="flex flex-col justify-start py-5 gap-7 h-80 md:h-[564px] bg-slate-200 overflow-y-scroll p-3 rounded-sm">
-                                        {selectedItems.map((item) => (
-                                            <div
-                                                className="dark:bg-slate-800 dark:shadow-none flex items-center justify-center gap-4 rounded-md shadow-md shadow-slate-300 p-3 w-full lg:w-2/3 bg-slate-50"
-                                                key={item.id}
-                                            >
-                                                <div className="w-1/3 h-[87px] overflow-hidden bg-gray-200 rounded-md aspect-h-1 aspect-w-1 lg:aspect-none group-hover:opacity-85">
-                                                    {item.photos?.length ===
-                                                    0 ? (
-                                                        <img
-                                                            alt="Image not found"
-                                                            src={ImageNotFound}
-                                                            className="object-cover object-center w-full h-full"
-                                                        />
-                                                    ) : (
-                                                        <img
-                                                            alt="item image"
-                                                            src={`${
-                                                                import.meta.env
-                                                                    .VITE_APP_URL
-                                                            }/storage/${
-                                                                item.photos?.[0]
-                                                                    .photo
-                                                            }`}
-                                                            className="object-cover object-center w-full h-full"
-                                                        />
-                                                    )}
-                                                </div>
+                                    <>
+                                        {/* ORDER ITEMS */}
+                                        <div className="flex flex-col justify-start gap-3 lg:gap-6 lg:p-6 h-80 md:h-[548px] dark:bg-gray-950 bg-gray-100 overflow-y-scroll p-3 rounded-sm">
+                                            {selectedItems.map((item) => (
                                                 <div
-                                                    className="w-2/3 flex flex-col items-start justify-start gap-3"
+                                                    className="flex items-center justify-center w-full gap-3 p-2 rounded-md shadow-sm lg:gap-5 lg:p-4 dark:bg-slate-800 dark:shadow-none shadow-slate-300 bg-slate-50"
                                                     key={item.id}
                                                 >
-                                                    <div>
-                                                        <h3 className="mb-1 text-md font-medium">
-                                                            {item.name}
-                                                        </h3>
-                                                        <p className="text-sm font-light text-slate-500">
-                                                            Rp.{" "}
-                                                            {(
-                                                                item.price *
-                                                                item.stock_quantity
-                                                            ).toLocaleString(
-                                                                "id-ID"
-                                                            )}
-                                                        </p>
+                                                    {/* SELECTED ITEMS IMAGE */}
+                                                    <div className="w-1/3 h-[87px] overflow-hidden bg-gray-200 rounded-md aspect-h-1 aspect-w-1 lg:aspect-none group-hover:opacity-85">
+                                                        {item.photos?.length ===
+                                                        0 ? (
+                                                            <img
+                                                                alt="Image not found"
+                                                                src={
+                                                                    ImageNotFound
+                                                                }
+                                                                className="object-cover object-center w-full h-full"
+                                                            />
+                                                        ) : (
+                                                            <img
+                                                                alt="item image"
+                                                                src={`${
+                                                                    import.meta
+                                                                        .env
+                                                                        .VITE_APP_URL
+                                                                }/storage/${
+                                                                    item
+                                                                        .photos?.[0]
+                                                                        .photo
+                                                                }`}
+                                                                className="object-cover object-center w-full h-full"
+                                                            />
+                                                        )}
                                                     </div>
-
                                                     <div
+                                                        className="flex flex-col items-start justify-start w-2/3 gap-3"
                                                         key={item.id}
-                                                        className="flex items-center justify-start w-full gap-3 md:gap-3 lg:gap-5"
                                                     >
-                                                        <div className="rounded-md w-full flex items-center justify-between bg-slate-200 text-slate-700">
-                                                            <Button
-                                                                variant={
-                                                                    "ghost"
-                                                                }
-                                                                type="button"
-                                                                className="bg-slate-200 hover:bg-slate-200 dark:hover:text-slate-600"
-                                                                onClick={() =>
-                                                                    adjustQuantity(
-                                                                        item,
-                                                                        -1
-                                                                    )
-                                                                }
-                                                            >
-                                                                -
-                                                            </Button>
-                                                            <span className="font-medium text-sm">
-                                                                {
+                                                        <div>
+                                                            <h3 className="mb-1 font-medium text-md">
+                                                                {item.name}
+                                                            </h3>
+                                                            <p className="text-sm font-light text-slate-500">
+                                                                Rp.{" "}
+                                                                {(
+                                                                    item.price *
                                                                     item.stock_quantity
-                                                                }
-                                                            </span>
+                                                                ).toLocaleString(
+                                                                    "id-ID"
+                                                                )}
+                                                            </p>
+                                                        </div>
+
+                                                        <div
+                                                            key={item.id}
+                                                            className="flex items-center justify-start w-full gap-2 lg:justify-end lg:gap-3"
+                                                        >
+                                                            <div className="flex items-center justify-between w-full rounded-md lg:w-24 bg-slate-200 text-slate-700">
+                                                                <Button
+                                                                    variant={
+                                                                        "ghost"
+                                                                    }
+                                                                    type="button"
+                                                                    className="bg-slate-200 hover:bg-slate-200 dark:hover:text-slate-600"
+                                                                    onClick={() =>
+                                                                        adjustQuantity(
+                                                                            item,
+                                                                            -1
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    -
+                                                                </Button>
+                                                                <span className="text-sm font-medium">
+                                                                    {
+                                                                        item.stock_quantity
+                                                                    }
+                                                                </span>
+                                                                <Button
+                                                                    variant={
+                                                                        "ghost"
+                                                                    }
+                                                                    className="bg-slate-200 hover:bg-slate-200 dark:hover:text-slate-600"
+                                                                    type="button"
+                                                                    onClick={() =>
+                                                                        adjustQuantity(
+                                                                            item,
+                                                                            1
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    +
+                                                                </Button>
+                                                            </div>
                                                             <Button
-                                                                variant={
-                                                                    "ghost"
-                                                                }
-                                                                className="bg-slate-200 hover:bg-slate-200 dark:hover:text-slate-600"
+                                                                variant="destructive"
+                                                                className="px-2 py-1 bg-red-500 dark:bg-red-500"
                                                                 type="button"
                                                                 onClick={() =>
-                                                                    adjustQuantity(
-                                                                        item,
-                                                                        1
+                                                                    removeItem(
+                                                                        item
                                                                     )
                                                                 }
                                                             >
-                                                                +
+                                                                <Trash2
+                                                                    width={18}
+                                                                    height={18}
+                                                                />
                                                             </Button>
                                                         </div>
-                                                        <Button
-                                                            variant="destructive"
-                                                            className="px-2 py-1 bg-red-500 dark:bg-red-500"
-                                                            type="button"
-                                                            onClick={() =>
-                                                                removeItem(item)
-                                                            }
-                                                        >
-                                                            <Trash2
-                                                                width={18}
-                                                                height={18}
-                                                            />
-                                                        </Button>
                                                     </div>
                                                 </div>
+                                            ))}
+                                        </div>
+                                        {/* PRICING */}
+                                        <div className="flex flex-col items-start justify-start w-full gap-3 p-5 my-10 bg-gray-100 rounded-md md:my-6 dark:bg-slate-950 text-slate-500">
+                                            <div className="flex justify-between w-full text-xs lg:text-sm ">
+                                                <p>Total items</p>
+                                                <p className="font-semibold text-slate-900 dark:text-slate-300">
+                                                    543x
+                                                </p>
                                             </div>
-                                        ))}
-                                    </div>
+                                            <div className="flex justify-between w-full text-xs lg:text-sm">
+                                                <p>Subtotal</p>
+                                                <p className="font-semibold text-slate-900 dark:text-slate-300">
+                                                    Rp. 34.000
+                                                </p>
+                                            </div>
+                                            <div className="flex justify-between w-full text-xs lg:text-sm">
+                                                <p>Tax (11%)</p>
+                                                <p className="font-semibold text-slate-900 dark:text-slate-300">
+                                                    + Rp. 934.000
+                                                </p>
+                                            </div>
+                                            <div className="flex justify-between w-full text-xs text-green-600 lg:text-sm">
+                                                <p>Discount</p>
+                                                <p className="font-semibold">
+                                                    - Rp. 34.000
+                                                </p>
+                                            </div>
+                                            <Separator />
+                                            <div className="flex justify-between w-full font-bold text-md text-slate-900 dark:text-slate-300">
+                                                <p>Total</p>
+                                                <p>Rp. 344.000</p>
+                                            </div>
+                                        </div>
+                                    </>
                                 ) : (
-                                    <h1 className="text-center text-slate-500 py-6">
+                                    <h1 className="py-6 text-center text-slate-500">
                                         No order.
                                     </h1>
                                 )}
-                                <div className="flex flex-col justify-start items-start w-full gap-2 py-7 text-sm text-slate-500">
-                                    <div className="flex justify-between w-full font-semibold text-slate-800">
-                                        <p>Total items</p>
-                                        <p>543x</p>
-                                    </div>
-                                    <div className="flex justify-between w-full">
-                                        <p>Subtotal</p>
-                                        <p>Rp. 34.000</p>
-                                    </div>
-                                    <div className="flex justify-between w-full">
-                                        <p>Tax (11%)</p>
-                                        <p>Rp. 934.000</p>
-                                    </div>
-                                    <div className="flex justify-between w-full">
-                                        <p>Discount</p>
-                                        <p>- Rp. 34.000</p>
-                                    </div>
-                                    <div className="flex justify-between w-full font-semibold text-slate-800">
-                                        <p>Total</p>
-                                        <p>Rp. 344.000</p>
-                                    </div>
-                                </div>
                             </div>
                         </div>
+                        {/* CHECKOUT FORM */}
                         <div className="flex flex-col w-full gap-4">
                             <div className="mb-4">
                                 <h1 className="mb-2 text-lg font-bold">
@@ -790,84 +815,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         </>
     );
 };
-
-//  const [products, setProducts] = useState([]);
-//     const [searchTerm, setSearchTerm] = useState('');
-//     const [selectedItems, setSelectedItems] = useState([]);
-
-//     useEffect(() => {
-//         fetchProducts();
-//     }, [searchTerm]);
-
-//     const fetchProducts = async () => {
-//         const response = await axios.get(`/products?name=${searchTerm}`);
-//         setProducts(response.data.products);
-//     };
-
-//      UDAH
-//     const addProduct = (product) => {
-//         const existingItem = selectedItems.find(item => item.id === product.id);
-//         if (existingItem) {
-//             setSelectedItems(selectedItems.map(item =>
-//                 item.id === product.id
-//                     ? { ...item, quantity: item.quantity + 1 }
-//                     : item
-//             ));
-//         } else {
-//             setSelectedItems([...selectedItems, { ...product, quantity: 1 }]);
-//         }
-//     };
-
-//     const adjustQuantity = (productId, amount) => {
-//         setSelectedItems(selectedItems.map(item =>
-//             item.id === productId
-//                 ? { ...item, quantity: Math.max(item.quantity + amount, 0) }
-//                 : item
-//         ));
-//     };
-
-//     const handleSubmitOrder = async () => {
-//         const response = await axios.post('/order', { items: selectedItems });
-//         console.log("Order saved:", response.data.order_id);
-//     };
-
-//     return (
-//         <div>
-//             <input
-//                 type="text"
-//                 placeholder="Cari produk..."
-//                 value={searchTerm}
-//                 onChange={(e) => setSearchTerm(e.target.value)}
-//             />
-//             <div className="product-list">
-//                 {products.map(product => (
-//                     <div key={product.id} className="product-card">
-//                         <h3>{product.name}</h3>
-//                         <p>Price: {product.price}</p>
-//                         <button onClick={() => addProduct(product)}>Add</button>
-//                     </div>
-//                 ))}
-//             </div>
-//             <div className="order-summary">
-//                 <h3>Order Summary</h3>
-//                 {selectedItems.map(item => (
-//                     <div key={item.id} className="selected-item">
-//                         <span>{item.name}</span>
-//                         <button onClick={() => adjustQuantity(item.id, -1)}>-</button>
-//                         <span>{item.quantity}</span>
-//                         <button onClick={() => adjustQuantity(item.id, 1)}>+</button>
-//                         <span>{item.price * item.quantity}</span>
-//                     </div>
-//                 ))}
-//                 <button onClick={handleSubmitOrder}>Submit Order</button>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default OrderForm;
-
-///////////
 
 // store order
 
