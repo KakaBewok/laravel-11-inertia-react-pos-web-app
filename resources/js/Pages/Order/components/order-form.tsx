@@ -108,6 +108,8 @@ export const OrderForm: React.FC<OrderFormProps> = ({
     const filteredProducts = products.filter((product) =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
+    const [isCreateAnother, setIsCreateAnother] = useState<boolean>(false);
+
     const title = initialData ? "Edit order" : "Create order";
     const description = initialData ? "Edit an order" : "Add a new order";
     const toastMessage = initialData ? "Order updated." : "Order created.";
@@ -139,7 +141,11 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 
         const handleSuccess = () => {
             clearForm();
-            router.visit(route("admin.order.index"));
+
+            isCreateAnother
+                ? router.visit(route("admin.order.create"))
+                : router.visit(route("admin.order.index"));
+
             setTimeout(() => {
                 toast.success(toastMessage, {
                     position: "top-center",
@@ -270,10 +276,8 @@ export const OrderForm: React.FC<OrderFormProps> = ({
     // Save data from localStorage
     useEffect(() => {
         localStorage.setItem("selectedItems", JSON.stringify(selectedItems));
-    }, [selectedItems]);
-    useEffect(() => {
         localStorage.setItem("formData", JSON.stringify(watchedFormValues));
-    }, [watchedFormValues]);
+    }, [selectedItems, watchedFormValues]);
 
     return (
         <>
@@ -629,13 +633,24 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                 )}
                             />
                             {/* submit button */}
-                            <Button
-                                disabled={loading}
-                                className="w-full mt-10"
-                                type="submit"
-                            >
-                                {action}
-                            </Button>
+                            <div className="flex flex-col items-center justify-between w-full gap-4 mt-10 lg:flex-row">
+                                <Button
+                                    disabled={loading}
+                                    className="w-full"
+                                    type="submit"
+                                    onClick={() => setIsCreateAnother(false)}
+                                >
+                                    {action}
+                                </Button>
+                                <Button
+                                    disabled={loading}
+                                    className="w-full bg-slate-300 text-slate-950 hover:bg-slate-200"
+                                    type="submit"
+                                    onClick={() => setIsCreateAnother(true)}
+                                >
+                                    Create & Create another
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </form>
