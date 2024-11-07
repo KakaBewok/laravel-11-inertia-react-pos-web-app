@@ -16,7 +16,7 @@ export function CarouselPhoto({ photos }: { photos: Photo[] }) {
                     photos.map((photo) => (
                         <CarouselItem key={photo.id}>
                             <img
-                                src={`${import.meta.env.VITE_APP_URL}/storage/${
+                                src={`${import.meta.env.APP_URL}/storage/${
                                     photo.photo
                                 }`}
                                 alt="Product photo"

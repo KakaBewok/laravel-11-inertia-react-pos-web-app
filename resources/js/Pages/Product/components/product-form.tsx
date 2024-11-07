@@ -109,7 +109,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 const files = await Promise.all(
                     initialData.photos.map((photoUrl, index) => {
                         const filePath = `${
-                            import.meta.env.VITE_APP_URL
+                            import.meta.env.APP_URL
                         }/storage/${photoUrl}`;
                         return urlToFile(
                             filePath,

@@ -63,7 +63,7 @@ const PaymentMethodDetails = ({
                     </Button>
                 </div>
             </div>
-            <div className="rounded-lg flex flex-col md:flex-row justify-between bg-slate-50 dark:bg-slate-600">
+            <div className="flex flex-col justify-between rounded-lg md:flex-row bg-slate-50 dark:bg-slate-600">
                 <div className="flex-1 p-6 space-y-6 md:p-7">
                     <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-50">
                         {paymentMethod.name}
@@ -85,7 +85,7 @@ const PaymentMethodDetails = ({
                         </p>
                     </div>
                     <div>
-                        <h3 className="font-semibold text-gray-800 dark:text-gray-50 mb-1">
+                        <h3 className="mb-1 font-semibold text-gray-800 dark:text-gray-50">
                             Status:{" "}
                         </h3>
                         <div className="text-sm text-gray-500 dark:text-gray-300">
@@ -121,11 +121,11 @@ const PaymentMethodDetails = ({
                         </p>
                     </div>
                 </div>
-                <div className="flex-1 flex flex-col gap-5 items-center justify-center w-full p-5 md:flex-row">
-                    <div className="w-full h-full overflow-hidden border rounded-sm shadow-sm dark:border-gray-400 border-gray-200">
+                <div className="flex flex-col items-center justify-center flex-1 w-full gap-5 p-5 md:flex-row">
+                    <div className="w-full h-full overflow-hidden border border-gray-200 rounded-sm shadow-sm dark:border-gray-400">
                         {paymentMethod.bank_logo ? (
                             <img
-                                src={`${import.meta.env.VITE_APP_URL}/storage/${
+                                src={`${import.meta.env.APP_URL}/storage/${
                                     paymentMethod.bank_logo
                                 }`}
                                 alt="Bank Logo"
@@ -139,10 +139,10 @@ const PaymentMethodDetails = ({
                             />
                         )}
                     </div>
-                    <div className="w-full h-full overflow-hidden border rounded-sm shadow-sm dark:border-gray-400 border-gray-200">
+                    <div className="w-full h-full overflow-hidden border border-gray-200 rounded-sm shadow-sm dark:border-gray-400">
                         {paymentMethod.qris_image ? (
                             <img
-                                src={`${import.meta.env.VITE_APP_URL}/storage/${
+                                src={`${import.meta.env.APP_URL}/storage/${
                                     paymentMethod.qris_image
                                 }`}
                                 alt="QRIS image"

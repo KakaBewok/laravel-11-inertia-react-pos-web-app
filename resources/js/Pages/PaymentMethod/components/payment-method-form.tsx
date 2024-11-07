@@ -133,7 +133,7 @@ export const PaymentMethodForm = ({
                         const randomId =
                             Math.floor(Math.random() * 90000) + 10000;
                         const filePath = `${
-                            import.meta.env.VITE_APP_URL
+                            import.meta.env.APP_URL
                         }/storage/${imageUrl}`;
                         const file = await urlToFile(
                             filePath,

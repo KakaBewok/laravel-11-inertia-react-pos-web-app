@@ -49,7 +49,7 @@ const OrderSummary = ({
                                             <img
                                                 alt="item image"
                                                 src={`${
-                                                    import.meta.env.VITE_APP_URL
+                                                    import.meta.env.APP_URL
                                                 }/storage/${
                                                     item.photos?.[0].photo
                                                 }`}
@@ -122,7 +122,7 @@ const OrderSummary = ({
                             ))}
                         </div>
                         {/* PRICING */}
-                        <div className="flex flex-col items-start justify-start w-full gap-3 p-5 my-10 bg-gray-200 shadow-md rounded-md md:my-6 dark:bg-slate-950 text-slate-500">
+                        <div className="flex flex-col items-start justify-start w-full gap-3 p-5 my-10 bg-gray-200 rounded-md shadow-md md:my-6 dark:bg-slate-950 text-slate-500">
                             <div className="flex justify-between w-full text-xs lg:text-sm ">
                                 <p>Total items</p>
                                 <p className="font-semibold text-slate-900 dark:text-slate-300">
