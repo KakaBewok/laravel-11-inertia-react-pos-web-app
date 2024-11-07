@@ -100,6 +100,8 @@ export const OrderForm: React.FC<OrderFormProps> = ({
     products,
 }) => {
     const { loading, setLoading } = useGlobalContext();
+    const [totalItems, setTotalItems] = useState<Number>(0);
+    const [totalProduct, setTotalProduct] = useState<Number>(0);
     const [isCash, setIsCash] = useState<boolean>(false);
     const [selectedItems, setSelectedItems] = useState<AllProduct[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>("");
@@ -237,16 +239,21 @@ export const OrderForm: React.FC<OrderFormProps> = ({
     };
 
     useEffect(() => {
-        const total = selectedItems.reduce(
+        const totalPrice = selectedItems.reduce(
             (acc, item) => acc + item.price * item.stock_quantity,
             0
         );
-
-        form.setValue("total_amount", total);
+        const totalItems = selectedItems.reduce(
+            (acc, item) => acc + item.stock_quantity,
+            0
+        );
+        form.setValue("total_amount", totalPrice);
+        setTotalItems(totalItems);
     }, [selectedItems, form.setValue]);
 
     return (
         <>
+            {/* --HEADER-- */}
             <div className="flex items-center justify-between">
                 <Heading title={title} description={description} />
                 <Button
@@ -257,6 +264,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                     Back
                 </Button>
             </div>
+            {/* --PRODUCTS-- */}
             <div className="p-3 rounded-md bg-slate-100 md:p-6 dark:bg-gradient-to-tr dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
                 {/* SEARCH FIELD */}
                 <div className="px-3 py-4 md:px-6">
@@ -281,6 +289,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                             key={product.id}
                             className="relative p-3 bg-gray-100 rounded-md shadow-md group dark:bg-gray-800"
                         >
+                            {/* PRODUCT IMAGE */}
                             <div className="w-full h-40 overflow-hidden bg-gray-200 rounded-md aspect-h-1 aspect-w-1 lg:aspect-none group-hover:opacity-85">
                                 {product.photos?.length === 0 ? (
                                     <img
@@ -298,6 +307,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                     />
                                 )}
                             </div>
+                            {/* PRODUCT DESC */}
                             <div className="flex items-start justify-between mt-4">
                                 <div>
                                     <h3 className="text-sm font-semibold text-gray-700 dark:text-slate-50">
@@ -326,7 +336,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                     className="w-full p-8 space-y-8 rounded-md bg-slate-50 dark:bg-gradient-to-tr md:dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-800"
                 >
                     <div className="grid w-full grid-cols-1 gap-4 md:gap-20 md:grid-cols-2">
-                        {/* ORDER SUMMARY */}
+                        {/* --ORDER SUMMARY-- */}
                         <div className="w-full ">
                             <div className="order-summary">
                                 <div className="mb-4">
@@ -372,6 +382,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                                             />
                                                         )}
                                                     </div>
+                                                    {/* SELECTED ITEMS DESC */}
                                                     <div
                                                         className="flex flex-col items-start justify-start w-2/3 gap-3"
                                                         key={item.id}
@@ -391,6 +402,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                                             </p>
                                                         </div>
 
+                                                        {/* SELECTED ITEMS BUTTONS */}
                                                         <div
                                                             key={item.id}
                                                             className="flex items-center justify-start w-full gap-2 lg:justify-end lg:gap-3"
@@ -453,35 +465,51 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                             ))}
                                         </div>
                                         {/* PRICING */}
-                                        <div className="flex flex-col items-start justify-start w-full gap-3 p-5 my-10 bg-gray-100 rounded-md md:my-6 dark:bg-slate-950 text-slate-500">
+                                        <div className="flex flex-col items-start justify-start w-full gap-3 p-5 my-10 bg-gray-200 shadow-md rounded-md md:my-6 dark:bg-slate-950 text-slate-500">
                                             <div className="flex justify-between w-full text-xs lg:text-sm ">
                                                 <p>Total items</p>
                                                 <p className="font-semibold text-slate-900 dark:text-slate-300">
-                                                    543x
+                                                    {Number(totalItems)}x
                                                 </p>
                                             </div>
                                             <div className="flex justify-between w-full text-xs lg:text-sm">
                                                 <p>Subtotal</p>
                                                 <p className="font-semibold text-slate-900 dark:text-slate-300">
-                                                    Rp. 34.000
+                                                    Rp.{" "}
+                                                    {form
+                                                        .getValues(
+                                                            "total_amount"
+                                                        )
+                                                        .toLocaleString(
+                                                            "id-ID"
+                                                        )}
                                                 </p>
                                             </div>
                                             <div className="flex justify-between w-full text-xs lg:text-sm">
-                                                <p>Tax (11%)</p>
+                                                <p>Tax</p>
                                                 <p className="font-semibold text-slate-900 dark:text-slate-300">
-                                                    + Rp. 934.000
+                                                    + 0
                                                 </p>
                                             </div>
-                                            <div className="flex justify-between w-full text-xs text-green-600 lg:text-sm">
+                                            <div className="flex justify-between w-full text-xs lg:text-sm">
                                                 <p>Discount</p>
-                                                <p className="font-semibold">
-                                                    - Rp. 34.000
+                                                <p className="font-semibold text-slate-900 dark:text-slate-300">
+                                                    - 0
                                                 </p>
                                             </div>
-                                            <Separator />
+                                            <Separator className="bg-slate-300" />
                                             <div className="flex justify-between w-full font-bold text-md text-slate-900 dark:text-slate-300">
                                                 <p>Total</p>
-                                                <p>Rp. 344.000</p>
+                                                <p>
+                                                    Rp.{" "}
+                                                    {form
+                                                        .getValues(
+                                                            "total_amount"
+                                                        )
+                                                        .toLocaleString(
+                                                            "id-ID"
+                                                        )}
+                                                </p>
                                             </div>
                                         </div>
                                     </>
@@ -800,7 +828,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                     </FormItem>
                                 )}
                             />
-
+                            {/* submit button */}
                             <Button
                                 disabled={loading}
                                 className="w-full mt-10"
