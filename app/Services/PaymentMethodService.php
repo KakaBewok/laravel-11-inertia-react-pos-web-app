@@ -26,8 +26,8 @@ class PaymentMethodService
                 'qris_image' => null,
             ];
             $imagesUpload = [
-                'bank_logo' => $validatedData['bank_logo'],
-                'qris_image' => $validatedData['qris_image'],
+                'bank_logo' => $validatedData['bank_logo'] ?? null,
+                'qris_image' => $validatedData['qris_image'] ?? null,
             ];
 
             if (!empty($imagesUpload['bank_logo']) || !empty($imagesUpload['qris_image'])) {
@@ -45,6 +45,7 @@ class PaymentMethodService
                 'name' => $validatedData['name'],
                 'bank_name' => $validatedData['bank_name'],
                 'status' => $validatedData['status'],
+                'is_cash' => $validatedData['is_cash'],
                 'description' => $validatedData['description'] ?? "",
                 'bank_logo' => $imagePaths['bank_logo'] ?? "",
                 'qris_image' => $imagePaths['qris_image'] ?? "",
@@ -66,7 +67,8 @@ class PaymentMethodService
                 'name' => $data['name'],
                 'bank_name' => $data['bank_name'],
                 'description' => $data['description'] ?? '',
-                'status' => $data['status']
+                'status' => $data['status'],
+                'is_cash' => $data['is_cash'],
             ];
             $this->paymentMethodRepository->update($paymentMethod->id, $updatedPaymentMethod);
             $this->handleImages($data['bank_logo'] ?? null, $data['qris_image'] ?? null, $paymentMethod);
