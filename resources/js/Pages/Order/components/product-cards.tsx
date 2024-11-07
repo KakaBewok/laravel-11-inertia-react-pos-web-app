@@ -51,9 +51,9 @@ const ProductCards = ({
                             ) : (
                                 <img
                                     alt="Product image"
-                                    src={`${
-                                        import.meta.env.VITE_APP_URL
-                                    }/storage/${product.photos?.[0].photo}`}
+                                    src={`${import.meta.env.APP_URL}/storage/${
+                                        product.photos?.[0].photo
+                                    }`}
                                     className="object-cover object-center w-full h-full"
                                 />
                             )}
