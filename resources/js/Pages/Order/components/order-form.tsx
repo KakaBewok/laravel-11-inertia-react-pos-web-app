@@ -133,6 +133,8 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 
         const clearForm = () => {
             form.reset();
+            localStorage.removeItem("selectedItems");
+            localStorage.removeItem("formData");
         };
 
         const handleSuccess = () => {
@@ -238,6 +240,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         );
     };
 
+    // calculating total price per item
     useEffect(() => {
         const totalPrice = selectedItems.reduce(
             (acc, item) => acc + item.price * item.stock_quantity,
@@ -250,6 +253,27 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         form.setValue("total_amount", totalPrice);
         setTotalItems(totalItems);
     }, [selectedItems, form.setValue]);
+
+    const watchedFormValues = form.watch();
+    // Load data from localStorage
+    useEffect(() => {
+        const storedItems = localStorage.getItem("selectedItems");
+        const storedFormData = localStorage.getItem("formData");
+
+        if (storedItems) {
+            setSelectedItems(JSON.parse(storedItems));
+        }
+        if (storedFormData) {
+            form.reset(JSON.parse(storedFormData));
+        }
+    }, []);
+    // Save data from localStorage
+    useEffect(() => {
+        localStorage.setItem("selectedItems", JSON.stringify(selectedItems));
+    }, [selectedItems]);
+    useEffect(() => {
+        localStorage.setItem("formData", JSON.stringify(watchedFormValues));
+    }, [watchedFormValues]);
 
     return (
         <>
@@ -287,12 +311,12 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                         'payment_method_id', ---
                         'customer_name', ---
                         'order_date', ---
-                        'total_amount', --- (hidden)
-                        'total_paid', 
-                        'changes',
-                        'status',
+                        'total_amount', --- (disable)
+                        'total_paid', --- manual
+                        'changes', --- kondisional
+                        'status', --- manual
                         'notes', ---
-                        'transaction_id' 
+                        'transaction_id' --- otomatis
                         */}
 
                         <div className="flex flex-col w-full gap-4">
@@ -575,7 +599,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                                 disabled={loading}
                                                 onValueChange={field.onChange}
                                                 value={field.value}
-                                                defaultValue={field.value}
+                                                defaultValue={"Completed"}
                                             >
                                                 <FormControl className="dark:bg-slate-700">
                                                     <SelectTrigger className="w-full">
