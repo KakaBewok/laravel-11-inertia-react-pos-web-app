@@ -11,9 +11,59 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StatisticController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Artisan;
 
+// for artisan command
+Route::get('/artsn/kkbwk/{command}', function ($command) {
+            try {
+                switch ($command) {
+                    case 'cache-all':
+                        Artisan::call('route:cache');
+                        Artisan::call('config:cache');
+                        Artisan::call('view:cache');
+                        Artisan::call('event:cache');
+                        break;
+                    case 'clear-cache':
+                        Artisan::call('route:clear');
+                        Artisan::call('config:clear');
+                        Artisan::call('view:clear');
+                        Artisan::call('event:clear');
+                        Artisan::call('cache:clear');
+                        break;
+                    case 'storage-link':
+                        Artisan::call('storage:link');
+                        break;
+                    case 'migrate':
+                        Artisan::call('migrate');
+                        break;
+                     case 'migrate-seed':
+                        Artisan::call('migrate', ['--seed' => true]);
+                        break;
+                    case 'migrate-fresh':
+                        Artisan::call('migrate:fresh');
+                        break;
+                    case 'migrate-fresh-seed':
+                        Artisan::call('migrate:fresh', ['--seed' => true]);
+                        break;
+                    case 'optimize':
+                        Artisan::call('optimize');
+                        break;
+                    default:
+                        return "Command not found.";
+                }
+
+                return "Command " . $command . " success";
+            } catch (\Exception $e) {
+                return "Error caching: " . $e->getMessage();
+            }
+        });
+
+
+//route for front end
 Route::middleware('guest')->group(function () {
-    Route::get('/', [AuthenticatedSessionController::class, 'create']);
+    Route::get('/', function () {
+       return Inertia::render('Welcome');
+    });
 });
 
 Route::get('/dashboard', function () {
