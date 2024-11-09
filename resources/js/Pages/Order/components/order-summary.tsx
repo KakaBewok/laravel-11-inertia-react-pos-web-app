@@ -4,6 +4,7 @@ import Product from "@/interfaces/Product";
 import { Trash2 } from "lucide-react";
 import ImageNotFound from "../../../../../public/images/image-not-found.jpg";
 import { CompleteProduct } from "./order-form";
+import { BASE_URL } from "@/constants";
 
 interface OrderSummaryProps {
     selectedItems: CompleteProduct[];
@@ -48,11 +49,7 @@ const OrderSummary = ({
                                         ) : (
                                             <img
                                                 alt="item image"
-                                                src={`${
-                                                    import.meta.env.APP_URL
-                                                }/storage/${
-                                                    item.photos?.[0].photo
-                                                }`}
+                                                src={`${BASE_URL}/storage/${item.photos?.[0].photo}`}
                                                 className="object-cover object-center w-full h-full"
                                             />
                                         )}

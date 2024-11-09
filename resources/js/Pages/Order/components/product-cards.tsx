@@ -1,6 +1,7 @@
 import Product from "@/interfaces/Product";
 import ImageNotFound from "../../../../../public/images/image-not-found.jpg";
 import { CompleteProduct } from "./order-form";
+import { BASE_URL } from "@/constants";
 
 interface ProductCardsProps {
     searchTerm: string;
@@ -51,9 +52,7 @@ const ProductCards = ({
                             ) : (
                                 <img
                                     alt="Product image"
-                                    src={`${import.meta.env.APP_URL}/storage/${
-                                        product.photos?.[0].photo
-                                    }`}
+                                    src={`${BASE_URL}/storage/${product.photos?.[0].photo}`}
                                     className="object-cover object-center w-full h-full"
                                 />
                             )}

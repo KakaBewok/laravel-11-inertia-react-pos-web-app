@@ -7,6 +7,7 @@ import {
 } from "@/Components/ui/carousel";
 import Photo from "@/interfaces/Photo";
 import ImageNotFound from "../../../public/images/image-not-found.jpg";
+import { BASE_URL } from "@/constants";
 
 export function CarouselPhoto({ photos }: { photos: Photo[] }) {
     return (
@@ -16,9 +17,7 @@ export function CarouselPhoto({ photos }: { photos: Photo[] }) {
                     photos.map((photo) => (
                         <CarouselItem key={photo.id}>
                             <img
-                                src={`${import.meta.env.APP_URL}/storage/${
-                                    photo.photo
-                                }`}
+                                src={`${BASE_URL}/storage/${photo.photo}`}
                                 alt="Product photo"
                                 className="object-contain w-full h-full"
                             />

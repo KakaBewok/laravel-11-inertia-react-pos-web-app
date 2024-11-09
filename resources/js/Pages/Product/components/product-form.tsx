@@ -27,7 +27,11 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as z from "zod";
-import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "../../../config";
+import {
+    ACCEPTED_IMAGE_TYPES,
+    BASE_URL,
+    MAX_FILE_SIZE,
+} from "../../../constants";
 import Product from "@/interfaces/Product";
 import Category from "@/interfaces/Category";
 import urlToFile from "@/lib/file-utils";
@@ -108,9 +112,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             if (initialData && initialData.photos.length > 0) {
                 const files = await Promise.all(
                     initialData.photos.map((photoUrl, index) => {
-                        const filePath = `${
-                            import.meta.env.APP_URL
-                        }/storage/${photoUrl}`;
+                        const filePath = `${BASE_URL}/storage/${photoUrl}`;
                         return urlToFile(
                             filePath,
                             `product-image-${index}.jpg`,
