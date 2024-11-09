@@ -168,7 +168,9 @@ export function DataTable<TData extends DataWithId, TValue>({
                 }
                 className={`flex items-center gap-1 ${
                     selectedIds.length < 1 ? "mb-4" : ""
-                } dark:bg-slate-200 dark:text-slate-800 dark:hover:bg-slate-300 hover:bg-slate-50`}
+                } dark:bg-slate-200 dark:text-slate-800 dark:hover:bg-slate-300 hover:bg-slate-50 ${
+                    data.length < 1 ? "hidden" : ""
+                }`}
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"

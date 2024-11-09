@@ -65,7 +65,7 @@ const PaymentMethodDetails = ({
                 </div>
             </div>
             <div className="flex flex-col justify-between rounded-lg md:flex-row bg-slate-50 dark:bg-slate-600">
-                <div className="flex-1 p-6 space-y-6 md:p-7">
+                <div className="w-full p-6 space-y-6 md:w-1/3 md:p-7">
                     <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-50">
                         {paymentMethod.name}
                     </h1>
@@ -74,7 +74,29 @@ const PaymentMethodDetails = ({
                             Bank name:{" "}
                         </h3>
                         <p className="text-sm text-gray-500 dark:text-gray-300">
-                            {paymentMethod.bank_name}
+                            {paymentMethod.bank_name == ""
+                                ? "-"
+                                : paymentMethod.bank_name}
+                        </p>
+                    </div>
+                    <div>
+                        <h3 className="font-semibold text-gray-800 dark:text-gray-50">
+                            Account Holder:{" "}
+                        </h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-300">
+                            {paymentMethod.account_holder == ""
+                                ? "-"
+                                : paymentMethod.account_holder}
+                        </p>
+                    </div>
+                    <div>
+                        <h3 className="font-semibold text-gray-800 dark:text-gray-50">
+                            Account Number:{" "}
+                        </h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-300">
+                            {paymentMethod.account_number == ""
+                                ? "-"
+                                : paymentMethod.account_number}
                         </p>
                     </div>
                     <div>
@@ -82,7 +104,7 @@ const PaymentMethodDetails = ({
                             Payment type:{" "}
                         </h3>
                         <p className="text-sm text-gray-500 dark:text-gray-300">
-                            {paymentMethod.is_cash ? "Cash" : "Cashless"}
+                            {paymentMethod.name == "Cash" ? "Cash" : "Cashless"}
                         </p>
                     </div>
                     <div>
@@ -107,22 +129,8 @@ const PaymentMethodDetails = ({
                             )}
                         </div>
                     </div>
-                    <div className="text-gray-800 dark:text-gray-200 ">
-                        <h3 className="font-semibold text-gray-800 dark:text-gray-50">
-                            Description/Account number:{" "}
-                        </h3>
-                        <p className="text-sm leading-normal text-justify text-gray-500 md:leading-relaxed lg:leading-loose dark:text-gray-300">
-                            {paymentMethod.description ? (
-                                paymentMethod.description
-                            ) : (
-                                <span className="text-slate-400">
-                                    No description.
-                                </span>
-                            )}
-                        </p>
-                    </div>
                 </div>
-                <div className="flex flex-col items-center justify-center flex-1 w-full gap-5 p-5 md:flex-row">
+                <div className="flex flex-col items-center justify-center w-full gap-5 p-5 md:w-2/3 md:flex-row">
                     <div className="w-full h-full overflow-hidden border border-gray-200 rounded-sm shadow-sm dark:border-gray-400">
                         {paymentMethod.bank_logo ? (
                             <img

@@ -102,7 +102,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 }) => {
     const { loading, setLoading } = useGlobalContext();
     const [totalItems, setTotalItems] = useState<number>(0);
-    const [isCash, setIsCash] = useState<boolean>(false);
     const [selectedItems, setSelectedItems] = useState<CompleteProduct[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>("");
     const filteredProducts = products.filter((product) =>
@@ -179,13 +178,13 @@ export const OrderForm: React.FC<OrderFormProps> = ({
               });
     };
 
-    const handlePaymentMethodChange = (value: string) => {
-        const selectedPaymentMethod = paymentMethods.find(
-            (method) => method.id.toString() === value
-        );
-        setIsCash(selectedPaymentMethod?.is_cash || false);
-        form.setValue("payment_method_id", value);
-    };
+    // const handlePaymentMethodChange = (value: string) => {
+    //     const selectedPaymentMethod = paymentMethods.find(
+    //         (method) => method.id.toString() === value
+    //     );
+    //     setIsCash(selectedPaymentMethod?.is_cash || false);
+    //     form.setValue("payment_method_id", value);
+    // };
 
     const adjustQuantity = (itemClicked: Product, amount: number) => {
         const product = products.find(
@@ -261,18 +260,24 @@ export const OrderForm: React.FC<OrderFormProps> = ({
     }, [selectedItems, form.setValue]);
 
     const watchedFormValues = form.watch();
+
     // Load data from localStorage
     useEffect(() => {
         const storedItems = localStorage.getItem("selectedItems");
         const storedFormData = localStorage.getItem("formData");
 
         if (storedItems) {
-            setSelectedItems(JSON.parse(storedItems));
+            const parsedItems = JSON.parse(storedItems);
+            const filteredItems = parsedItems.filter((item: Product) =>
+                products.some((product) => product.id === item.id)
+            );
+            setSelectedItems(filteredItems);
         }
         if (storedFormData) {
             form.reset(JSON.parse(storedFormData));
         }
     }, []);
+
     // Save data from localStorage
     useEffect(() => {
         localStorage.setItem("selectedItems", JSON.stringify(selectedItems));
@@ -304,6 +309,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                 >
                     <div className="grid w-full grid-cols-1 gap-4 md:gap-20 md:grid-cols-2">
                         <OrderSummary
+                            products={products}
                             selectedItems={selectedItems}
                             adjustQuantity={adjustQuantity}
                             removeItem={removeItem}
@@ -345,6 +351,9 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                             }
                                         >
                                             Customer name
+                                            <span className="text-red-500">
+                                                *
+                                            </span>
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -457,14 +466,17 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                             }
                                         >
                                             Payment method
+                                            <span className="text-red-500">
+                                                *
+                                            </span>
                                         </FormLabel>
                                         <Select
                                             disabled={loading}
                                             onValueChange={(value) => {
                                                 field.onChange(value);
-                                                handlePaymentMethodChange(
-                                                    value
-                                                );
+                                                // handlePaymentMethodChange(
+                                                //     value
+                                                // );
                                             }}
                                             value={field.value.toString()}
                                             defaultValue={field.value.toString()}
@@ -539,6 +551,9 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                             }
                                         >
                                             Total paid
+                                            <span className="text-red-500">
+                                                *
+                                            </span>
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -554,7 +569,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                             />
 
                             {/* changes */}
-                            {isCash && (
+                            {/* {isCash && (
                                 <FormField
                                     control={form.control}
                                     name="changes"
@@ -581,7 +596,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                         </FormItem>
                                     )}
                                 />
-                            )}
+                            )} */}
 
                             {/* status */}
                             <FormField
@@ -597,6 +612,9 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                             }
                                         >
                                             Status
+                                            <span className="text-red-500">
+                                                *
+                                            </span>
                                         </FormLabel>
                                         <FormControl>
                                             <Select

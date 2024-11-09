@@ -8,7 +8,6 @@ const EditPage = ({ paymentMethod }: { paymentMethod: PaymentMethod }) => {
     const initialData = {
         ...paymentMethod,
         status: paymentMethod.status ? true : false,
-        is_cash: paymentMethod.is_cash ? true : false,
     };
     return (
         <MainLayout>

@@ -5,6 +5,6 @@ export default interface PaymentMethod {
     bank_logo: string;
     qris_image: string;
     status: boolean;
-    is_cash: boolean;
-    description: string;
+    account_number: string;
+    account_holder: string;
 }
