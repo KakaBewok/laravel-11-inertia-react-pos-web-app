@@ -17,13 +17,13 @@ class PaymentMethodFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->words(2, true),
-            'bank_name' => $this->faker->company,
+            'name' => $this->faker->randomElement(['Bank Transfer', 'QRIS', 'Cash']),
+            'bank_name' => $this->faker->randomElement(['BRI', 'BCA', 'Mandiri']),
             'bank_logo' => $this->faker->imageUrl,
             'qris_image' => $this->faker->imageUrl,
             'status' => $this->faker->boolean,
-            'is_cash' => $this->faker->boolean,
-            'description' => $this->faker->sentence(15, true),
+            'account_number' => $this->faker->numerify('############'),
+            'account_holder' => $this->faker->name,
         ];
     }
 }

@@ -266,6 +266,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                         }
                                     >
                                         Price
+                                        <span className="text-red-500">*</span>
                                     </FormLabel>
                                     <FormControl>
                                         <Input
@@ -388,6 +389,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                         }
                                     >
                                         Stock
+                                        <span className="text-red-500">*</span>
                                     </FormLabel>
                                     <FormControl>
                                         <Input
@@ -520,7 +522,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         </Button>
                         <Button
                             disabled={loading}
-                            className="w-full bg-slate-300 text-slate-950 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200"
+                            className={`${
+                                initialData ? "hidden" : ""
+                            } w-full bg-slate-300 text-slate-950 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200`}
                             type="submit"
                             onClick={() => setIsCreateAnother(true)}
                         >

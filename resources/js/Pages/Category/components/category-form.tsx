@@ -16,6 +16,7 @@ import { useGlobalContext } from "@/hooks/useGlobalContext";
 import Category from "@/interfaces/Category";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "@inertiajs/react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as z from "zod";
@@ -35,7 +36,7 @@ interface CategoryFormProps {
 
 export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData }) => {
     const { loading, setLoading } = useGlobalContext();
-
+    const [isCreateAnother, setIsCreateAnother] = useState<boolean>(false);
     const title = initialData ? "Edit category" : "Create category";
     const description = initialData ? "Edit a category" : "Add a new category";
     const toastMessage = initialData
@@ -60,7 +61,11 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData }) => {
 
         const handleSuccess = () => {
             clearForm();
-            router.visit(route("admin.category.index"));
+
+            isCreateAnother
+                ? router.visit(route("admin.category.create"))
+                : router.visit(route("admin.category.index"));
+
             setTimeout(() => {
                 toast.success(toastMessage, {
                     position: "top-center",
@@ -125,7 +130,8 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData }) => {
                                                 : "dark:text-gray-300"
                                         }
                                     >
-                                        Name
+                                        Name{" "}
+                                        <span className="text-red-500">*</span>
                                     </FormLabel>
                                     <FormControl>
                                         <Input
@@ -169,13 +175,27 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData }) => {
                         />
                     </div>
 
-                    <Button
-                        disabled={loading}
-                        className="w-full lg:w-1/2"
-                        type="submit"
-                    >
-                        {action}
-                    </Button>
+                    {/* submit button */}
+                    <div className="flex flex-col items-center justify-between w-full gap-4 mt-10 md:w-1/2 lg:flex-row">
+                        <Button
+                            disabled={loading}
+                            className="w-full"
+                            type="submit"
+                            onClick={() => setIsCreateAnother(false)}
+                        >
+                            {action}
+                        </Button>
+                        <Button
+                            disabled={loading}
+                            className={`${
+                                initialData ? "hidden" : ""
+                            } w-full bg-slate-300 text-slate-950 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200`}
+                            type="submit"
+                            onClick={() => setIsCreateAnother(true)}
+                        >
+                            Create & Create another
+                        </Button>
+                    </div>
                 </form>
             </Form>
         </>

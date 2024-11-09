@@ -7,6 +7,7 @@ import { CompleteProduct } from "./order-form";
 import { BASE_URL } from "@/constants";
 
 interface OrderSummaryProps {
+    products: Product[];
     selectedItems: CompleteProduct[];
     adjustQuantity: (itemClicked: Product, amount: number) => void;
     removeItem: (itemClicked: Product) => void;
@@ -15,12 +16,14 @@ interface OrderSummaryProps {
 }
 
 const OrderSummary = ({
+    products,
     selectedItems,
     adjustQuantity,
     removeItem,
     totalItems,
     form,
 }: OrderSummaryProps) => {
+    if (products.length < 1) localStorage.removeItem("selectedItems");
     return (
         <div className="w-full ">
             <div className="order-summary">
@@ -29,7 +32,7 @@ const OrderSummary = ({
                     <Separator className="dark:bg-slate-700 bg-slate-300" />
                 </div>
 
-                {selectedItems.length > 0 ? (
+                {selectedItems.length > 0 && products.length > 0 ? (
                     <>
                         {/* ORDER ITEMS */}
                         <div className="flex flex-col justify-start gap-3 lg:gap-6 lg:p-6 h-80 md:h-[548px] dark:bg-gray-950 bg-gray-100 overflow-y-scroll p-3 rounded-sm">

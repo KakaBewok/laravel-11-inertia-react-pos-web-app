@@ -43,10 +43,10 @@ class PaymentMethodService
 
             $this->paymentMethodRepository->store([
                 'name' => $validatedData['name'],
-                'bank_name' => $validatedData['bank_name'],
+                'bank_name' => $validatedData['bank_name'] ?? "",
                 'status' => $validatedData['status'],
-                'is_cash' => $validatedData['is_cash'],
-                'description' => $validatedData['description'] ?? "",
+                'account_number' => $validatedData['account_number'] ?? "",
+                'account_holder' => $validatedData['account_holder'] ?? "",
                 'bank_logo' => $imagePaths['bank_logo'] ?? "",
                 'qris_image' => $imagePaths['qris_image'] ?? "",
             ]);
@@ -65,10 +65,10 @@ class PaymentMethodService
         try {
             $updatedPaymentMethod = [
                 'name' => $data['name'],
-                'bank_name' => $data['bank_name'],
-                'description' => $data['description'] ?? '',
+                'bank_name' => $data['bank_name'] ?? "",
                 'status' => $data['status'],
-                'is_cash' => $data['is_cash'],
+                'account_number' => $data['account_number'] ?? "",
+                'account_holder' => $data['account_holder'] ?? "",
             ];
             $this->paymentMethodRepository->update($paymentMethod->id, $updatedPaymentMethod);
             $this->handleImages($data['bank_logo'] ?? null, $data['qris_image'] ?? null, $paymentMethod);
@@ -122,11 +122,11 @@ class PaymentMethodService
         $paymentMethod->save();
     }
 
-   private function deleteExistingImages($key, PaymentMethod $paymentMethod): void
+    private function deleteExistingImages($key, PaymentMethod $paymentMethod): void
     {
         $existingImage = $paymentMethod->{$key};
         if (!empty($existingImage) && Storage::disk('public')->exists($existingImage)) {
-                Storage::disk('public')->delete($existingImage);
-        } 
+            Storage::disk('public')->delete($existingImage);
+        }
     }
 }
