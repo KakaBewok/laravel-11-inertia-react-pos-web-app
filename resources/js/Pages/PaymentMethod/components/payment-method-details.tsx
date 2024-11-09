@@ -5,6 +5,7 @@ import { useGlobalContext } from "@/hooks/useGlobalContext";
 import PaymentMethod from "@/interfaces/PaymentMethod";
 import { router } from "@inertiajs/react";
 import ImageNotFound from "../../../../../public/images/image-not-found.jpg";
+import { BASE_URL } from "@/constants";
 
 const PaymentMethodDetails = ({
     paymentMethod,
@@ -125,9 +126,7 @@ const PaymentMethodDetails = ({
                     <div className="w-full h-full overflow-hidden border border-gray-200 rounded-sm shadow-sm dark:border-gray-400">
                         {paymentMethod.bank_logo ? (
                             <img
-                                src={`${import.meta.env.APP_URL}/storage/${
-                                    paymentMethod.bank_logo
-                                }`}
+                                src={`${BASE_URL}/storage/${paymentMethod.bank_logo}`}
                                 alt="Bank Logo"
                                 className="object-cover w-full h-full transition-transform duration-200 transform hover:scale-105"
                             />
@@ -142,9 +141,7 @@ const PaymentMethodDetails = ({
                     <div className="w-full h-full overflow-hidden border border-gray-200 rounded-sm shadow-sm dark:border-gray-400">
                         {paymentMethod.qris_image ? (
                             <img
-                                src={`${import.meta.env.APP_URL}/storage/${
-                                    paymentMethod.qris_image
-                                }`}
+                                src={`${BASE_URL}/storage/${paymentMethod.qris_image}`}
                                 alt="QRIS image"
                                 className="object-cover w-full h-full transition-transform duration-200 transform hover:scale-105"
                             />

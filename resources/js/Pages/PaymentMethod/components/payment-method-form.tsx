@@ -23,7 +23,11 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as z from "zod";
-import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "../../../config";
+import {
+    ACCEPTED_IMAGE_TYPES,
+    BASE_URL,
+    MAX_FILE_SIZE,
+} from "../../../constants";
 
 interface FilesToProcessType {
     key: "bank_logo" | "qris_image";
@@ -132,9 +136,7 @@ export const PaymentMethodForm = ({
                     if (imageUrl) {
                         const randomId =
                             Math.floor(Math.random() * 90000) + 10000;
-                        const filePath = `${
-                            import.meta.env.APP_URL
-                        }/storage/${imageUrl}`;
+                        const filePath = `${BASE_URL}/storage/${imageUrl}`;
                         const file = await urlToFile(
                             filePath,
                             `${fileData.key}-${randomId}.jpg`,
