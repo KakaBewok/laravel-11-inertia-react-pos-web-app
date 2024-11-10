@@ -42,6 +42,8 @@ import { toast } from "react-toastify";
 import * as z from "zod";
 import OrderSummary from "./order-summary";
 import ProductCards from "./product-cards";
+import { QrModal } from "./qr-modal";
+import { BankTransferCard } from "./bank-transfer-card";
 
 const formSchema = z.object({
     customer_name: z
@@ -100,34 +102,46 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 }) => {
     const { loading, setLoading } = useGlobalContext();
     const [paymentMethodName, setPaymentMethodName] = useState<string | null>(
-        JSON.parse(localStorage.getItem("paymentMethodName") ?? "")
+        null
     );
+    const [isVisible, setIsVisible] = useState<boolean>(false);
     const [totalItems, setTotalItems] = useState<number>(0);
+    const [totalPrice, setTotalPrice] = useState<number>(0);
     const [selectedItems, setSelectedItems] = useState<CompleteProduct[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>("");
     const filteredProducts = products.filter((product) =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     const [isCreateAnother, setIsCreateAnother] = useState<boolean>(false);
-
     const title = initialData ? "Edit order" : "Create order";
     const description = initialData ? "Edit an order" : "Add a new order";
     const toastMessage = initialData ? "Order updated." : "Order created.";
     const action = initialData ? "Save changes" : "Create";
+
+    const defaultFormValues = {
+        customer_name: "",
+        order_date: new Date(),
+        total_amount: totalPrice,
+        changes: 0,
+        status: "",
+        notes: "",
+        payment_method_id: "",
+    };
 
     const form = useForm<OrderFormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             customer_name: initialData?.customer_name || "",
             order_date: initialData?.order_date || new Date(),
-            total_amount: initialData?.total_amount || 0,
+            total_amount: initialData?.total_amount || totalPrice,
             changes: initialData?.changes || 0,
             status: initialData?.status || "",
             notes: initialData?.notes || "",
             payment_method_id: initialData?.payment_method_id || "",
-            products: initialData?.products,
         },
     });
+
+    const watchedFormValues = form.watch();
 
     const onSubmit = (data: OrderFormValues) => {
         setLoading(true);
@@ -245,8 +259,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         );
     };
 
-    const watchedFormValues = form.watch();
-
     // calculating total price per item
     useEffect(() => {
         const totalPrice = selectedItems.reduce(
@@ -258,6 +270,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             0
         );
         form.setValue("total_amount", totalPrice);
+        setTotalPrice(totalPrice);
         setTotalItems(totalItems);
     }, [selectedItems, form.setValue]);
 
@@ -265,6 +278,8 @@ export const OrderForm: React.FC<OrderFormProps> = ({
     useEffect(() => {
         const storedItemsCache = localStorage.getItem("selectedItems");
         const storedFormDataCache = localStorage.getItem("formData");
+        const paymentMethodNameCache =
+            localStorage.getItem("paymentMethodName");
 
         if (storedItemsCache) {
             const parsedItems = JSON.parse(storedItemsCache);
@@ -280,6 +295,9 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             }
             form.reset(parsedData);
         }
+        if (paymentMethodNameCache) {
+            setPaymentMethodName(JSON.parse(paymentMethodNameCache) ?? null);
+        }
     }, []);
 
     // Save data to localStorage
@@ -291,6 +309,25 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             JSON.stringify(paymentMethodName)
         );
     }, [selectedItems, watchedFormValues]);
+
+    // check form values
+    const isFormEmpty = (
+        Object.keys(defaultFormValues) as (keyof typeof defaultFormValues)[]
+    ).every((key) => {
+        const defaultValue = defaultFormValues[key];
+        const currentValue = watchedFormValues[key];
+
+        if (defaultValue instanceof Date && currentValue instanceof Date) {
+            return defaultValue.toDateString() === currentValue.toDateString();
+        }
+
+        return currentValue === defaultValue;
+    });
+
+    const clearFormValue = () => {
+        form.reset(defaultFormValues);
+        setPaymentMethodName("");
+    };
 
     return (
         <>
@@ -340,10 +377,22 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 
                         <div className="flex flex-col w-full gap-4">
                             <div className="mb-4">
-                                <h1 className="mb-2 text-lg font-bold">
-                                    Form Checkout
-                                </h1>
-                                <Separator className="dark:bg-slate-700 bg-slate-300" />
+                                <div className="flex items-baseline justify-between">
+                                    <h1 className="text-lg font-bold ">
+                                        Form Checkout
+                                    </h1>
+                                    <Button
+                                        type="button"
+                                        size={"sm"}
+                                        variant="outline"
+                                        onClick={() => clearFormValue()}
+                                        className={`${
+                                            isFormEmpty ? "hidden" : ""
+                                        } text-white bg-red-500 hover:bg-red-500 hover:text-white hover:opacity-85`}
+                                    >
+                                        Clear Form
+                                    </Button>
+                                </div>
                             </div>
 
                             {/* customer name */}
@@ -462,32 +511,34 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                             />
 
                             {/* total amount */}
-                            <FormField
-                                control={form.control}
-                                name="total_amount"
-                                render={({ field, fieldState }) => (
-                                    <FormItem>
-                                        <FormLabel
-                                            className={
-                                                fieldState.error
-                                                    ? "text-red-500"
-                                                    : "dark:text-gray-300"
-                                            }
-                                        >
-                                            Total amount
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                className="dark:bg-slate-700"
-                                                type="number"
-                                                disabled={true}
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage className="dark:text-red-500" />
-                                    </FormItem>
-                                )}
-                            />
+                            <div className="hidden">
+                                <FormField
+                                    control={form.control}
+                                    name="total_amount"
+                                    render={({ field, fieldState }) => (
+                                        <FormItem>
+                                            <FormLabel
+                                                className={
+                                                    fieldState.error
+                                                        ? "text-red-500"
+                                                        : "dark:text-gray-300"
+                                                }
+                                            >
+                                                Total amount
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    className="dark:bg-slate-700"
+                                                    type="number"
+                                                    disabled={true}
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage className="dark:text-red-500" />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
 
                             {/* payment method */}
                             <FormField
@@ -537,6 +588,10 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                                             value={paymentMethod.id.toString()}
                                                         >
                                                             {paymentMethod.name}
+                                                            {paymentMethod.name ==
+                                                            "Cash"
+                                                                ? ""
+                                                                : ` - ${paymentMethod.bank_name}`}
                                                         </SelectItem>
                                                     ))}
                                             </SelectContent>
@@ -586,23 +641,40 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 
                                     case "QRIS":
                                         return (
-                                            <Button
-                                                onClick={() =>
-                                                    alert("QRIS here")
-                                                }
-                                                className="bg-sky-500"
-                                                disabled={loading}
-                                                type="button"
-                                            >
-                                                Show QR Code
-                                            </Button>
+                                            <>
+                                                <Button
+                                                    onClick={() =>
+                                                        setIsVisible(true)
+                                                    }
+                                                    type="button"
+                                                    variant="outline"
+                                                    className="text-white bg-sky-500 hover:bg-sky-500 hover:text-white hover:opacity-85"
+                                                >
+                                                    Show QR code
+                                                </Button>
+                                                <QrModal
+                                                    paymentMethodId={form.getValues(
+                                                        "payment_method_id"
+                                                    )}
+                                                    paymentMethods={
+                                                        paymentMethods
+                                                    }
+                                                    isVisible={isVisible}
+                                                    onClose={() =>
+                                                        setIsVisible(false)
+                                                    }
+                                                />
+                                            </>
                                         );
 
                                     case "Bank Transfer":
                                         return (
-                                            <div>
-                                                <h1>Bank data</h1>
-                                            </div>
+                                            <BankTransferCard
+                                                paymentMethodId={form.getValues(
+                                                    "payment_method_id"
+                                                )}
+                                                paymentMethods={paymentMethods}
+                                            />
                                         );
 
                                     default:
@@ -662,8 +734,9 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                     </FormItem>
                                 )}
                             />
+
                             {/* submit button */}
-                            <div className="flex flex-col items-center justify-between w-full gap-4 mt-10 lg:flex-row">
+                            <div className="flex flex-col items-center justify-between w-full gap-4 mt-5 md:w-1/2 lg:flex-row">
                                 <Button
                                     disabled={loading}
                                     className="w-full"
@@ -674,7 +747,9 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                 </Button>
                                 <Button
                                     disabled={loading}
-                                    className="w-full bg-slate-300 text-slate-950 hover:bg-slate-200"
+                                    className={`${
+                                        initialData ? "hidden" : ""
+                                    } w-full bg-slate-300 text-slate-950 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200`}
                                     type="submit"
                                     onClick={() => setIsCreateAnother(true)}
                                 >
