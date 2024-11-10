@@ -81,7 +81,13 @@ const OrderDetails = ({
                             Payment method:{" "}
                         </h3>
                         <p className="text-sm text-gray-500 dark:text-gray-300">
-                            {paymentMethod.name}
+                            {paymentMethod == null ? (
+                                <span className="font-medium text-red-500">
+                                    Payment Method has been removed
+                                </span>
+                            ) : (
+                                paymentMethod.name
+                            )}
                         </p>
                     </div>
                     <div>

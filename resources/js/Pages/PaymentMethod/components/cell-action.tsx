@@ -71,7 +71,6 @@ export const CellAction = ({ data }: { data: PaymentMethodColumn }) => {
                 }}
                 onConfirm={(e) => handleDeleteId(e)}
                 loading={loading}
-                description="All orders under this payment method will also be deleted."
             />
             <div className="flex items-center gap-2">
                 <Button
