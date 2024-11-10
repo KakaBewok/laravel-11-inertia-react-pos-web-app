@@ -64,9 +64,6 @@ const formSchema = z.object({
     total_amount: z.coerce
         .number()
         .min(0, { message: "Total amount must be greater than or equal to 0" }),
-    total_paid: z.coerce
-        .number()
-        .min(0, { message: "Total paid must be greater than or equal to 0" }),
     changes: z.coerce
         .number()
         .min(0, { message: "Changes must be greater than or equal to 0" }),
@@ -85,6 +82,7 @@ type OrderFormValues = z.infer<typeof formSchema>;
 export type CompleteProduct = Product & {
     photos?: Photo[];
 };
+
 interface OrderFormProps {
     initialData?:
         | (Order & {
@@ -101,6 +99,9 @@ export const OrderForm: React.FC<OrderFormProps> = ({
     products,
 }) => {
     const { loading, setLoading } = useGlobalContext();
+    const [paymentMethodName, setPaymentMethodName] = useState<string | null>(
+        JSON.parse(localStorage.getItem("paymentMethodName") ?? "")
+    );
     const [totalItems, setTotalItems] = useState<number>(0);
     const [selectedItems, setSelectedItems] = useState<CompleteProduct[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>("");
@@ -120,7 +121,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             customer_name: initialData?.customer_name || "",
             order_date: initialData?.order_date || new Date(),
             total_amount: initialData?.total_amount || 0,
-            total_paid: initialData?.total_paid || 0,
             changes: initialData?.changes || 0,
             status: initialData?.status || "",
             notes: initialData?.notes || "",
@@ -136,6 +136,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             form.reset();
             localStorage.removeItem("selectedItems");
             localStorage.removeItem("formData");
+            localStorage.removeItem("paymentMethodName");
         };
 
         const handleSuccess = () => {
@@ -178,13 +179,12 @@ export const OrderForm: React.FC<OrderFormProps> = ({
               });
     };
 
-    // const handlePaymentMethodChange = (value: string) => {
-    //     const selectedPaymentMethod = paymentMethods.find(
-    //         (method) => method.id.toString() === value
-    //     );
-    //     setIsCash(selectedPaymentMethod?.is_cash || false);
-    //     form.setValue("payment_method_id", value);
-    // };
+    const handlePaymentMethodChange = (value: string) => {
+        const selectedPaymentMethod = paymentMethods.find(
+            (method) => method.id.toString() === value
+        );
+        setPaymentMethodName(selectedPaymentMethod?.name ?? null);
+    };
 
     const adjustQuantity = (itemClicked: Product, amount: number) => {
         const product = products.find(
@@ -245,6 +245,8 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         );
     };
 
+    const watchedFormValues = form.watch();
+
     // calculating total price per item
     useEffect(() => {
         const totalPrice = selectedItems.reduce(
@@ -259,29 +261,35 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         setTotalItems(totalItems);
     }, [selectedItems, form.setValue]);
 
-    const watchedFormValues = form.watch();
-
     // Load data from localStorage
     useEffect(() => {
-        const storedItems = localStorage.getItem("selectedItems");
-        const storedFormData = localStorage.getItem("formData");
+        const storedItemsCache = localStorage.getItem("selectedItems");
+        const storedFormDataCache = localStorage.getItem("formData");
 
-        if (storedItems) {
-            const parsedItems = JSON.parse(storedItems);
+        if (storedItemsCache) {
+            const parsedItems = JSON.parse(storedItemsCache);
             const filteredItems = parsedItems.filter((item: Product) =>
                 products.some((product) => product.id === item.id)
             );
             setSelectedItems(filteredItems);
         }
-        if (storedFormData) {
-            form.reset(JSON.parse(storedFormData));
+        if (storedFormDataCache) {
+            const parsedData = JSON.parse(storedFormDataCache);
+            if (parsedData.order_date) {
+                parsedData.order_date = new Date(parsedData.order_date);
+            }
+            form.reset(parsedData);
         }
     }, []);
 
-    // Save data from localStorage
+    // Save data to localStorage
     useEffect(() => {
         localStorage.setItem("selectedItems", JSON.stringify(selectedItems));
         localStorage.setItem("formData", JSON.stringify(watchedFormValues));
+        localStorage.setItem(
+            "paymentMethodName",
+            JSON.stringify(paymentMethodName)
+        );
     }, [selectedItems, watchedFormValues]);
 
     return (
@@ -410,7 +418,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                                     : "dark:text-gray-300"
                                             }
                                         >
-                                            Order date
+                                            Order Date
                                         </FormLabel>
                                         <FormControl>
                                             <Popover>
@@ -453,6 +461,34 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                 )}
                             />
 
+                            {/* total amount */}
+                            <FormField
+                                control={form.control}
+                                name="total_amount"
+                                render={({ field, fieldState }) => (
+                                    <FormItem>
+                                        <FormLabel
+                                            className={
+                                                fieldState.error
+                                                    ? "text-red-500"
+                                                    : "dark:text-gray-300"
+                                            }
+                                        >
+                                            Total amount
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                className="dark:bg-slate-700"
+                                                type="number"
+                                                disabled={true}
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="dark:text-red-500" />
+                                    </FormItem>
+                                )}
+                            />
+
                             {/* payment method */}
                             <FormField
                                 control={form.control}
@@ -475,9 +511,9 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                             disabled={loading}
                                             onValueChange={(value) => {
                                                 field.onChange(value);
-                                                // handlePaymentMethodChange(
-                                                //     value
-                                                // );
+                                                handlePaymentMethodChange(
+                                                    value
+                                                );
                                             }}
                                             value={field.value.toString()}
                                             defaultValue={field.value.toString()}
@@ -510,94 +546,69 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                 )}
                             />
 
-                            {/* total amount */}
-                            <FormField
-                                control={form.control}
-                                name="total_amount"
-                                render={({ field, fieldState }) => (
-                                    <FormItem>
-                                        <FormLabel
-                                            className={
-                                                fieldState.error
-                                                    ? "text-red-500"
-                                                    : "dark:text-gray-300"
-                                            }
-                                        >
-                                            Total amount
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                className="dark:bg-slate-700"
-                                                type="number"
-                                                disabled={true}
-                                                {...field}
+                            {/* Conditional Rendering for Payment Methods */}
+                            {(() => {
+                                switch (paymentMethodName) {
+                                    case "Cash":
+                                        return (
+                                            <FormField
+                                                control={form.control}
+                                                name="changes"
+                                                render={({
+                                                    field,
+                                                    fieldState,
+                                                }) => (
+                                                    <FormItem>
+                                                        <FormLabel
+                                                            className={
+                                                                fieldState.error
+                                                                    ? "text-red-500"
+                                                                    : "dark:text-gray-300"
+                                                            }
+                                                        >
+                                                            Changes
+                                                        </FormLabel>
+                                                        <FormControl>
+                                                            <Input
+                                                                className="dark:bg-slate-700"
+                                                                type="number"
+                                                                disabled={
+                                                                    loading
+                                                                }
+                                                                {...field}
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage className="dark:text-red-500" />
+                                                    </FormItem>
+                                                )}
                                             />
-                                        </FormControl>
-                                        <FormMessage className="dark:text-red-500" />
-                                    </FormItem>
-                                )}
-                            />
+                                        );
 
-                            {/* total paid */}
-                            <FormField
-                                control={form.control}
-                                name="total_paid"
-                                render={({ field, fieldState }) => (
-                                    <FormItem>
-                                        <FormLabel
-                                            className={
-                                                fieldState.error
-                                                    ? "text-red-500"
-                                                    : "dark:text-gray-300"
-                                            }
-                                        >
-                                            Total paid
-                                            <span className="text-red-500">
-                                                *
-                                            </span>
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                className="dark:bg-slate-700"
-                                                type="number"
-                                                disabled={loading}
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage className="dark:text-red-500" />
-                                    </FormItem>
-                                )}
-                            />
-
-                            {/* changes */}
-                            {/* {isCash && (
-                                <FormField
-                                    control={form.control}
-                                    name="changes"
-                                    render={({ field, fieldState }) => (
-                                        <FormItem>
-                                            <FormLabel
-                                                className={
-                                                    fieldState.error
-                                                        ? "text-red-500"
-                                                        : "dark:text-gray-300"
+                                    case "QRIS":
+                                        return (
+                                            <Button
+                                                onClick={() =>
+                                                    alert("QRIS here")
                                                 }
+                                                className="bg-sky-500"
+                                                disabled={loading}
+                                                type="button"
                                             >
-                                                Changes
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    className="dark:bg-slate-700"
-                                                    type="number"
-                                                    disabled={loading}
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage className="dark:text-red-500" />
-                                        </FormItem>
-                                    )}
-                                />
-                            )} */}
+                                                Show QR Code
+                                            </Button>
+                                        );
+
+                                    case "Bank Transfer":
+                                        return (
+                                            <div>
+                                                <h1>Bank data</h1>
+                                            </div>
+                                        );
+
+                                    default:
+                                        return null;
+                                }
+                            })()}
 
                             {/* status */}
                             <FormField
@@ -612,7 +623,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                                     : "dark:text-gray-300"
                                             }
                                         >
-                                            Status
+                                            Payment Status
                                             <span className="text-red-500">
                                                 *
                                             </span>
@@ -630,7 +641,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                                             defaultValue={
                                                                 field.value
                                                             }
-                                                            placeholder="Select a status"
+                                                            placeholder="Select a payment status"
                                                         />
                                                     </SelectTrigger>
                                                 </FormControl>
