@@ -76,7 +76,6 @@ export const PaymentMethodClient: React.FC<PaymentMethodClientProps> = ({
                 onClose={() => setModalOpen(false)}
                 onConfirm={handleDeleteIds}
                 loading={loading}
-                description="All orders under this payment method will also be deleted."
             />
             <DataTable
                 onDelete={openDeleteModal}

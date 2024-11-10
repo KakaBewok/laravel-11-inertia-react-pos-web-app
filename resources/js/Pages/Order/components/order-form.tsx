@@ -311,6 +311,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                         <OrderSummary
                             products={products}
                             selectedItems={selectedItems}
+                            setSelectedItems={setSelectedItems}
                             adjustQuantity={adjustQuantity}
                             removeItem={removeItem}
                             totalItems={totalItems}
