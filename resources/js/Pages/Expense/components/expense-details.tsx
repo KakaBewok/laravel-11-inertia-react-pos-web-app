@@ -1,5 +1,6 @@
 import { Button } from "@/Components/ui/button";
 import { Heading } from "@/Components/ui/heading";
+import { Separator } from "@/Components/ui/separator";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import Expense from "@/interfaces/Expense";
 import { router } from "@inertiajs/react";
@@ -61,6 +62,7 @@ const ExpenseDetails = ({ expense }: { expense: Expense }) => {
                 <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-50">
                     {expense.name}
                 </h1>
+                <Separator className="bg-slate-300 dark:bg-slate-700" />
                 <div>
                     <h3 className="font-semibold text-gray-800 dark:text-gray-50">
                         Amount:{" "}

@@ -70,7 +70,11 @@ class OrderController extends Controller
      */
     public function edit(Order $order)
     {
-        //
+        return Inertia::render('Order/edit', [
+            'order' => $order,
+            'paymentMethods' => $this->paymentMethodService->getAllPaymentMethods(),
+            'products' => $this->productService->getAllProducts(),
+        ]);
     }
 
     /**

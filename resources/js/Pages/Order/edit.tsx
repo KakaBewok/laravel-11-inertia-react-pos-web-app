@@ -17,19 +17,14 @@ const EditPage: React.FC<EditPageProps> = ({
     paymentMethods,
     products,
 }) => {
-    const initialData: Order & { products: string[] } = {
-        ...order,
-        products: products.map((product: Product) => product.id),
-    };
-
     return (
         <MainLayout>
             <AuthenticatedLayout>
-                <Head title="Edit product" />
+                <Head title="Edit order" />
                 <div className="flex-col">
                     <div className="flex-1 p-4 pt-5 space-y-4 md:p-8">
                         <OrderForm
-                            initialData={initialData}
+                            initialData={order}
                             paymentMethods={paymentMethods}
                             products={products}
                         />

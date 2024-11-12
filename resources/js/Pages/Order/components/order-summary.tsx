@@ -1,10 +1,9 @@
 import { Button } from "@/Components/ui/button";
 import { Separator } from "@/Components/ui/separator";
+import { BASE_URL } from "@/constants";
 import Product from "@/interfaces/Product";
-import { Trash2 } from "lucide-react";
 import ImageNotFound from "../../../../../public/images/image-not-found.jpg";
 import { CompleteProduct } from "./order-form";
-import { BASE_URL } from "@/constants";
 
 interface OrderSummaryProps {
     products: Product[];
@@ -29,22 +28,22 @@ const OrderSummary = ({
     return (
         <div className="w-full ">
             <div className="order-summary">
-                <div className="mb-4">
-                    <div className="flex items-center justify-between p-3 bg-gray-100 rounded-sm shadow-sm">
-                        <h1 className="text-lg font-bold ">Order Summary</h1>
-                        <Button
-                            type="button"
-                            size={"sm"}
-                            variant="outline"
-                            onClick={() => setSelectedItems([])}
-                            className={`${
-                                selectedItems.length < 1 ? "hidden" : ""
-                            } text-white bg-red-500  hover:bg-red-500 hover:text-white hover:opacity-85`}
-                        >
-                            Clear Items
-                        </Button>
-                    </div>
+                <div className="flex items-center justify-between mb-4">
+                    <h1 className="text-lg font-bold ">Order Summary</h1>
+                    <Button
+                        type="button"
+                        size={"sm"}
+                        variant="outline"
+                        onClick={() => setSelectedItems([])}
+                        className={`${
+                            selectedItems.length < 1 ? "hidden" : ""
+                        } text-white bg-red-500  hover:bg-red-500 hover:text-white hover:opacity-85`}
+                    >
+                        Clear Items
+                    </Button>
                 </div>
+
+                <Separator className="bg-slate-300 dark:bg-slate-700 mb-4" />
 
                 {selectedItems.length > 0 && products.length > 0 ? (
                     <>
