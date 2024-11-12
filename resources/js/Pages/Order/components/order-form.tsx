@@ -86,12 +86,11 @@ export type CompleteProduct = Product & {
 };
 
 interface OrderFormProps {
-    // initialData?:
-    //     | (Order & {
-    //           products: string[];
-    //       })
-    //     | null;
-    initialData?: Order | null;
+    initialData?:
+        | (Order & {
+              productOrdered: CompleteProduct[];
+          })
+        | null;
     paymentMethods: PaymentMethod[];
     products: CompleteProduct[];
 }
@@ -108,7 +107,9 @@ export const OrderForm: React.FC<OrderFormProps> = ({
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [totalItems, setTotalItems] = useState<number>(0);
     const [totalPrice, setTotalPrice] = useState<number>(0);
-    const [selectedItems, setSelectedItems] = useState<CompleteProduct[]>([]);
+    const [selectedItems, setSelectedItems] = useState<CompleteProduct[]>(
+        initialData ? initialData.productOrdered : []
+    );
     const [searchTerm, setSearchTerm] = useState<string>("");
     const filteredProducts = products.filter((product) =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -307,12 +308,17 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 
     // Save data to localStorage
     useEffect(() => {
-        localStorage.setItem("selectedItems", JSON.stringify(selectedItems));
-        localStorage.setItem("formData", JSON.stringify(watchedFormValues));
-        localStorage.setItem(
-            "paymentMethodName",
-            JSON.stringify(paymentMethodName)
-        );
+        if (!initialData) {
+            localStorage.setItem(
+                "selectedItems",
+                JSON.stringify(selectedItems)
+            );
+            localStorage.setItem("formData", JSON.stringify(watchedFormValues));
+            localStorage.setItem(
+                "paymentMethodName",
+                JSON.stringify(paymentMethodName)
+            );
+        }
     }, [selectedItems, watchedFormValues]);
 
     // check form values
@@ -710,7 +716,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                                 disabled={loading}
                                                 onValueChange={field.onChange}
                                                 value={field.value}
-                                                defaultValue={"Completed"}
+                                                defaultValue={"completed"}
                                             >
                                                 <FormControl className="dark:bg-slate-700">
                                                     <SelectTrigger className="w-full">
@@ -723,13 +729,13 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
-                                                    <SelectItem value="Completed">
+                                                    <SelectItem value="completed">
                                                         Completed
                                                     </SelectItem>
-                                                    <SelectItem value="Pending">
+                                                    <SelectItem value="pending">
                                                         Pending
                                                     </SelectItem>
-                                                    <SelectItem value="Cancelled">
+                                                    <SelectItem value="cancelled">
                                                         Cancelled
                                                     </SelectItem>
                                                 </SelectContent>
