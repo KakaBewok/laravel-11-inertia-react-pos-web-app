@@ -377,7 +377,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 
                         <div className="flex flex-col w-full gap-4">
                             <div className="mb-4">
-                                <div className="flex items-baseline justify-between">
+                                <div className="flex items-baseline justify-between p-3 bg-gray-100 rounded-sm shadow-sm">
                                     <h1 className="text-lg font-bold ">
                                         Form Checkout
                                     </h1>

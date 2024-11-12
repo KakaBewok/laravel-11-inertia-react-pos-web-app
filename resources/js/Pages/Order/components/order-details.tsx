@@ -8,6 +8,7 @@ import ProductOrdered from "@/interfaces/ProductsOrdered";
 import { router } from "@inertiajs/react";
 import { format } from "date-fns";
 import ProductOrderTable from "./product-order-table";
+import { Separator } from "@/Components/ui/separator";
 
 interface OrderDetailsProps {
     order: Order;
@@ -76,6 +77,7 @@ const OrderDetails = ({
                     <h1 className="text-2xl font-bold text-gray-800 md:text-3xl dark:text-gray-50">
                         {order.customer_name}
                     </h1>
+                    <Separator className="bg-slate-700" />
                     <div>
                         <h3 className="font-semibold text-gray-800 dark:text-gray-50">
                             Payment method:{" "}

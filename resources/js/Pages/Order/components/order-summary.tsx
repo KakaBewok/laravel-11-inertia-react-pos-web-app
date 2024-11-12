@@ -30,10 +30,8 @@ const OrderSummary = ({
         <div className="w-full ">
             <div className="order-summary">
                 <div className="mb-4">
-                    <div className="flex items-center justify-between">
-                        <h1 className="mb-2 text-lg font-bold">
-                            Order Summary
-                        </h1>
+                    <div className="flex items-center justify-between p-3 bg-gray-100 rounded-sm shadow-sm">
+                        <h1 className="text-lg font-bold ">Order Summary</h1>
                         <Button
                             type="button"
                             size={"sm"}
