@@ -69,6 +69,7 @@ export const CellAction = ({ data }: { data: ProductColumn }) => {
                 }}
                 onConfirm={(e) => handleDeleteId(e)}
                 loading={loading}
+                description="Deleting this product will also remove it from any orders."
             />
             <div className="flex items-center gap-2">
                 <Button

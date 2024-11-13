@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreOrderRequest;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Services\OrderService;
@@ -48,9 +49,10 @@ class OrderController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreOrderRequest $request)
     {
-        //
+        $validatedData = $request->validated();
+        $this->orderService->store($validatedData);
     }
 
     /**
@@ -88,11 +90,23 @@ class OrderController extends Controller
         //
     }
 
-    /**
+      /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Order $order)
+    public function destroy(int $id)
     {
-        //
+        $this->orderService->delete($id);
+    }
+
+    /**
+     * Remove many resource from storage.
+     */
+    public function destroy_bulk(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'string',
+        ]);
+        $this->orderService->multipleDelete($validated['ids']);
     }
 }

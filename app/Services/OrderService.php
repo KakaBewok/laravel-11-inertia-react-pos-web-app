@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Repositories\OrderRepo;
 use App\Models\Order;
+use Illuminate\Support\Facades\Log;
 
 class OrderService
 {
@@ -12,6 +13,30 @@ class OrderService
     public function __construct(OrderRepo $orderRepository)
     {
         $this->orderRepository = $orderRepository;
+    }
+
+    public function store(array $validatedData)
+    {
+        //  protected $fillable = [
+        //     'payment_method_id',
+        //     'customer_name',
+        //     'order_date',
+        //     'total_amount',
+        //     'total_paid', --
+        //     'changes',
+        //     'status',
+        //     'notes',
+        //     'transaction_id'
+        // ];
+        try {
+            // 1. buat data total_paid = total_amount + changes
+            // 2. edit field stock di data product (jika statusnya completed), stock = stock - ?
+            // 3. kumpulkan semua field di variable
+            // 4. simpan ke db dengan db::transaction()
+            // 5. logs
+        } catch (\Exception $e) {
+            Log::error('Error when creating order: ' . $e->getMessage());
+        }
     }
 
     public function getAllOrders()
@@ -53,5 +78,29 @@ class OrderService
             ];
         }
         return $productsOrdered;
+    }
+
+    public function delete(int $id)
+    {
+        try {
+            $this->orderRepository->delete($id);
+        } catch (\Exception $e) {
+            Log::error('Failed to delete data', [
+                'id' => $id,
+                'error_message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function multipleDelete(array $ids)
+    {
+        try {
+            $this->orderRepository->deleteMany($ids);
+        } catch (\Exception $e) {
+            Log::error('Failed to delete data', [
+                'ids' => $ids,
+                'error_message' => $e->getMessage(),
+            ]);
+        }
     }
 }

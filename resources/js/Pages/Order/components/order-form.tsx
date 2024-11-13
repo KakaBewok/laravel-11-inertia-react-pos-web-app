@@ -76,7 +76,16 @@ const formSchema = z.object({
     payment_method_id: z
         .string()
         .min(1, { message: "Payment method is required" }),
-    products: z.array(z.string().min(2)),
+    order_items: z.array(
+        z.object({
+            product_id: z
+                .string()
+                .min(1, { message: "Product id is required" }),
+            quantity: z
+                .number()
+                .min(1, { message: "Quantity must be at least 1" }),
+        })
+    ),
 });
 
 type OrderFormValues = z.infer<typeof formSchema>;
@@ -180,6 +189,12 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                   route("admin.order.update", initialData?.id),
                   {
                       ...data,
+                      items: [
+                          ...selectedItems.map((item) => ({
+                              product_id: item.id,
+                              quantity: item.stock_quantity,
+                          })),
+                      ],
                       _method: "PATCH",
                   },
                   {
@@ -188,11 +203,23 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                       onFinish: handleFinish,
                   }
               )
-            : router.post(route("admin.order.store"), data, {
-                  onSuccess: handleSuccess,
-                  onError: handleError,
-                  onFinish: handleFinish,
-              });
+            : router.post(
+                  route("admin.order.store"),
+                  {
+                      ...data,
+                      items: [
+                          ...selectedItems.map((item) => ({
+                              product_id: item.id,
+                              quantity: item.stock_quantity,
+                          })),
+                      ],
+                  },
+                  {
+                      onSuccess: handleSuccess,
+                      onError: handleError,
+                      onFinish: handleFinish,
+                  }
+              );
     };
 
     const handlePaymentMethodChange = (value: string) => {
@@ -774,35 +801,3 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         </>
     );
 };
-
-// store order
-
-// public function store(Request $request)
-// {
-//     $items = $request->items;
-
-//     \DB::transaction(function () use ($items) {
-//         $order = Order::create();
-
-//         foreach ($items as $item) {
-//             $product = Product::find($item['id']);
-
-//             // Cek stok produk
-//             if ($product->stock < $item['quantity']) {
-//                 throw new \Exception("Stok tidak mencukupi untuk produk {$product->name}");
-//             }
-
-//             // Kurangi stok produk
-//             $product->reduceStock($item['quantity']);
-
-//             // Simpan item order
-//             $order->items()->create([
-//                 'product_id' => $product->id,
-//                 'quantity' => $item['quantity'],
-//                 'price' => $product->price
-//             ]);
-//         }
-//     });
-
-//     return response()->json(['status' => 'success', 'order_id' => $order->id]);
-// }

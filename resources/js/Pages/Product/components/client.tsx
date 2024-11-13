@@ -74,6 +74,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
                 onClose={() => setModalOpen(false)}
                 onConfirm={handleDeleteIds}
                 loading={loading}
+                description="Deleting these products will also remove them from any orders."
             />
             <DataTable
                 onDelete={openDeleteModal}
