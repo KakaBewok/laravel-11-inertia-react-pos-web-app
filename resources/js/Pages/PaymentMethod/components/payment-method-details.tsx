@@ -1,11 +1,12 @@
 import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
 import { Heading } from "@/Components/ui/heading";
+import { Separator } from "@/Components/ui/separator";
+import { BASE_URL } from "@/constants";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import PaymentMethod from "@/interfaces/PaymentMethod";
 import { router } from "@inertiajs/react";
 import ImageNotFound from "../../../../../public/images/image-not-found.jpg";
-import { BASE_URL } from "@/constants";
 
 const PaymentMethodDetails = ({
     paymentMethod,
@@ -69,6 +70,7 @@ const PaymentMethodDetails = ({
                     <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-50">
                         {paymentMethod.name}
                     </h1>
+                    <Separator className="bg-slate-300 dark:bg-slate-700" />
                     <div>
                         <h3 className="font-semibold text-gray-800 dark:text-gray-50">
                             Bank name:{" "}

@@ -1,6 +1,7 @@
 import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
 import { Heading } from "@/Components/ui/heading";
+import { Separator } from "@/Components/ui/separator";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import Order from "@/interfaces/Order";
 import PaymentMethod from "@/interfaces/PaymentMethod";
@@ -76,6 +77,7 @@ const OrderDetails = ({
                     <h1 className="text-2xl font-bold text-gray-800 md:text-3xl dark:text-gray-50">
                         {order.customer_name}
                     </h1>
+                    <Separator className="bg-slate-300 dark:bg-slate-700" />
                     <div>
                         <h3 className="font-semibold text-gray-800 dark:text-gray-50">
                             Payment method:{" "}

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreOrderRequest;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Services\OrderService;
@@ -15,7 +16,8 @@ class OrderController extends Controller
     protected $productService;
     protected $paymentMethodService;
 
-    public function __construct(OrderService $orderService, ProductService $productService, PaymentMethodService $paymentMethodService){
+    public function __construct(OrderService $orderService, ProductService $productService, PaymentMethodService $paymentMethodService)
+    {
         $this->orderService = $orderService;
         $this->productService = $productService;
         $this->paymentMethodService = $paymentMethodService;
@@ -47,18 +49,19 @@ class OrderController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreOrderRequest $request)
     {
-        //
+        $validatedData = $request->validated();
+        $this->orderService->store($validatedData);
     }
 
     /**
      * Display the specified resource.
      */
     public function show(Order $order)
-    { 
-       $productsOrdered = $this->orderService->mappingProductsOrdered($order);
-       return Inertia::render('Order/details', [
+    {
+        $productsOrdered = $this->orderService->mappingProductsDetails($order);
+        return Inertia::render('Order/details', [
             'order' => $order,
             'paymentMethod' => $order->paymentMethod,
             'productsOrdered' => $productsOrdered,
@@ -70,7 +73,13 @@ class OrderController extends Controller
      */
     public function edit(Order $order)
     {
-        //
+        $productOrdered = $this->orderService->mappingProductsEdit($order);
+        return Inertia::render('Order/edit', [
+            'order' => $order,
+            'productOrdered' => $productOrdered,
+            'paymentMethods' => $this->paymentMethodService->getAllPaymentMethods(),
+            'products' => $this->productService->getAllProducts(),
+        ]);
     }
 
     /**
@@ -81,11 +90,23 @@ class OrderController extends Controller
         //
     }
 
-    /**
+      /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Order $order)
+    public function destroy(int $id)
     {
-        //
+        $this->orderService->delete($id);
+    }
+
+    /**
+     * Remove many resource from storage.
+     */
+    public function destroy_bulk(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'string',
+        ]);
+        $this->orderService->multipleDelete($validated['ids']);
     }
 }

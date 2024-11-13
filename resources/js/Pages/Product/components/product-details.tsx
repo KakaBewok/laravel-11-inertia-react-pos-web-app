@@ -1,6 +1,7 @@
 import { CarouselPhoto } from "@/Components/CarouselPhoto";
 import { Button } from "@/Components/ui/button";
 import { Heading } from "@/Components/ui/heading";
+import { Separator } from "@/Components/ui/separator";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import Category from "@/interfaces/Category";
 import Photo from "@/interfaces/Photo";
@@ -73,6 +74,7 @@ const ProductDetails = ({ product, category, photos }: ProductDetailsProps) => {
                             <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-50">
                                 {product.name}
                             </h1>
+                            <Separator className="bg-slate-300 dark:bg-slate-700 my-4" />
                             <h2 className="text-xl font-semibold text-gray-400">
                                 {category.name}
                             </h2>

@@ -40,10 +40,10 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as z from "zod";
+import { BankTransferCard } from "./bank-transfer-card";
 import OrderSummary from "./order-summary";
 import ProductCards from "./product-cards";
 import { QrModal } from "./qr-modal";
-import { BankTransferCard } from "./bank-transfer-card";
 
 const formSchema = z.object({
     customer_name: z
@@ -76,7 +76,16 @@ const formSchema = z.object({
     payment_method_id: z
         .string()
         .min(1, { message: "Payment method is required" }),
-    products: z.array(z.string().min(2)),
+    order_items: z.array(
+        z.object({
+            product_id: z
+                .string()
+                .min(1, { message: "Product id is required" }),
+            quantity: z
+                .number()
+                .min(1, { message: "Quantity must be at least 1" }),
+        })
+    ),
 });
 
 type OrderFormValues = z.infer<typeof formSchema>;
@@ -85,10 +94,21 @@ export type CompleteProduct = Product & {
     photos?: Photo[];
 };
 
+//
+interface OrderItem {
+    id: string;
+    name: string;
+    price: number;
+    total_price: number;
+    quantity: number;
+    photos?: Photo[];
+}
+//
+
 interface OrderFormProps {
     initialData?:
         | (Order & {
-              products: string[];
+              productOrdered: CompleteProduct[];
           })
         | null;
     paymentMethods: PaymentMethod[];
@@ -107,7 +127,9 @@ export const OrderForm: React.FC<OrderFormProps> = ({
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [totalItems, setTotalItems] = useState<number>(0);
     const [totalPrice, setTotalPrice] = useState<number>(0);
-    const [selectedItems, setSelectedItems] = useState<CompleteProduct[]>([]);
+    const [selectedItems, setSelectedItems] = useState<CompleteProduct[]>(
+        initialData ? initialData.productOrdered : []
+    );
     const [searchTerm, setSearchTerm] = useState<string>("");
     const filteredProducts = products.filter((product) =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -178,6 +200,12 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                   route("admin.order.update", initialData?.id),
                   {
                       ...data,
+                      items: [
+                          ...selectedItems.map((item) => ({
+                              product_id: item.id,
+                              quantity: item.stock_quantity,
+                          })),
+                      ],
                       _method: "PATCH",
                   },
                   {
@@ -186,11 +214,23 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                       onFinish: handleFinish,
                   }
               )
-            : router.post(route("admin.order.store"), data, {
-                  onSuccess: handleSuccess,
-                  onError: handleError,
-                  onFinish: handleFinish,
-              });
+            : router.post(
+                  route("admin.order.store"),
+                  {
+                      ...data,
+                      items: [
+                          ...selectedItems.map((item) => ({
+                              product_id: item.id,
+                              quantity: item.stock_quantity,
+                          })),
+                      ],
+                  },
+                  {
+                      onSuccess: handleSuccess,
+                      onError: handleError,
+                      onFinish: handleFinish,
+                  }
+              );
     };
 
     const handlePaymentMethodChange = (value: string) => {
@@ -276,38 +316,47 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 
     // Load data from localStorage
     useEffect(() => {
-        const storedItemsCache = localStorage.getItem("selectedItems");
-        const storedFormDataCache = localStorage.getItem("formData");
-        const paymentMethodNameCache =
-            localStorage.getItem("paymentMethodName");
+        if (!initialData) {
+            const storedItemsCache = localStorage.getItem("selectedItems");
+            const storedFormDataCache = localStorage.getItem("formData");
+            const paymentMethodNameCache =
+                localStorage.getItem("paymentMethodName");
 
-        if (storedItemsCache) {
-            const parsedItems = JSON.parse(storedItemsCache);
-            const filteredItems = parsedItems.filter((item: Product) =>
-                products.some((product) => product.id === item.id)
-            );
-            setSelectedItems(filteredItems);
-        }
-        if (storedFormDataCache) {
-            const parsedData = JSON.parse(storedFormDataCache);
-            if (parsedData.order_date) {
-                parsedData.order_date = new Date(parsedData.order_date);
+            if (storedItemsCache) {
+                const parsedItems = JSON.parse(storedItemsCache);
+                const filteredItems = parsedItems.filter((item: Product) =>
+                    products.some((product) => product.id === item.id)
+                );
+                setSelectedItems(filteredItems);
             }
-            form.reset(parsedData);
-        }
-        if (paymentMethodNameCache) {
-            setPaymentMethodName(JSON.parse(paymentMethodNameCache) ?? null);
+            if (storedFormDataCache) {
+                const parsedData = JSON.parse(storedFormDataCache);
+                if (parsedData.order_date) {
+                    parsedData.order_date = new Date(parsedData.order_date);
+                }
+                form.reset(parsedData);
+            }
+            if (paymentMethodNameCache) {
+                setPaymentMethodName(
+                    JSON.parse(paymentMethodNameCache) ?? null
+                );
+            }
         }
     }, []);
 
     // Save data to localStorage
     useEffect(() => {
-        localStorage.setItem("selectedItems", JSON.stringify(selectedItems));
-        localStorage.setItem("formData", JSON.stringify(watchedFormValues));
-        localStorage.setItem(
-            "paymentMethodName",
-            JSON.stringify(paymentMethodName)
-        );
+        if (!initialData) {
+            localStorage.setItem(
+                "selectedItems",
+                JSON.stringify(selectedItems)
+            );
+            localStorage.setItem("formData", JSON.stringify(watchedFormValues));
+            localStorage.setItem(
+                "paymentMethodName",
+                JSON.stringify(paymentMethodName)
+            );
+        }
     }, [selectedItems, watchedFormValues]);
 
     // check form values
@@ -376,24 +425,24 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                         */}
 
                         <div className="flex flex-col w-full gap-4">
-                            <div className="mb-4">
-                                <div className="flex items-baseline justify-between">
-                                    <h1 className="text-lg font-bold ">
-                                        Form Checkout
-                                    </h1>
-                                    <Button
-                                        type="button"
-                                        size={"sm"}
-                                        variant="outline"
-                                        onClick={() => clearFormValue()}
-                                        className={`${
-                                            isFormEmpty ? "hidden" : ""
-                                        } text-white bg-red-500 hover:bg-red-500 hover:text-white hover:opacity-85`}
-                                    >
-                                        Clear Form
-                                    </Button>
-                                </div>
+                            <div className="flex items-baseline justify-between">
+                                <h1 className="text-lg font-bold ">
+                                    Form Checkout
+                                </h1>
+                                <Button
+                                    type="button"
+                                    size={"sm"}
+                                    variant="outline"
+                                    onClick={() => clearFormValue()}
+                                    className={`${
+                                        isFormEmpty ? "hidden" : ""
+                                    } text-white bg-red-500 hover:bg-red-500 hover:text-white hover:opacity-85`}
+                                >
+                                    Clear Form
+                                </Button>
                             </div>
+
+                            <Separator className="bg-slate-300 dark:bg-slate-700" />
 
                             {/* customer name */}
                             <FormField
@@ -705,7 +754,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                                 disabled={loading}
                                                 onValueChange={field.onChange}
                                                 value={field.value}
-                                                defaultValue={"Completed"}
+                                                defaultValue={"completed"}
                                             >
                                                 <FormControl className="dark:bg-slate-700">
                                                     <SelectTrigger className="w-full">
@@ -718,13 +767,13 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
-                                                    <SelectItem value="Completed">
+                                                    <SelectItem value="completed">
                                                         Completed
                                                     </SelectItem>
-                                                    <SelectItem value="Pending">
+                                                    <SelectItem value="pending">
                                                         Pending
                                                     </SelectItem>
-                                                    <SelectItem value="Cancelled">
+                                                    <SelectItem value="cancelled">
                                                         Cancelled
                                                     </SelectItem>
                                                 </SelectContent>
@@ -736,7 +785,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                             />
 
                             {/* submit button */}
-                            <div className="flex flex-col items-center justify-between w-full gap-4 mt-5 md:w-1/2 lg:flex-row">
+                            <div className="flex flex-col items-center justify-between w-full gap-4 mt-5 lg:flex-row">
                                 <Button
                                     disabled={loading}
                                     className="w-full"
@@ -763,35 +812,3 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         </>
     );
 };
-
-// store order
-
-// public function store(Request $request)
-// {
-//     $items = $request->items;
-
-//     \DB::transaction(function () use ($items) {
-//         $order = Order::create();
-
-//         foreach ($items as $item) {
-//             $product = Product::find($item['id']);
-
-//             // Cek stok produk
-//             if ($product->stock < $item['quantity']) {
-//                 throw new \Exception("Stok tidak mencukupi untuk produk {$product->name}");
-//             }
-
-//             // Kurangi stok produk
-//             $product->reduceStock($item['quantity']);
-
-//             // Simpan item order
-//             $order->items()->create([
-//                 'product_id' => $product->id,
-//                 'quantity' => $item['quantity'],
-//                 'price' => $product->price
-//             ]);
-//         }
-//     });
-
-//     return response()->json(['status' => 'success', 'order_id' => $order->id]);
-// }

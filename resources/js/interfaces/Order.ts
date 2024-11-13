@@ -1,3 +1,5 @@
+import OrderProduct from "./OrderProduct";
+
 export default interface Order {
     id: string;
     customer_name: string;
@@ -9,4 +11,5 @@ export default interface Order {
     status: "pending" | "cancelled" | "completed";
     notes: string;
     transaction_id: string;
+    order_products: OrderProduct[];
 }

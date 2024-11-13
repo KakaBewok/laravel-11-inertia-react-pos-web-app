@@ -1,5 +1,6 @@
 import { Button } from "@/Components/ui/button";
 import { Heading } from "@/Components/ui/heading";
+import { Separator } from "@/Components/ui/separator";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import Category from "@/interfaces/Category";
 import Product from "@/interfaces/Product";
@@ -68,6 +69,7 @@ const CategoryDetails = ({ products, category }: CategoryDetailsProps) => {
                     <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-50">
                         {category.name}
                     </h1>
+                    <Separator className="bg-slate-300 dark:bg-slate-700" />
                     <div>
                         <h3 className="font-semibold text-gray-800 dark:text-gray-50">
                             Total products:{" "}
