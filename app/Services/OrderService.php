@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Repositories\OrderRepo;
 use App\Models\Order;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class OrderService
 {
@@ -18,22 +19,54 @@ class OrderService
     public function store(array $validatedData)
     {
         //  protected $fillable = [
-        //     'payment_method_id',
-        //     'customer_name',
-        //     'order_date',
-        //     'total_amount',
+        //     'payment_method_id', --
+        //     'customer_name', --
+        //     'order_date', --
+        //     'total_amount', --
         //     'total_paid', --
-        //     'changes',
-        //     'status',
-        //     'notes',
-        //     'transaction_id'
+        //     'changes', --
+        //     'status', --
+        //     'notes', --
+        //     'transaction_id' --
         // ];
+
         try {
-            // 1. buat data total_paid = total_amount + changes
-            // 2. edit field stock di data product (jika statusnya completed), stock = stock - ?
-            // 3. kumpulkan semua field di variable
+            // 1. buat data total_paid = total_amount + changes --
+            // 2. edit field stock di data product (jika statusnya completed), stock = stock - quantity yang dibeli
+            // 3. kumpulkan semua field di variable --
             // 4. simpan ke db dengan db::transaction()
-            // 5. logs
+            // 5. simpan juga di order_product
+            // 6. logs
+            DB::transaction(function () use ($validatedData) {
+
+                $orderData = [
+                    'payment_method_id' => $validatedData["payment_method_id"],
+                    'customer_name' => $validatedData["customer_name"],
+                    'order_date' => $validatedData["order_date"],
+                    'total_amount' => $validatedData["total_amount"],
+                    'changes' => $validatedData["changes"],
+                    'status' => $validatedData["status"],
+                    'notes' => $validatedData["notes"] ?? "",
+                    'transaction_id' => $validatedData["transaction_id"],
+                    'total_paid' => $validatedData["total_amount"] + $validatedData["changes"]
+                ];
+
+                $this->orderRepository->store($orderData);
+            });
+
+            // DB::transaction(function () use ($request, $product) {
+            //     $validated = $request->validated();
+
+            //     if ($request->hasFile('thumbnail')) {
+            //         $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
+            //         $validated['thumbnail'] = $thumbnailPath;
+            //     }
+
+            //     $product->update($validated);
+            // });
+
+            // return redirect()->route('admin.products.index');
+
         } catch (\Exception $e) {
             Log::error('Error when creating order: ' . $e->getMessage());
         }

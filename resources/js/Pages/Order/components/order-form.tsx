@@ -94,6 +94,17 @@ export type CompleteProduct = Product & {
     photos?: Photo[];
 };
 
+//
+interface OrderItem {
+    id: string;
+    name: string;
+    price: number;
+    total_price: number;
+    quantity: number;
+    photos?: Photo[];
+}
+//
+
 interface OrderFormProps {
     initialData?:
         | (Order & {

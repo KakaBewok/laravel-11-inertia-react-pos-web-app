@@ -22,16 +22,16 @@ class StoreOrderRequest extends FormRequest
      */
     public function rules(): array
     {
-         return [
+        return [
             'customer_name' => 'required|string|min:3',
             'order_date' => [
-                'required', 
-                'date', 
+                'required',
+                'date',
                 function ($attribute, $value, $fail) {
                     $orderDate = Carbon::parse($value);
                     $today = Carbon::today();
                     $tomorrow = $today->copy()->addDay();
-                    
+
                     if ($orderDate->gte($tomorrow)) {
                         $fail('The order date cannot be tomorrow or in the future.');
                     }
@@ -62,11 +62,11 @@ class StoreOrderRequest extends FormRequest
             'status.required' => 'Status is required.',
             'status.min' => 'Status must contain at least 3 characters.',
             'payment_method_id.required' => 'Payment method is required.',
-            // 'order_items.required' => 'Harus ada produk yang dipesan.',
-            // 'order_items.*.product_id.required' => 'ID produk wajib diisi.',
-            // 'order_items.*.product_id.exists' => 'Produk yang dipilih tidak ditemukan.',
-            // 'order_items.*.quantity.required' => 'Jumlah produk wajib diisi.',
-            // 'order_items.*.quantity.integer' => 'Jumlah produk harus berupa angka.',
+            'order_items.required' => 'At least one product must be ordered.',
+            'order_items.*.product_id.required' => 'Product ID is required.',
+            'order_items.*.product_id.exists' => 'The selected product was not found.',
+            'order_items.*.quantity.required' => 'Product quantity is required.',
+            'order_items.*.quantity.integer' => 'Product quantity must be a number.',
         ];
     }
 }
