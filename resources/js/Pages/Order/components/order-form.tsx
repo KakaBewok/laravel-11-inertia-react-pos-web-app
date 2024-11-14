@@ -153,10 +153,10 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         setLoading(true);
 
         const clearForm = () => {
+            form.reset();
             localStorage.removeItem("selectedItems");
             localStorage.removeItem("formData");
             localStorage.removeItem("paymentMethodName");
-            form.reset();
         };
 
         const handleSuccess = () => {
@@ -769,7 +769,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                     className="w-full"
                                     type="submit"
                                     onClick={() => setIsCreateAnother(false)}
-                                    // onClick={() => alert("Submit clicked")}
                                 >
                                     {action}
                                 </Button>

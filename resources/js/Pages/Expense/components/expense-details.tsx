@@ -68,7 +68,7 @@ const ExpenseDetails = ({ expense }: { expense: Expense }) => {
                         Amount:{" "}
                     </h3>
                     <p className="text-sm text-gray-500 dark:text-gray-300">
-                        Rp. {expense.amount}
+                        Rp. {expense.amount.toLocaleString("id-ID")}
                     </p>
                 </div>
                 <div>
@@ -83,7 +83,7 @@ const ExpenseDetails = ({ expense }: { expense: Expense }) => {
                     <h3 className="font-semibold text-gray-800 dark:text-gray-50">
                         Description:{" "}
                     </h3>
-                    <p className="text-sm leading-normal md:text-justify text-gray-500 md:leading-relaxed lg:leading-loose dark:text-gray-300">
+                    <p className="text-sm leading-normal text-gray-500 md:text-justify md:leading-relaxed lg:leading-loose dark:text-gray-300">
                         {expense.description ? (
                             expense.description
                         ) : (

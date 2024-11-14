@@ -38,7 +38,7 @@ const ProductTable = ({ products }: { products: Product[] }) => {
                                 {product.name}
                             </TableCell>
                             <TableCell className="text-center">
-                                {product.price}
+                                {product.price.toLocaleString("id-ID")}
                             </TableCell>
                             <TableCell className="text-center">
                                 {product.unit}
