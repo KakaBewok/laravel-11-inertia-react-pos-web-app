@@ -42,9 +42,9 @@ class UpdateOrderRequest extends FormRequest
             'status' => 'required|string|min:3',
             'notes' => 'nullable|string',
             'payment_method_id' => 'required|string|min:1',
-            'order_items' => 'required|array|min:1',
-            'order_items.*.product_id' => 'required|exists:products,id',
-            'order_items.*.quantity' => 'required|integer|min:1',
+            'items' => 'required|array|min:1',
+            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.quantity' => 'required|integer|min:1',
         ];
     }
 
@@ -62,11 +62,11 @@ class UpdateOrderRequest extends FormRequest
             'status.required' => 'Status is required.',
             'status.min' => 'Status must contain at least 3 characters.',
             'payment_method_id.required' => 'Payment method is required.',
-            'order_items.required' => 'At least one product must be ordered.',
-            'order_items.*.product_id.required' => 'Product ID is required.',
-            'order_items.*.product_id.exists' => 'The selected product was not found.',
-            'order_items.*.quantity.required' => 'Product quantity is required.',
-            'order_items.*.quantity.integer' => 'Product quantity must be a number.',
+            'items.required' => 'At least one product must be ordered.',
+            'items.*.product_id.required' => 'Product ID is required.',
+            'items.*.product_id.exists' => 'The selected product was not found.',
+            'items.*.quantity.required' => 'Product quantity is required.',
+            'items.*.quantity.integer' => 'Product quantity must be a number.',
         ];
     }
 }

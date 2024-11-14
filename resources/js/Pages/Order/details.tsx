@@ -2,7 +2,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import MainLayout from "@/Layouts/MainLayout";
 import Order from "@/interfaces/Order";
 import PaymentMethod from "@/interfaces/PaymentMethod";
-import ProductOrdered from "@/interfaces/ProductsOrdered";
+import ProductOrdered from "@/interfaces/SelectedItem";
 import { Head } from "@inertiajs/react";
 import OrderDetails from "./components/order-details";
 

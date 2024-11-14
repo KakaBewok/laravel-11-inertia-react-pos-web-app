@@ -2,75 +2,93 @@
 
 namespace App\Services;
 
-use App\Repositories\OrderRepo;
 use App\Models\Order;
-use Illuminate\Support\Facades\Log;
+use App\Repositories\OrderProductRepo;
+use App\Repositories\OrderRepo;
+use App\Repositories\ProductRepo;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class OrderService
 {
     protected $orderRepository;
+    protected $productRepository;
+    protected $orderProductRepository;
 
-    public function __construct(OrderRepo $orderRepository)
+    public function __construct(OrderRepo $orderRepository, ProductRepo $productRepository, OrderProductRepo $orderProductRepository)
     {
         $this->orderRepository = $orderRepository;
+        $this->productRepository = $productRepository;
+        $this->orderProductRepository = $orderProductRepository;
     }
 
+    //store methods
     public function store(array $validatedData)
     {
-        //  protected $fillable = [
-        //     'payment_method_id', --
-        //     'customer_name', --
-        //     'order_date', --
-        //     'total_amount', --
-        //     'total_paid', --
-        //     'changes', --
-        //     'status', --
-        //     'notes', --
-        //     'transaction_id' --
-        // ];
-
         try {
-            // 1. buat data total_paid = total_amount + changes --
-            // 2. edit field stock di data product (jika statusnya completed), stock = stock - quantity yang dibeli
-            // 3. kumpulkan semua field di variable --
-            // 4. simpan ke db dengan db::transaction()
-            // 5. simpan juga di order_product
-            // 6. logs
             DB::transaction(function () use ($validatedData) {
+                $orderData = $this->prepareOrderData($validatedData);
+                $newOrder = $this->orderRepository->store($orderData);
+                $orderProducts = $this->prepareOrderProducts($validatedData['items'], $newOrder->id, $validatedData['status']);
 
-                $orderData = [
-                    'payment_method_id' => $validatedData["payment_method_id"],
-                    'customer_name' => $validatedData["customer_name"],
-                    'order_date' => $validatedData["order_date"],
-                    'total_amount' => $validatedData["total_amount"],
-                    'changes' => $validatedData["changes"],
-                    'status' => $validatedData["status"],
-                    'notes' => $validatedData["notes"] ?? "",
-                    'transaction_id' => $validatedData["transaction_id"],
-                    'total_paid' => $validatedData["total_amount"] + $validatedData["changes"]
-                ];
+                foreach ($orderProducts as $orderProduct){
+                    $this->orderProductRepository->store($orderProduct);
+                }
 
-                $this->orderRepository->store($orderData);
+                Log::info('Order created successfully: ' . $newOrder->transaction_id);
             });
-
-            // DB::transaction(function () use ($request, $product) {
-            //     $validated = $request->validated();
-
-            //     if ($request->hasFile('thumbnail')) {
-            //         $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
-            //         $validated['thumbnail'] = $thumbnailPath;
-            //     }
-
-            //     $product->update($validated);
-            // });
-
-            // return redirect()->route('admin.products.index');
-
         } catch (\Exception $e) {
             Log::error('Error when creating order: ' . $e->getMessage());
         }
     }
+
+    protected function prepareOrderData(array $data): array
+    {
+        return [
+            'payment_method_id' => $data["payment_method_id"],
+            'customer_name' => $data["customer_name"],
+            'order_date' => $data["order_date"],
+            'total_amount' => $data["total_amount"],
+            'changes' => $data["changes"],
+            'status' => $data["status"],
+            'notes' => $data["notes"] ?? "",
+            'total_paid' => $data["total_amount"] + $data["changes"]
+        ];
+    }
+
+    protected function prepareOrderProducts(array $items, string $orderId, string $status): array
+    {
+        $orderProducts = [];
+        foreach ($items as $item) {
+            $product = $this->productRepository->find($item['product_id']);
+            if (!$product) {
+                throw new \Exception('Product not found: ' . $item['product_id']);
+            }
+
+            if ($status === 'completed') {
+                $this->checkAndUpdateStock($product, $item['quantity']);
+            }
+
+            // Append to order products array
+            $orderProducts[] = [
+                'order_id' => $orderId,
+                'product_id' => $item['product_id'],
+                'quantity' => $item['quantity'],
+                'price' => $item['quantity'] * $product->price,
+            ];
+        }
+        return $orderProducts;
+    }
+
+    protected function checkAndUpdateStock($product, int $quantity): void
+    {
+        if ($product->stock_quantity < $quantity) {
+            throw new \Exception('Insufficient stock for product: ' . $product->name);
+        }
+        $product->decrement('stock_quantity', $quantity);
+    }
+    //store methods
 
     public function getAllOrders()
     {
@@ -101,13 +119,12 @@ class OrderService
             $product = $orderProduct->product;
             $productsOrdered[] = [
                 'id' => $product->id,
-                'name' => $product->name,
-                'slug' => $product->slug,
-                'description' => $product->description,
+                'product_name' => $product->name,
                 'price' => $product->price,
                 'unit' => $product->unit,
-                'stock_quantity' => $orderProduct->quantity,
-                'category_id' => $product->category_id,
+                'quantity' => $orderProduct->quantity,
+                'total_price' => $orderProduct->price,
+                'photos' => $product->photos
             ];
         }
         return $productsOrdered;

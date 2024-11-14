@@ -4,24 +4,25 @@ import Product from "@/interfaces/Product";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import MainLayout from "@/Layouts/MainLayout";
 import { Head } from "@inertiajs/react";
-import { CompleteProduct, OrderForm } from "./components/order-form";
+import { OrderForm } from "./components/order-form";
+import SelectedItem from "@/interfaces/SelectedItem";
 
 interface EditPageProps {
     order: Order;
-    productOrdered: CompleteProduct[];
+    selectedItems: SelectedItem[];
     paymentMethods: PaymentMethod[];
     products: Product[];
 }
 
 const EditPage: React.FC<EditPageProps> = ({
     order,
-    productOrdered,
+    selectedItems,
     paymentMethods,
     products,
 }) => {
-    const initialData: Order & { productOrdered: CompleteProduct[] } = {
+    const initialData: Order & { selectedItems: SelectedItem[] } = {
         ...order,
-        productOrdered: productOrdered,
+        selectedItems: selectedItems,
     };
 
     return (

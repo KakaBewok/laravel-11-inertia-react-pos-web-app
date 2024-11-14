@@ -2,15 +2,15 @@ import { Button } from "@/Components/ui/button";
 import { Separator } from "@/Components/ui/separator";
 import { BASE_URL } from "@/constants";
 import Product from "@/interfaces/Product";
+import SelectedItem from "@/interfaces/SelectedItem";
 import ImageNotFound from "../../../../../public/images/image-not-found.jpg";
-import { CompleteProduct } from "./order-form";
 
 interface OrderSummaryProps {
     products: Product[];
-    selectedItems: CompleteProduct[];
-    setSelectedItems: (arg: CompleteProduct[]) => void;
-    adjustQuantity: (itemClicked: Product, amount: number) => void;
-    removeItem: (itemClicked: Product) => void;
+    selectedItems: SelectedItem[];
+    setSelectedItems: (arg: SelectedItem[]) => void;
+    adjustQuantity: (itemClicked: SelectedItem, amount: number) => void;
+    removeItem: (itemClicked: SelectedItem) => void;
     totalItems: number;
     form: any;
 }
@@ -43,7 +43,7 @@ const OrderSummary = ({
                     </Button>
                 </div>
 
-                <Separator className="bg-slate-300 dark:bg-slate-700 mb-4" />
+                <Separator className="mb-4 bg-slate-300 dark:bg-slate-700" />
 
                 {selectedItems.length > 0 && products.length > 0 ? (
                     <>
@@ -77,13 +77,12 @@ const OrderSummary = ({
                                     >
                                         <div className="mr-1">
                                             <h3 className="mb-1 font-medium leading-none text-md">
-                                                {item.name}
+                                                {item.product_name}
                                             </h3>
                                             <p className="text-sm font-light text-slate-500">
                                                 Rp.{" "}
                                                 {(
-                                                    item.price *
-                                                    item.stock_quantity
+                                                    item.price * item.quantity
                                                 ).toLocaleString("id-ID")}
                                             </p>
                                         </div>
@@ -105,7 +104,7 @@ const OrderSummary = ({
                                                     -
                                                 </Button>
                                                 <span className="text-sm font-medium">
-                                                    {item.stock_quantity}
+                                                    {item.quantity}
                                                 </span>
                                                 <Button
                                                     variant={"ghost"}

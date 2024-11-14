@@ -5,7 +5,7 @@ import { Separator } from "@/Components/ui/separator";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import Order from "@/interfaces/Order";
 import PaymentMethod from "@/interfaces/PaymentMethod";
-import ProductOrdered from "@/interfaces/ProductsOrdered";
+import ProductOrdered from "@/interfaces/SelectedItem";
 import { router } from "@inertiajs/react";
 import { format } from "date-fns";
 import ProductOrderTable from "./product-order-table";

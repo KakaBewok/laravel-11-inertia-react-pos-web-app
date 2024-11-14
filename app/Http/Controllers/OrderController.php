@@ -73,10 +73,10 @@ class OrderController extends Controller
      */
     public function edit(Order $order)
     {
-        $productOrdered = $this->orderService->mappingProductsEdit($order);
+        $selectedItems = $this->orderService->mappingProductsEdit($order);
         return Inertia::render('Order/edit', [
             'order' => $order,
-            'productOrdered' => $productOrdered,
+            'selectedItems' => $selectedItems,
             'paymentMethods' => $this->paymentMethodService->getAllPaymentMethods(),
             'products' => $this->productService->getAllProducts(),
         ]);
@@ -90,7 +90,7 @@ class OrderController extends Controller
         //
     }
 
-      /**
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(int $id)
