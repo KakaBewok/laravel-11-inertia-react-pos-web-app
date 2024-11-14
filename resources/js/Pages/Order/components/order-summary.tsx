@@ -2,8 +2,8 @@ import { Button } from "@/Components/ui/button";
 import { Separator } from "@/Components/ui/separator";
 import { BASE_URL } from "@/constants";
 import Product from "@/interfaces/Product";
-import ImageNotFound from "../../../../../public/images/image-not-found.jpg";
 import SelectedItem from "@/interfaces/SelectedItem";
+import ImageNotFound from "../../../../../public/images/image-not-found.jpg";
 
 interface OrderSummaryProps {
     products: Product[];
@@ -25,7 +25,6 @@ const OrderSummary = ({
     form,
 }: OrderSummaryProps) => {
     if (products.length < 1) localStorage.removeItem("selectedItems");
-    console.log(selectedItems);
     return (
         <div className="w-full ">
             <div className="order-summary">

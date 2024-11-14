@@ -1,7 +1,7 @@
+import { BASE_URL } from "@/constants";
 import Product from "@/interfaces/Product";
 import ImageNotFound from "../../../../../public/images/image-not-found.jpg";
 import { CompleteProduct } from "./order-form";
-import { BASE_URL } from "@/constants";
 
 interface ProductCardsProps {
     searchTerm: string;

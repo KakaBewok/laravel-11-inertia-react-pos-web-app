@@ -31,6 +31,7 @@ import Order from "@/interfaces/Order";
 import PaymentMethod from "@/interfaces/PaymentMethod";
 import Photo from "@/interfaces/Photo";
 import Product from "@/interfaces/Product";
+import SelectedItem from "@/interfaces/SelectedItem";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "@inertiajs/react";
@@ -44,7 +45,6 @@ import { BankTransferCard } from "./bank-transfer-card";
 import OrderSummary from "./order-summary";
 import ProductCards from "./product-cards";
 import { QrModal } from "./qr-modal";
-import SelectedItem from "@/interfaces/SelectedItem";
 
 const formSchema = z.object({
     customer_name: z
@@ -77,21 +77,11 @@ const formSchema = z.object({
     payment_method_id: z
         .string()
         .min(1, { message: "Payment method is required" }),
-    order_items: z.array(
-        z.object({
-            product_id: z
-                .string()
-                .min(1, { message: "Product id is required" }),
-            quantity: z
-                .number()
-                .min(1, { message: "Quantity must be at least 1" }),
-        })
-    ),
 });
 
 type OrderFormValues = z.infer<typeof formSchema>;
 
-type CompleteProduct = Product & {
+export type CompleteProduct = Product & {
     photos?: Photo[];
 };
 
@@ -110,7 +100,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
     paymentMethods,
     products,
 }) => {
-    console.log(initialData?.selectedItems);
     const { loading, setLoading } = useGlobalContext();
     const [paymentMethodName, setPaymentMethodName] = useState<string | null>(
         null
@@ -124,8 +113,10 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             : []
     );
     const [searchTerm, setSearchTerm] = useState<string>("");
-    const filteredProducts = products.filter((product) =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredProducts = products.filter(
+        (product) =>
+            product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+            product.stock_quantity > 0
     );
     const [isCreateAnother, setIsCreateAnother] = useState<boolean>(false);
     const title = initialData ? "Edit order" : "Create order";
@@ -162,15 +153,13 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         setLoading(true);
 
         const clearForm = () => {
-            form.reset();
             localStorage.removeItem("selectedItems");
             localStorage.removeItem("formData");
             localStorage.removeItem("paymentMethodName");
+            form.reset();
         };
 
         const handleSuccess = () => {
-            clearForm();
-
             isCreateAnother
                 ? router.visit(route("admin.order.create"))
                 : router.visit(route("admin.order.index"));
@@ -179,6 +168,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                 toast.success(toastMessage, {
                     position: "top-center",
                 });
+                clearForm();
             }, 1000);
         };
 
@@ -412,19 +402,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                             totalItems={totalItems}
                             form={form}
                         />
-
-                        {/* 
-                        'payment_method_id', ---
-                        'customer_name', ---
-                        'order_date', ---
-                        'total_amount', --- (disable)
-                        'total_paid', --- manual
-                        'changes', --- kondisional
-                        'status', --- manual
-                        'notes', ---
-                        'transaction_id' --- otomatis
-                        */}
-
                         <div className="flex flex-col w-full gap-4">
                             <div className="flex items-baseline justify-between">
                                 <h1 className="text-lg font-bold ">
@@ -792,6 +769,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                     className="w-full"
                                     type="submit"
                                     onClick={() => setIsCreateAnother(false)}
+                                    // onClick={() => alert("Submit clicked")}
                                 >
                                     {action}
                                 </Button>
