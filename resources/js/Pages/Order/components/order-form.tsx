@@ -44,6 +44,7 @@ import { BankTransferCard } from "./bank-transfer-card";
 import OrderSummary from "./order-summary";
 import ProductCards from "./product-cards";
 import { QrModal } from "./qr-modal";
+import SelectedItem from "@/interfaces/SelectedItem";
 
 const formSchema = z.object({
     customer_name: z
@@ -90,25 +91,14 @@ const formSchema = z.object({
 
 type OrderFormValues = z.infer<typeof formSchema>;
 
-export type CompleteProduct = Product & {
+type CompleteProduct = Product & {
     photos?: Photo[];
 };
-
-//
-interface OrderItem {
-    id: string;
-    name: string;
-    price: number;
-    total_price: number;
-    quantity: number;
-    photos?: Photo[];
-}
-//
 
 interface OrderFormProps {
     initialData?:
         | (Order & {
-              productOrdered: CompleteProduct[];
+              selectedItems: SelectedItem[];
           })
         | null;
     paymentMethods: PaymentMethod[];
@@ -120,6 +110,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
     paymentMethods,
     products,
 }) => {
+    console.log(initialData?.selectedItems);
     const { loading, setLoading } = useGlobalContext();
     const [paymentMethodName, setPaymentMethodName] = useState<string | null>(
         null
@@ -127,8 +118,10 @@ export const OrderForm: React.FC<OrderFormProps> = ({
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [totalItems, setTotalItems] = useState<number>(0);
     const [totalPrice, setTotalPrice] = useState<number>(0);
-    const [selectedItems, setSelectedItems] = useState<CompleteProduct[]>(
-        initialData ? initialData.productOrdered : []
+    const [selectedItems, setSelectedItems] = useState<SelectedItem[]>(
+        initialData && initialData.selectedItems
+            ? initialData.selectedItems
+            : []
     );
     const [searchTerm, setSearchTerm] = useState<string>("");
     const filteredProducts = products.filter((product) =>
@@ -203,7 +196,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                       items: [
                           ...selectedItems.map((item) => ({
                               product_id: item.id,
-                              quantity: item.stock_quantity,
+                              quantity: item.quantity,
                           })),
                       ],
                       _method: "PATCH",
@@ -221,7 +214,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                       items: [
                           ...selectedItems.map((item) => ({
                               product_id: item.id,
-                              quantity: item.stock_quantity,
+                              quantity: item.quantity,
                           })),
                       ],
                   },
@@ -240,7 +233,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         setPaymentMethodName(selectedPaymentMethod?.name ?? null);
     };
 
-    const adjustQuantity = (itemClicked: Product, amount: number) => {
+    const adjustQuantity = (itemClicked: SelectedItem, amount: number) => {
         const product = products.find(
             (product) => product.id == itemClicked.id
         );
@@ -249,7 +242,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                 selectedItems
                     .map((item) => {
                         if (item.id === itemClicked.id) {
-                            let newQuantity = item.stock_quantity + amount;
+                            let newQuantity = item.quantity + amount;
                             newQuantity = Math.min(
                                 newQuantity,
                                 product.stock_quantity
@@ -257,19 +250,19 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                             newQuantity = Math.max(newQuantity, 0);
                             return {
                                 ...item,
-                                stock_quantity: newQuantity,
+                                quantity: newQuantity,
                             };
                         }
                         return item;
                     })
-                    .filter((item) => item.stock_quantity > 0)
+                    .filter((item) => item.quantity > 0)
             );
         }
     };
 
-    const addItem = (product: Product) => {
+    const addItem = (product: CompleteProduct) => {
         const existingItem = selectedItems.find(
-            (item: Product) => item.id === product.id
+            (item: SelectedItem) => item.id === product.id
         );
         if (existingItem) {
             setSelectedItems(
@@ -277,8 +270,8 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                     item.id === product.id
                         ? {
                               ...item,
-                              stock_quantity: Math.min(
-                                  item.stock_quantity + 1,
+                              quantity: Math.min(
+                                  item.quantity + 1,
                                   product.stock_quantity
                               ),
                           }
@@ -288,12 +281,20 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         } else {
             setSelectedItems([
                 ...selectedItems,
-                { ...product, stock_quantity: 1 },
+                {
+                    id: product.id,
+                    product_name: product.name,
+                    price: product.price,
+                    unit: product.unit,
+                    quantity: 1,
+                    total_price: product.price,
+                    photos: product.photos,
+                },
             ]);
         }
     };
 
-    const removeItem = (itemClicked: Product) => {
+    const removeItem = (itemClicked: SelectedItem) => {
         setSelectedItems(
             selectedItems.filter((item) => item.id !== itemClicked.id)
         );
@@ -302,11 +303,11 @@ export const OrderForm: React.FC<OrderFormProps> = ({
     // calculating total price per item
     useEffect(() => {
         const totalPrice = selectedItems.reduce(
-            (acc, item) => acc + item.price * item.stock_quantity,
+            (acc, item) => acc + item.price * item.quantity,
             0
         );
         const totalItems = selectedItems.reduce(
-            (acc, item) => acc + item.stock_quantity,
+            (acc, item) => acc + item.quantity,
             0
         );
         form.setValue("total_amount", totalPrice);

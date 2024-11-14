@@ -7,7 +7,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/Components/ui/table";
-import ProductsOrdered from "@/interfaces/ProductsOrdered";
+import ProductsOrdered from "@/interfaces/SelectedItem";
 
 const ProductOrderTable = ({
     productsOrdered,

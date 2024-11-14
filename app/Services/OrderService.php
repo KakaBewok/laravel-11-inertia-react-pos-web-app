@@ -51,6 +51,14 @@ class OrderService
                     'total_paid' => $validatedData["total_amount"] + $validatedData["changes"]
                 ];
 
+                // orderProducts
+                // protected $fillable = [
+                //     'order_id',
+                //     'product_id',
+                //     'quantity',
+                //     'price'
+                // ];
+
                 $this->orderRepository->store($orderData);
             });
 
@@ -101,13 +109,12 @@ class OrderService
             $product = $orderProduct->product;
             $productsOrdered[] = [
                 'id' => $product->id,
-                'name' => $product->name,
-                'slug' => $product->slug,
-                'description' => $product->description,
+                'product_name' => $product->name,
                 'price' => $product->price,
                 'unit' => $product->unit,
-                'stock_quantity' => $orderProduct->quantity,
-                'category_id' => $product->category_id,
+                'quantity' => $orderProduct->quantity,
+                'total_price' => $orderProduct->price,
+                'photos' => $product->photos
             ];
         }
         return $productsOrdered;
