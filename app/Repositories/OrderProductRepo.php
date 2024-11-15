@@ -44,4 +44,9 @@ class OrderProductRepo implements CrudRepository
     {
         return OrderProduct::destroy($ids);
     }
+
+    public function deleteByOrderId(int $orderId)
+    {
+        return OrderProduct::where('order_id', $orderId)->delete();
+    }
 }

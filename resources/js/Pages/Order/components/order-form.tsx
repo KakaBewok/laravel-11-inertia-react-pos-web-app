@@ -150,6 +150,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 
     const onSubmit = (data: OrderFormValues) => {
         setLoading(true);
+        const orderDateFormatted = data.order_date.toLocaleDateString("en-CA");
 
         const clearForm = () => {
             form.reset();
@@ -184,6 +185,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                   route("admin.order.update", initialData?.id),
                   {
                       ...data,
+                      order_date: orderDateFormatted,
                       items: [
                           ...selectedItems.map((item) => ({
                               product_id: item.id,
@@ -202,6 +204,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                   route("admin.order.store"),
                   {
                       ...data,
+                      order_date: orderDateFormatted,
                       items: [
                           ...selectedItems.map((item) => ({
                               product_id: item.id,
@@ -445,7 +448,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                             <Input
                                                 className="dark:bg-slate-700"
                                                 disabled={loading}
-                                                placeholder="Panjul"
+                                                placeholder="Kevin Diks"
                                                 {...field}
                                             />
                                         </FormControl>

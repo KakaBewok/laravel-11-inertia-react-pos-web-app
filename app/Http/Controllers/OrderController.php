@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreOrderRequest;
+use App\Http\Requests\UpdateOrderRequest;
 use App\Models\Order;
-use Illuminate\Http\Request;
 use App\Services\OrderService;
-use App\Services\ProductService;
 use App\Services\PaymentMethodService;
+use App\Services\ProductService;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class OrderController extends Controller
@@ -85,9 +86,10 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Order $order)
+    public function update(UpdateOrderRequest $request, Order $order)
     {
-        //
+        $validatedData = $request->validated();
+        $this->orderService->update($order->id, $validatedData);
     }
 
     /**

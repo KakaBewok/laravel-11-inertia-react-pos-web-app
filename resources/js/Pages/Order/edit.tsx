@@ -22,6 +22,7 @@ const EditPage: React.FC<EditPageProps> = ({
 }) => {
     const initialData: Order & { selectedItems: SelectedItem[] } = {
         ...order,
+        payment_method_id: order.payment_method_id.toString(),
         order_date: new Date(order.order_date),
         selectedItems: selectedItems,
     };
