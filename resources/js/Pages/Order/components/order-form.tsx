@@ -173,7 +173,12 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         };
 
         const handleError = (error: any) => {
-            console.log("An error occurred: ", error);
+            Object.keys(error).forEach((key) => {
+                const message = error[key];
+                toast.error(message, {
+                    position: "top-center",
+                });
+            });
         };
 
         const handleFinish = () => setLoading(false);
