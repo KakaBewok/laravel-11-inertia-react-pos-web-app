@@ -1,11 +1,11 @@
 import Order from "@/interfaces/Order";
 import PaymentMethod from "@/interfaces/PaymentMethod";
 import Product from "@/interfaces/Product";
+import SelectedItem from "@/interfaces/SelectedItem";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import MainLayout from "@/Layouts/MainLayout";
 import { Head } from "@inertiajs/react";
 import { OrderForm } from "./components/order-form";
-import SelectedItem from "@/interfaces/SelectedItem";
 
 interface EditPageProps {
     order: Order;
@@ -22,6 +22,7 @@ const EditPage: React.FC<EditPageProps> = ({
 }) => {
     const initialData: Order & { selectedItems: SelectedItem[] } = {
         ...order,
+        order_date: new Date(order.order_date),
         selectedItems: selectedItems,
     };
 
