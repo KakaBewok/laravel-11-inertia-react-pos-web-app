@@ -74,7 +74,7 @@ const ProductDetails = ({ product, category, photos }: ProductDetailsProps) => {
                             <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-50">
                                 {product.name}
                             </h1>
-                            <Separator className="bg-slate-300 dark:bg-slate-700 my-4" />
+                            <Separator className="my-4 bg-slate-300 dark:bg-slate-700" />
                             <h2 className="text-xl font-semibold text-gray-400">
                                 {category.name}
                             </h2>
@@ -84,7 +84,8 @@ const ProductDetails = ({ product, category, photos }: ProductDetailsProps) => {
                                 Price:{" "}
                             </h3>
                             <p className="text-sm text-gray-500 dark:text-gray-300">
-                                Rp. {product.price}/{product.unit}
+                                Rp. {product.price.toLocaleString("id-ID")}/
+                                {product.unit}
                             </p>
                         </div>
                         <div>

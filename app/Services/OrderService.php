@@ -23,7 +23,6 @@ class OrderService
         $this->orderProductRepository = $orderProductRepository;
     }
 
-    //store methods
     public function store(array $validatedData)
     {
         try {
@@ -32,7 +31,7 @@ class OrderService
                 $newOrder = $this->orderRepository->store($orderData);
                 $orderProducts = $this->prepareOrderProducts($validatedData['items'], $newOrder->id, $validatedData['status']);
 
-                foreach ($orderProducts as $orderProduct){
+                foreach ($orderProducts as $orderProduct) {
                     $this->orderProductRepository->store($orderProduct);
                 }
 
@@ -66,7 +65,7 @@ class OrderService
                 throw new \Exception('Product not found: ' . $item['product_id']);
             }
 
-            if ($status === 'completed') {
+            if ($status === 'Paid') {
                 $this->checkAndUpdateStock($product, $item['quantity']);
             }
 
@@ -88,7 +87,6 @@ class OrderService
         }
         $product->decrement('stock_quantity', $quantity);
     }
-    //store methods
 
     public function getAllOrders()
     {
@@ -128,6 +126,32 @@ class OrderService
             ];
         }
         return $productsOrdered;
+    }
+
+    public function update(int $orderId, array $validatedData)
+    {
+        try {
+            DB::transaction(function () use ($orderId, $validatedData) {
+                $existingOrder = $this->orderRepository->find($orderId);
+                if (!$existingOrder) {
+                    throw new \Exception("Order not found: " . $orderId);
+                }
+
+                $orderData = $this->prepareOrderData($validatedData);
+                $this->orderRepository->update($orderId, $orderData);
+
+                $this->orderProductRepository->deleteByOrderId($orderId);
+
+                $orderProducts = $this->prepareOrderProducts($validatedData['items'], $orderId, $validatedData['status']);
+                foreach ($orderProducts as $orderProduct) {
+                    $this->orderProductRepository->store($orderProduct);
+                }
+
+                Log::info('Order updated successfully: ' . $existingOrder->transaction_id);
+            });
+        } catch (\Exception $e) {
+            Log::error('Error when updating order: ' . $e->getMessage());
+        }
     }
 
     public function delete(int $id)

@@ -12,7 +12,7 @@ export type OrderColumn = {
     total_amount: number;
     total_paid: number;
     changes: number;
-    status: "pending" | "cancelled" | "completed";
+    status: "Paid" | "Pending" | "Cancelled";
 };
 
 export const columns: ColumnDef<OrderColumn>[] = [
@@ -154,9 +154,9 @@ export const columns: ColumnDef<OrderColumn>[] = [
                 <Badge
                     variant="default"
                     className={`${
-                        status === "completed"
+                        status === "Paid"
                             ? "bg-green-500 dark:text-white hover:bg-green-500 hover:text-white"
-                            : status === "pending"
+                            : status === "Pending"
                             ? "bg-yellow-500 dark:text-white hover:bg-yellow-500 hover:text-white"
                             : "bg-red-500 dark:text-white hover:bg-red-500 hover:text-white"
                     } px-3 py-1 text-sm rounded-sm`}

@@ -62,7 +62,7 @@ class UpdateOrderRequest extends FormRequest
             'status.required' => 'Status is required.',
             'status.min' => 'Status must contain at least 3 characters.',
             'payment_method_id.required' => 'Payment method is required.',
-            'items.required' => 'At least one product must be ordered.',
+            'items.required' => 'Add at least one product.',
             'items.*.product_id.required' => 'Product ID is required.',
             'items.*.product_id.exists' => 'The selected product was not found.',
             'items.*.quantity.required' => 'Product quantity is required.',

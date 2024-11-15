@@ -118,7 +118,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
             product.stock_quantity > 0
     );
-    const [isCreateAnother, setIsCreateAnother] = useState<boolean>(false);
     const title = initialData ? "Edit order" : "Create order";
     const description = initialData ? "Edit an order" : "Add a new order";
     const toastMessage = initialData ? "Order updated." : "Order created.";
@@ -151,19 +150,17 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 
     const onSubmit = (data: OrderFormValues) => {
         setLoading(true);
+        const orderDateFormatted = data.order_date.toLocaleDateString("en-CA");
 
         const clearForm = () => {
+            form.reset();
             localStorage.removeItem("selectedItems");
             localStorage.removeItem("formData");
             localStorage.removeItem("paymentMethodName");
-            form.reset();
         };
 
         const handleSuccess = () => {
-            isCreateAnother
-                ? router.visit(route("admin.order.create"))
-                : router.visit(route("admin.order.index"));
-
+            router.visit(route("admin.order.index"));
             setTimeout(() => {
                 toast.success(toastMessage, {
                     position: "top-center",
@@ -173,7 +170,12 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         };
 
         const handleError = (error: any) => {
-            console.log("An error occurred: ", error);
+            Object.keys(error).forEach((key) => {
+                const message = error[key];
+                toast.error(message, {
+                    position: "top-center",
+                });
+            });
         };
 
         const handleFinish = () => setLoading(false);
@@ -183,6 +185,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                   route("admin.order.update", initialData?.id),
                   {
                       ...data,
+                      order_date: orderDateFormatted,
                       items: [
                           ...selectedItems.map((item) => ({
                               product_id: item.id,
@@ -201,6 +204,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                   route("admin.order.store"),
                   {
                       ...data,
+                      order_date: orderDateFormatted,
                       items: [
                           ...selectedItems.map((item) => ({
                               product_id: item.id,
@@ -444,7 +448,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                             <Input
                                                 className="dark:bg-slate-700"
                                                 disabled={loading}
-                                                placeholder="Panjul"
+                                                placeholder="Kevin Diks"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -745,13 +749,13 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
-                                                    <SelectItem value="completed">
-                                                        Completed
+                                                    <SelectItem value="Paid">
+                                                        Paid
                                                     </SelectItem>
-                                                    <SelectItem value="pending">
+                                                    <SelectItem value="Pending">
                                                         Pending
                                                     </SelectItem>
-                                                    <SelectItem value="cancelled">
+                                                    <SelectItem value="Cancelled">
                                                         Cancelled
                                                     </SelectItem>
                                                 </SelectContent>
@@ -763,27 +767,15 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                             />
 
                             {/* submit button */}
-                            <div className="flex flex-col items-center justify-between w-full gap-4 mt-5 lg:flex-row">
-                                <Button
-                                    disabled={loading}
-                                    className="w-full"
-                                    type="submit"
-                                    onClick={() => setIsCreateAnother(false)}
-                                    // onClick={() => alert("Submit clicked")}
-                                >
-                                    {action}
-                                </Button>
-                                <Button
-                                    disabled={loading}
-                                    className={`${
-                                        initialData ? "hidden" : ""
-                                    } w-full bg-slate-300 text-slate-950 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200`}
-                                    type="submit"
-                                    onClick={() => setIsCreateAnother(true)}
-                                >
-                                    Create & Create another
-                                </Button>
-                            </div>
+                            {/* <div className="flex flex-col items-center justify-between w-full gap-4 mt-5 lg:flex-row"> */}
+                            <Button
+                                disabled={loading}
+                                className="w-full mt-6"
+                                type="submit"
+                            >
+                                {action}
+                            </Button>
+                            {/* </div> */}
                         </div>
                     </div>
                 </form>
