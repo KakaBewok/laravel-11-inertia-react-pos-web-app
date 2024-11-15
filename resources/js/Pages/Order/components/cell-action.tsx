@@ -26,17 +26,21 @@ export const CellAction = ({ data }: { data: OrderColumn }) => {
         });
     };
 
-    const handleEditOrder = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleEditOrder = (
+        e: React.MouseEvent<HTMLButtonElement>,
+        isPaid: boolean
+    ) => {
         e.stopPropagation();
-
-        setLoading(true);
-        router.get(
-            route("admin.order.edit", data.id),
-            {},
-            {
-                onFinish: () => setLoading(false),
-            }
-        );
+        if (!isPaid) {
+            setLoading(true);
+            router.get(
+                route("admin.order.edit", data.id),
+                {},
+                {
+                    onFinish: () => setLoading(false),
+                }
+            );
+        }
     };
 
     const handleShowDetailsOrder = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -93,8 +97,10 @@ export const CellAction = ({ data }: { data: OrderColumn }) => {
                 <Button
                     disabled={loading}
                     variant="ghost"
-                    className="h-8 p-0 w-9 bg-amber-400 hover:bg-amber-500"
-                    onClick={(e) => handleEditOrder(e)}
+                    className={`${
+                        data.status == "Paid" ? "opacity-45" : ""
+                    } h-8 p-0 w-9 bg-amber-400 hover:bg-amber-500`}
+                    onClick={(e) => handleEditOrder(e, data.status == "Paid")}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

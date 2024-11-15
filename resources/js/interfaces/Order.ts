@@ -8,7 +8,7 @@ export default interface Order {
     total_amount: number;
     total_paid: number;
     changes: number;
-    status: "pending" | "cancelled" | "completed";
+    status: "Paid" | "Pending" | "Cancelled";
     notes: string;
     transaction_id: string;
     order_products: OrderProduct[];

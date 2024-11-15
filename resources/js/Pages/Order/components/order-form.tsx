@@ -118,7 +118,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
             product.stock_quantity > 0
     );
-    const [isCreateAnother, setIsCreateAnother] = useState<boolean>(false);
     const title = initialData ? "Edit order" : "Create order";
     const description = initialData ? "Edit an order" : "Add a new order";
     const toastMessage = initialData ? "Order updated." : "Order created.";
@@ -160,10 +159,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         };
 
         const handleSuccess = () => {
-            isCreateAnother
-                ? router.visit(route("admin.order.create"))
-                : router.visit(route("admin.order.index"));
-
+            router.visit(route("admin.order.index"));
             setTimeout(() => {
                 toast.success(toastMessage, {
                     position: "top-center",
@@ -750,13 +746,13 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
-                                                    <SelectItem value="completed">
-                                                        Completed
+                                                    <SelectItem value="Paid">
+                                                        Paid
                                                     </SelectItem>
-                                                    <SelectItem value="pending">
+                                                    <SelectItem value="Pending">
                                                         Pending
                                                     </SelectItem>
-                                                    <SelectItem value="cancelled">
+                                                    <SelectItem value="Cancelled">
                                                         Cancelled
                                                     </SelectItem>
                                                 </SelectContent>
@@ -768,26 +764,15 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                             />
 
                             {/* submit button */}
-                            <div className="flex flex-col items-center justify-between w-full gap-4 mt-5 lg:flex-row">
-                                <Button
-                                    disabled={loading}
-                                    className="w-full"
-                                    type="submit"
-                                    onClick={() => setIsCreateAnother(false)}
-                                >
-                                    {action}
-                                </Button>
-                                <Button
-                                    disabled={loading}
-                                    className={`${
-                                        initialData ? "hidden" : ""
-                                    } w-full bg-slate-300 text-slate-950 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200`}
-                                    type="submit"
-                                    onClick={() => setIsCreateAnother(true)}
-                                >
-                                    Create & Create another
-                                </Button>
-                            </div>
+                            {/* <div className="flex flex-col items-center justify-between w-full gap-4 mt-5 lg:flex-row"> */}
+                            <Button
+                                disabled={loading}
+                                className="w-full mt-6"
+                                type="submit"
+                            >
+                                {action}
+                            </Button>
+                            {/* </div> */}
                         </div>
                     </div>
                 </form>

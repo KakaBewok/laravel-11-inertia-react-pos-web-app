@@ -45,7 +45,9 @@ const OrderDetails = ({
                     <Button
                         disabled={loading}
                         variant="ghost"
-                        className="h-8 p-0 w-9 bg-amber-400 hover:bg-amber-500"
+                        className={`${
+                            order.status == "Paid" ? "hidden" : ""
+                        } h-8 p-0 w-9 bg-amber-400 hover:bg-amber-500`}
                         onClick={handleEditOrder}
                     >
                         <svg
@@ -140,9 +142,9 @@ const OrderDetails = ({
                             <Badge
                                 variant="default"
                                 className={`${
-                                    order.status === "completed"
+                                    order.status === "Paid"
                                         ? "bg-green-500 dark:text-white hover:bg-green-500 hover:text-white"
-                                        : order.status === "pending"
+                                        : order.status === "Pending"
                                         ? "bg-yellow-500 dark:text-white hover:bg-yellow-500 hover:text-white"
                                         : "bg-red-500 dark:text-white hover:bg-red-500 hover:text-white"
                                 } px-3 py-1 text-sm rounded-sm`}

@@ -24,7 +24,7 @@ class OrderFactory extends Factory
             'total_amount' => $this->faker->randomFloat(2, 10000, 300000),
             'total_paid' => $this->faker->randomFloat(2, 10000, 300000),
             'changes' => $this->faker->randomFloat(2, 10000, 300000),
-            'status' => $this->faker->randomElement(['pending', 'completed', 'cancelled']),
+            'status' => $this->faker->randomElement(['Paid', 'Pending', 'Cancelled']),
             'notes' => $this->faker->sentence(15, true),
         ];
     }
