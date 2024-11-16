@@ -5,11 +5,14 @@ export default function Guest({ children }: PropsWithChildren) {
         <div className="grid min-h-screen grid-cols-1 md:grid-cols-2">
             <div className="items-center justify-center hidden md:flex bg-gradient-to-r from-blue-500 via-purple-500 to-pink-400">
                 <div className="text-center text-white lg:text-left lg:px-20">
-                    <h1 className="text-5xl font-bold">Welcome back!</h1>
+                    <h1 className="text-5xl font-bold">
+                        Welcome back to{" "}
+                        <span className="text-sky-300">TradeMate</span>
+                    </h1>
                     <p className="py-6">
                         Effortless Sales Management, Right at Your Fingertips{" "}
                         <br />
-                        Streamline your operations with our powerful POS system.
+                        Streamline your operations with our powerful POS system
                     </p>
                 </div>
             </div>

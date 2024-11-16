@@ -1,1 +1,0 @@
-import{j as o}from"./app-DWVvGJV7.js";import{G as r}from"./useGlobalContext-BRqftNUw.js";import{Q as s}from"./react-toastify.esm-a2GOqe9n.js";const a=({children:t})=>o.jsx(r,{children:o.jsxs("div",{className:"main-layout",children:[o.jsx(s,{autoClose:3100}),t]})}),m=a;export{m as M};
