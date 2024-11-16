@@ -85,12 +85,13 @@ export type CompleteProduct = Product & {
     photos?: Photo[];
 };
 
+export interface InitialData extends Order {
+    selectedItems: SelectedItem[];
+    selectedPaymentMethod?: PaymentMethod;
+}
+
 interface OrderFormProps {
-    initialData?:
-        | (Order & {
-              selectedItems: SelectedItem[];
-          })
-        | null;
+    initialData?: InitialData | null;
     paymentMethods: PaymentMethod[];
     products: CompleteProduct[];
 }
@@ -102,7 +103,9 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 }) => {
     const { loading, setLoading } = useGlobalContext();
     const [paymentMethodName, setPaymentMethodName] = useState<string | null>(
-        null
+        initialData?.selectedPaymentMethod
+            ? initialData?.selectedPaymentMethod.name
+            : null
     );
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [totalItems, setTotalItems] = useState<number>(0);
