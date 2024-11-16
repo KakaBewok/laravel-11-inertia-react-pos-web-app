@@ -2,7 +2,6 @@ import NavLink from "@/Components/Sidebar/NavLink";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { Link } from "@inertiajs/react";
 import React, { useEffect, useRef, useState } from "react";
-import Logo from "../../../../public/images/logo/logo.svg";
 import SidebarLinkGroup from "./SidebarLinkGroup";
 
 const Sidebar = () => {
@@ -63,9 +62,25 @@ const Sidebar = () => {
         >
             {/* <!-- SIDEBAR HEADER --> */}
             <div className="flex items-center justify-between gap-2 px-6 py-6 lg:py-7">
-                <Link href="/">
-                    <img src={Logo} alt="Logo" />
-                </Link>
+                <div className="w-full">
+                    <Link href="/dashboard" className="flex items-center gap-1">
+                        <svg
+                            id="shopping-cart-alt"
+                            className="fill-current w-9 h-9"
+                            viewBox="0 0 23 23"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                fill="#7DD3FC"
+                                d="M21.5,15a3,3,0,0,0-1.9-2.78l1.87-7a1,1,0,0,0-.18-.87A1,1,0,0,0,20.5,4H6.8L6.47,2.74A1,1,0,0,0,5.5,2h-2V4H4.73l2.48,9.26a1,1,0,0,0,1,.74H18.5a1,1,0,0,1,0,2H5.5a1,1,0,0,0,0,2H6.68a3,3,0,1,0,5.64,0h2.36a3,3,0,1,0,5.82,1,2.94,2.94,0,0,0-.4-1.47A3,3,0,0,0,21.5,15Zm-3.91-3H9L7.34,6H19.2ZM9.5,20a1,1,0,1,1,1-1A1,1,0,0,1,9.5,20Zm8,0a1,1,0,1,1,1-1A1,1,0,0,1,17.5,20Z"
+                            ></path>
+                        </svg>
+                        <h1 className="text-2xl font-extrabold text-sky-300">
+                            TradeMate
+                        </h1>
+                    </Link>
+                </div>
 
                 <button
                     ref={trigger}
