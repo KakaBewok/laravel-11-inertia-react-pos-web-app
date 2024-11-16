@@ -5,7 +5,7 @@ import SelectedItem from "@/interfaces/SelectedItem";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import MainLayout from "@/Layouts/MainLayout";
 import { Head } from "@inertiajs/react";
-import { OrderForm } from "./components/order-form";
+import { InitialData, OrderForm } from "./components/order-form";
 
 interface EditPageProps {
     order: Order;
@@ -20,11 +20,15 @@ const EditPage: React.FC<EditPageProps> = ({
     paymentMethods,
     products,
 }) => {
-    const initialData: Order & { selectedItems: SelectedItem[] } = {
+    const selectedPaymentMethod = paymentMethods.find(
+        (paymentMethod) => paymentMethod.id == order.payment_method_id
+    );
+    const initialData: InitialData = {
         ...order,
         payment_method_id: order.payment_method_id.toString(),
         order_date: new Date(order.order_date),
         selectedItems: selectedItems,
+        selectedPaymentMethod: selectedPaymentMethod,
     };
 
     return (

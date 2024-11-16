@@ -7,5 +7,5 @@ export const ACCEPTED_IMAGE_TYPES = [
 ];
 export const BASE_URL =
     import.meta.env.MODE == "production"
-        ? "https://pos-kkbwk.xyz"
+        ? "https://www.pos-kkbwk.xyz"
         : "http://localhost:8000";
