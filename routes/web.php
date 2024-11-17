@@ -15,59 +15,59 @@ use Illuminate\Support\Facades\Artisan;
 
 // for artisan command
 Route::get('/artsn/kkbwk/{command}', function ($command) {
-            try {
-                switch ($command) {
-                    case 'cache-all':
-                        Artisan::call('route:cache');
-                        Artisan::call('config:cache');
-                        Artisan::call('view:cache');
-                        Artisan::call('event:cache');
-                        break;
-                    case 'clear-cache':
-                        Artisan::call('route:clear');
-                        Artisan::call('config:clear');
-                        Artisan::call('view:clear');
-                        Artisan::call('event:clear');
-                        Artisan::call('cache:clear');
-                        break;
-                    case 'storage-link':
-                        Artisan::call('storage:link');
-                        break;
-                    case 'migrate':
-                        Artisan::call('migrate');
-                        break;
-                     case 'migrate-seed':
-                        Artisan::call('migrate', ['--seed' => true]);
-                        break;
-                    case 'migrate-fresh':
-                        Artisan::call('migrate:fresh');
-                        break;
-                    case 'migrate-fresh-seed':
-                        Artisan::call('migrate:fresh', ['--seed' => true]);
-                        break;
-                    case 'optimize':
-                        Artisan::call('optimize');
-                        break;
-                    default:
-                        return "Command not found.";
-                }
+    try {
+        switch ($command) {
+            case 'cache-all':
+                Artisan::call('route:cache');
+                Artisan::call('config:cache');
+                Artisan::call('view:cache');
+                Artisan::call('event:cache');
+                break;
+            case 'clear-cache':
+                Artisan::call('route:clear');
+                Artisan::call('config:clear');
+                Artisan::call('view:clear');
+                Artisan::call('event:clear');
+                Artisan::call('cache:clear');
+                break;
+            case 'storage-link':
+                Artisan::call('storage:link');
+                break;
+            case 'migrate':
+                Artisan::call('migrate');
+                break;
+            case 'migrate-seed':
+                Artisan::call('migrate', ['--seed' => true]);
+                break;
+            case 'migrate-fresh':
+                Artisan::call('migrate:fresh');
+                break;
+            case 'migrate-fresh-seed':
+                Artisan::call('migrate:fresh', ['--seed' => true]);
+                break;
+            case 'optimize':
+                Artisan::call('optimize');
+                break;
+            default:
+                return "Command not found.";
+        }
 
-                return "Command " . $command . " success";
-            } catch (\Exception $e) {
-                return "Error caching: " . $e->getMessage();
-            }
-        });
+        return "Command " . $command . " success";
+    } catch (\Exception $e) {
+        return "Error caching: " . $e->getMessage();
+    }
+});
 
 
 //route for front end
 Route::middleware('guest')->group(function () {
     Route::get('/', function () {
-       return Inertia::render('Welcome');
+        return Inertia::render('Welcome');
     });
 });
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    return Inertia::render('Statistic/index', []);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -76,7 +76,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('statistic', [StatisticController::class, 'index'])->name('statistic');
         Route::middleware('can:manage categories')->group(function () {
             Route::resource('category', CategoryController::class);
             Route::post('/category/destroy-bulk', [CategoryController::class, 'destroy_bulk'])->name("category.destroy-bulk");
