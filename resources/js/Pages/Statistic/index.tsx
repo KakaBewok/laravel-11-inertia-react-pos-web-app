@@ -120,7 +120,13 @@ const StatisticPage: React.FC = () => {
                 </div>
 
                 <div className="grid grid-cols-12 gap-4 mt-4 md:mt-6 md:gap-6 2xl:mt-7 2xl:gap-7">
-                    <ChartOne />
+                    <ChartOne
+                        data={[
+                            20, 22, 50, 12, 12, 55, 99, 21, 11, 24, 12, 15, 13,
+                            11, 96, 23, 34, 23, 34, 34, 34, 55, 45, 44, 23, 34,
+                            23, 34, 34, 34, 99,
+                        ]}
+                    />
                     <ChartTwo />
                     <ChartThree />
                 </div>

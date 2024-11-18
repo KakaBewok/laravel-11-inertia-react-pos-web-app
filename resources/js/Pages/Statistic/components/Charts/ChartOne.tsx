@@ -189,7 +189,7 @@
 // export default ChartOne;
 
 import { ApexOptions } from "apexcharts";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 
 const options: ApexOptions = {
@@ -240,6 +240,7 @@ const options: ApexOptions = {
                 show: true,
             },
         },
+        borderColor: true ? "#1e293b" : "#e2e8f0",
     },
     dataLabels: {
         enabled: false,
@@ -273,25 +274,27 @@ interface ChartOneState {
     }[];
 }
 
-const ChartOne: React.FC = () => {
-    const [month, setMonth] = useState<number>(new Date().getMonth() + 1); // Bulan saat ini
+const ChartOne = ({ data }: { data: number[] }) => {
+    const [month, setMonth] = useState<number>(new Date().getMonth()); // Bulan saat ini
     const [year, setYear] = useState<number>(new Date().getFullYear()); // Tahun saat ini
 
     // Hitung jumlah hari dalam bulan
     const getDaysInMonth = (month: number, year: number): number[] => {
-        const days = new Date(year, month, 0).getDate(); // `month` tetap ditambah 1
+        const days = new Date(year, month, 0).getDate(); // Tambahkan 1 ke bulan
         return Array.from({ length: days }, (_, i) => i + 1); // [1, 2, ..., days]
     };
 
     const daysInMonth = getDaysInMonth(month, year);
+    console.log(daysInMonth);
 
     const [state, setState] = useState<ChartOneState>({
         series: [
             {
                 name: "Omzet",
-                data: Array.from({ length: daysInMonth.length }, () =>
-                    Math.floor(Math.random() * 100)
-                ), // Dummy data omzet
+                // data: Array.from({ length: daysInMonth.length }, () =>
+                //     Math.floor(Math.random() * 100)
+                // ), // Dummy data omzet
+                data: data,
             },
         ],
     });
