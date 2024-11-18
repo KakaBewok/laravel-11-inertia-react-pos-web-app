@@ -44,15 +44,16 @@ class OrderService
 
     protected function prepareOrderData(array $data): array
     {
+        $isUnpaid = $data['status'] === 'Pending' || $data['status'] === 'Cancelled';
         return [
             'payment_method_id' => $data["payment_method_id"],
             'customer_name' => $data["customer_name"],
             'order_date' => $data["order_date"],
             'total_amount' => $data["total_amount"],
-            'changes' => $data["changes"],
+            'changes' => $isUnpaid ? 0 : $data['changes'],
             'status' => $data["status"],
             'notes' => $data["notes"] ?? "",
-            'total_paid' => $data["total_amount"] + $data["changes"]
+            'total_paid' => $isUnpaid ? 0 : ($data['total_amount'] + $data['changes']),
         ];
     }
 

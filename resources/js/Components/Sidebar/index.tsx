@@ -188,7 +188,7 @@ const Sidebar = () => {
                                             >
                                                 <ul className="mt-4 mb-5 pl-7">
                                                     <li>
-                                                        <NavLink
+                                                        {/* <NavLink
                                                             url="admin.statistic"
                                                             href={route(
                                                                 "admin.statistic"
@@ -196,22 +196,22 @@ const Sidebar = () => {
                                                             active={route().current(
                                                                 "admin.statistic"
                                                             )}
+                                                        > */}
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            className="fill-current"
+                                                            width="18"
+                                                            height="18"
+                                                            viewBox="0 0 21 27"
+                                                            fill="none"
                                                         >
-                                                            <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                className="fill-current"
-                                                                width="18"
-                                                                height="18"
-                                                                viewBox="0 0 21 27"
-                                                                fill="none"
-                                                            >
-                                                                <path
-                                                                    fill="#F8F8FE"
-                                                                    d="M5,12a1,1,0,0,0-1,1v8a1,1,0,0,0,2,0V13A1,1,0,0,0,5,12ZM10,2A1,1,0,0,0,9,3V21a1,1,0,0,0,2,0V3A1,1,0,0,0,10,2ZM20,16a1,1,0,0,0-1,1v4a1,1,0,0,0,2,0V17A1,1,0,0,0,20,16ZM15,8a1,1,0,0,0-1,1V21a1,1,0,0,0,2,0V9A1,1,0,0,0,15,8Z"
-                                                                ></path>
-                                                            </svg>
-                                                            Statistics
-                                                        </NavLink>
+                                                            <path
+                                                                fill="#F8F8FE"
+                                                                d="M5,12a1,1,0,0,0-1,1v8a1,1,0,0,0,2,0V13A1,1,0,0,0,5,12ZM10,2A1,1,0,0,0,9,3V21a1,1,0,0,0,2,0V3A1,1,0,0,0,10,2ZM20,16a1,1,0,0,0-1,1v4a1,1,0,0,0,2,0V17A1,1,0,0,0,20,16ZM15,8a1,1,0,0,0-1,1V21a1,1,0,0,0,2,0V9A1,1,0,0,0,15,8Z"
+                                                            ></path>
+                                                        </svg>
+                                                        Statistics
+                                                        {/* </NavLink> */}
                                                     </li>
                                                 </ul>
                                             </div>
