@@ -1,11 +1,10 @@
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import MainLayout from "@/Layouts/MainLayout";
+import { Head } from "@inertiajs/react";
 import React from "react";
 import CardDataStats from "./components/CardDataStats";
 import ChartOne from "./components/Charts/ChartOne";
-import ChartThree from "./components/Charts/ChartThree";
 import ChartTwo from "./components/Charts/ChartTwo";
-import MainLayout from "@/Layouts/MainLayout";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
 
 const StatisticPage: React.FC = () => {
     return (
@@ -128,7 +127,6 @@ const StatisticPage: React.FC = () => {
                         ]}
                     />
                     <ChartTwo />
-                    <ChartThree />
                 </div>
             </AuthenticatedLayout>
         </MainLayout>

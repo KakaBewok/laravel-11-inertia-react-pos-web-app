@@ -10,13 +10,12 @@ const options: ApexOptions = {
         height: 335,
         stacked: true,
         toolbar: {
-            show: false,
+            show: true,
         },
         zoom: {
             enabled: false,
         },
     },
-
     responsive: [
         {
             breakpoint: 1536,
@@ -42,22 +41,43 @@ const options: ApexOptions = {
     dataLabels: {
         enabled: false,
     },
-
     xaxis: {
         categories: ["M", "T", "W", "T", "F", "S", "S"],
+        labels: {
+            show: true,
+            style: {
+                colors: "#737373",
+            },
+        },
+    },
+    yaxis: {
+        labels: {
+            show: true,
+            style: {
+                colors: "#737373",
+            },
+        },
     },
     legend: {
         position: "top",
         horizontalAlign: "left",
-        fontFamily: "Satoshi",
+        fontFamily: "sans-serif",
         fontWeight: 500,
         fontSize: "14px",
-        // markers: {
-        //     radius: 99,
-        // },
+        labels: {
+            colors: "#737373",
+        },
     },
     fill: {
         opacity: 1,
+    },
+    tooltip: {
+        enabled: true,
+        theme: "dark",
+        fillSeriesColor: true,
+        style: {
+            fontSize: "12px",
+        },
     },
 };
 
@@ -90,11 +110,11 @@ const ChartTwo: React.FC = () => {
     handleReset;
 
     return (
-        <div className="col-span-12 rounded-sm border border-stroke bg-white p-7.5 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
+        <div className="col-span-12 rounded-sm border bg-white p-6 shadow-slate-800 dark:border-slate-700 dark:bg-slate-900 xl:col-span-4">
             <div className="justify-between gap-4 mb-4 sm:flex">
                 <div>
-                    <h4 className="text-xl font-semibold text-black dark:text-white">
-                        Profit this week
+                    <h4 className="text-xl font-semibold text-black dark:text-white pb-3">
+                        Omzet this week
                     </h4>
                 </div>
                 <div>
@@ -102,14 +122,10 @@ const ChartTwo: React.FC = () => {
                         <select
                             name="#"
                             id="#"
-                            className="relative z-20 inline-flex py-1 pl-3 pr-8 text-sm font-medium bg-transparent outline-none appearance-none"
+                            className="dark:text-slate-300 dark:bg-slate-700 relative z-20 inline-flex py-1 pl-3 pr-8 text-sm font-medium"
                         >
-                            <option value="" className="dark:bg-boxdark">
-                                This Week
-                            </option>
-                            <option value="" className="dark:bg-boxdark">
-                                Last Week
-                            </option>
+                            <option value="">This Week</option>
+                            <option value="">Last Week</option>
                         </select>
                         <span className="absolute z-10 -translate-y-1/2 top-1/2 right-3">
                             <svg
