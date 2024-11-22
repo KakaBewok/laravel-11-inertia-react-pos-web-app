@@ -63,7 +63,7 @@ const Sidebar = () => {
             {/* <!-- SIDEBAR HEADER --> */}
             <div className="flex items-center justify-between gap-2 px-6 py-6 lg:py-7">
                 <div className="w-full">
-                    <Link href="/dashboard" className="flex items-center gap-1">
+                    <Link href="dashboard" className="flex items-center gap-1">
                         <svg
                             id="shopping-cart-alt"
                             className="fill-current w-9 h-9"

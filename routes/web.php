@@ -8,10 +8,12 @@ use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StatisticController;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Artisan;
+
 
 // for artisan command
 Route::get('/artsn/kkbwk/{command}', function ($command) {
@@ -66,9 +68,11 @@ Route::middleware('guest')->group(function () {
     });
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Statistic/index', []);
-})->middleware(['auth', 'verified'])->name('dashboard');
+//statistics
+Route::get(
+    '/dashboard',
+    [ReportController::class, 'index']
+)->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

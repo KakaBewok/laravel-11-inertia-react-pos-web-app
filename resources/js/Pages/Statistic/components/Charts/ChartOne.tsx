@@ -1,3 +1,4 @@
+import { router } from "@inertiajs/react";
 import { ApexOptions } from "apexcharts";
 import { useState } from "react";
 import ReactApexChart from "react-apexcharts";
@@ -12,6 +13,14 @@ interface ChartOneState {
 const ChartOne = ({ data }: { data: number[] }) => {
     const [month, setMonth] = useState<number>(new Date().getMonth());
     const [year, setYear] = useState<number>(new Date().getFullYear());
+    const [state, setState] = useState<ChartOneState>({
+        series: [
+            {
+                name: "Omzet",
+                data: data,
+            },
+        ],
+    });
 
     const options: ApexOptions = {
         colors: ["#3C50E0", "#80CAEE"],
@@ -119,19 +128,10 @@ const ChartOne = ({ data }: { data: number[] }) => {
 
     const daysInMonth = getDaysInMonth(month, year);
 
-    const [state, setState] = useState<ChartOneState>({
-        series: [
-            {
-                name: "Omzet",
-                data: data,
-            },
-        ],
-    });
-
     return (
         <div className="col-span-12 px-5 pb-5 bg-white border rounded-sm shadow-md pt-7 dark:border-slate-700 dark:bg-slate-900 dark:shadow-slate-800 sm:px-7 xl:col-span-8">
             <div>
-                <h4 className="text-xl font-semibold text-black dark:text-white pb-3">
+                <h4 className="pb-3 text-xl font-semibold text-black dark:text-white">
                     Omzet per Month
                 </h4>
             </div>
@@ -139,7 +139,7 @@ const ChartOne = ({ data }: { data: number[] }) => {
                 <select
                     value={month}
                     onChange={(e) => setMonth(parseInt(e.target.value))}
-                    className="px-2 py-1 w-1/3 dark:text-slate-300 dark:bg-slate-700"
+                    className="w-1/3 px-2 py-1 dark:text-slate-300 dark:bg-slate-700"
                 >
                     {Array.from({ length: 12 }, (_, i) => (
                         <option key={i + 1} value={i + 1}>
@@ -152,7 +152,7 @@ const ChartOne = ({ data }: { data: number[] }) => {
                 <select
                     value={year}
                     onChange={(e) => setYear(parseInt(e.target.value))}
-                    className="px-2 py-1 w-1/3 dark:text-slate-300 dark:bg-slate-700"
+                    className="w-1/3 px-2 py-1 dark:text-slate-300 dark:bg-slate-700"
                 >
                     <option value={2022}>2022</option>
                     <option value={2023}>2023</option>
