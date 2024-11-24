@@ -9,11 +9,8 @@ use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
-use App\Http\Controllers\StatisticController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
-
 
 // for artisan command
 Route::get('/artsn/kkbwk/{command}', function ($command) {
@@ -60,15 +57,11 @@ Route::get('/artsn/kkbwk/{command}', function ($command) {
     }
 });
 
-
-//route for front end
 Route::middleware('guest')->group(function () {
-    Route::get('/', function () {
-        return Inertia::render('Welcome');
-    });
+    Route::get('/', [AuthenticatedSessionController::class, 'create']);
 });
 
-//statistics
+// reports
 Route::get(
     '/dashboard',
     [ReportController::class, 'index']

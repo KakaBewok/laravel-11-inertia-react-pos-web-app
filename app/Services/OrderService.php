@@ -8,7 +8,6 @@ use App\Repositories\OrderRepo;
 use App\Repositories\ProductRepo;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class OrderService
 {
