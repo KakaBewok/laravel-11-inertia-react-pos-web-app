@@ -5,23 +5,9 @@ namespace App\Services;
 use App\Models\Expense;
 use App\Models\Order;
 use App\Models\OrderProduct;
-use App\Repositories\OrderProductRepo;
-use App\Repositories\OrderRepo;
-use App\Repositories\ProductRepo;
 
 class ReportService
 {
-    // protected $orderRepository;
-    // protected $productRepository;
-    // protected $orderProductRepository;
-
-    // public function __construct(OrderRepo $orderRepository, ProductRepo $productRepository, OrderProductRepo $orderProductRepository)
-    // {
-    //     $this->orderRepository = $orderRepository;
-    //     $this->productRepository = $productRepository;
-    //     $this->orderProductRepository = $orderProductRepository;
-    // }
-
     public function getOmzetPerMonth()
     {
         $currentMonth = now()->format('Y-m');
@@ -95,6 +81,7 @@ class ReportService
         $currentMonth = now()->format('Y-m');
         $totalOrder = Order::selectRaw('COUNT(*) as total_order')
             ->whereRaw("DATE_FORMAT(order_date, '%Y-%m') = ?", [$currentMonth])
+            ->where('status', 'Paid')
             ->pluck('total_order')
             ->first();
 
@@ -107,6 +94,7 @@ class ReportService
 
         $totalItems = OrderProduct::selectRaw('SUM(quantity) as total_quantity')
             ->join('orders', 'orders.id', '=', 'order_products.order_id')
+            ->where('orders.status', 'Paid')
             ->whereRaw("DATE_FORMAT(orders.order_date, '%Y-%m') = ?", [$currentMonth])
             ->value('total_quantity');
 
