@@ -1,0 +1,1 @@
+import{j as o}from"./app-C3BytVar.js";import{G as r}from"./useGlobalContext-BKdBRKDL.js";import{Q as s}from"./react-toastify.esm-DWzPGhLO.js";const a=({children:t})=>o.jsx(r,{children:o.jsxs("div",{className:"main-layout",children:[o.jsx(s,{autoClose:3100}),t]})}),m=a;export{m as M};
