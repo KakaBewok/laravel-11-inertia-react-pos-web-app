@@ -37,17 +37,6 @@ class OrderService
                 }
 
                 Log::info('Order created successfully: ' . $newOrder->transaction_id);
-
-                // Generate PDF Invoice
-                $pdf = Pdf::loadView('invoices.template', compact('newOrder'));
-                $filePath = 'invoices/invoice-' . $newOrder->transaction_id . '.pdf';
-
-                Storage::disk('public')->put($filePath, $pdf->output()); // Save PDF to storage
-
-                return response()->json([
-                    'message' => 'Order created successfully.',
-                    'invoice_url' => Storage::url($filePath), // Return the accessible URL
-                ]);
             });
         } catch (\Exception $e) {
             Log::error('Error when creating order: ' . $e->getMessage());
