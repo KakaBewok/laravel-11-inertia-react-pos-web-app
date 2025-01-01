@@ -126,8 +126,9 @@
                     <tr>
                         <td>{{ $orderProduct->product->name }}</td>
                         <td>{{ $orderProduct->quantity }}</td>
-                        <td>{{ number_format($orderProduct->price, 0, ',', '.') }}</td>
-                        <td>{{ number_format($orderProduct->quantity * $orderProduct->price, 0, ',', '.') }}</td>
+                        <td>{{ number_format($orderProduct->product->price, 0, ',', '.') }}</td>
+                        <td>{{ number_format($orderProduct->quantity * $orderProduct->product->price, 0, ',', '.') }}
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
